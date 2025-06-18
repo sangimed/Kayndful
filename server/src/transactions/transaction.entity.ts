@@ -1,31 +1,41 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  CreateDateColumn,
+  JoinColumn,
+} from 'typeorm';
 import { User } from '../users/user.entity';
 import { ServiceOffer } from '../service-offers/service-offer.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
-@Entity()
+@Entity({ name: 'transactions' })
 export class Transaction {
   @ApiProperty()
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ name: 'id' })
   id: number;
 
   @ApiProperty()
   @ManyToOne(() => User)
+  @JoinColumn({ name: 'from_user_id' })
   fromUser: User;
 
   @ApiProperty()
   @ManyToOne(() => User)
+  @JoinColumn({ name: 'to_user_id' })
   toUser: User;
 
   @ApiProperty()
   @ManyToOne(() => ServiceOffer)
+  @JoinColumn({ name: 'service_id' })
   service: ServiceOffer;
 
   @ApiProperty()
-  @Column('int')
+  @Column('int', { name: 'points' })
   points: number;
 
   @ApiProperty()
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'timestamp' })
   timestamp: Date;
 }

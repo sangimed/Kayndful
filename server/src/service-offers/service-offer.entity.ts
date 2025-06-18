@@ -1,41 +1,50 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
+  JoinColumn,
+} from 'typeorm';
 import { User } from '../users/user.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
-@Entity()
+@Entity({ name: 'service_offers' })
 export class ServiceOffer {
   @ApiProperty()
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ name: 'id' })
   id: number;
 
   @ApiProperty()
-  @Column()
+  @Column({ name: 'title' })
   title: string;
 
   @ApiProperty()
-  @Column('text')
+  @Column('text', { name: 'description' })
   description: string;
 
   @ApiProperty()
-  @Column()
+  @Column({ name: 'category' })
   category: string;
 
   @ApiProperty()
-  @Column('int')
+  @Column('int', { name: 'point_cost' })
   pointCost: number;
 
   @ApiProperty()
-  @Column({ default: true })
+  @Column({ name: 'availability', default: true })
   availability: boolean;
 
   @ManyToOne(() => User, (user) => user.offers)
+  @JoinColumn({ name: 'provider_id' })
   provider: User;
 
   @ApiProperty()
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
   @ApiProperty()
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 }

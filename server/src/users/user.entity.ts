@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+} from 'typeorm';
 import { ServiceOffer } from '../service-offers/service-offer.entity';
 import { Transaction } from '../transactions/transaction.entity';
 import { ApiProperty } from '@nestjs/swagger';
@@ -8,42 +15,47 @@ export enum AccountType {
   PREMIUM = 'PREMIUM',
 }
 
-@Entity()
+@Entity({ name: 'users' })
 export class User {
   @ApiProperty()
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ name: 'id' })
   id: number;
 
   @ApiProperty()
-  @Column({ unique: true })
+  @Column({ name: 'phone', unique: true })
   phone: string;
 
   @ApiProperty()
-  @Column()
+  @Column({ name: 'password' })
   password: string;
 
   @ApiProperty()
-  @Column()
+  @Column({ name: 'name' })
   name: string;
 
   @ApiProperty()
-  @Column({ nullable: true })
+  @Column({ name: 'location', nullable: true })
   location: string;
 
   @ApiProperty({ default: 100 })
-  @Column({ default: 100 })
+  @Column({ name: 'points_balance', default: 100 })
   pointsBalance: number;
 
   @ApiProperty({ enum: AccountType })
-  @Column({ type: 'enum', enum: AccountType, default: AccountType.FREE })
+  @Column({
+    name: 'account_type',
+    type: 'enum',
+    enum: AccountType,
+    default: AccountType.FREE,
+  })
   accountType: AccountType;
 
   @ApiProperty()
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
   @ApiProperty()
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 
   @OneToMany(() => ServiceOffer, (offer) => offer.provider)
