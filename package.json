@@ -1,0 +1,5 @@
+{
+  "name": "kayndful-root",
+  "private": true,
+  "workspaces": ["server"]
+}
