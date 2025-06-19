@@ -2,6 +2,16 @@
 
 This document describes the current capabilities of the Kayndful backend implemented with NestJS. Authentication is based on JWT tokens and the database layer uses PostgreSQL via TypeORM.
 
+## Features
+
+The codebase provides a basic time‑bank system with the following functionality:
+
+- **User management** – registration, login and profile updates secured by JWT authentication.
+- **Service offers** – users can publish offers that specify a category, description and point cost.
+- **Transactions** – points are transferred from a buyer to a provider when an offer is purchased.
+- **Monthly bonus service** – premium accounts receive additional points each month (cron job still pending).
+- **Seed script** – populate the database with demo users and offers for testing purposes.
+
 ## Project layout
 
 - `server/` — NestJS application sources
