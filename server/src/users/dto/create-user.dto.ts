@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsEnum, IsOptional } from 'class-validator';
+import { IsString, IsNotEmpty, IsEnum, IsOptional, IsNumber } from 'class-validator';
 import { AccountType } from '../user.entity';
 
 export class CreateUserDto {
@@ -27,4 +27,9 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   password: string;
+
+  @ApiProperty({ default: 100 })
+  @IsOptional()
+  @IsNumber()
+  pointsBalance: number = 100;
 }
