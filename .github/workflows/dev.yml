@@ -1,0 +1,43 @@
+name: Dev Environment
+
+on:
+  workflow_dispatch:
+
+jobs:
+  server:
+    runs-on: ubuntu-latest
+    container:
+      image: node:22.16.0
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: kayndful
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: server
+
+      - name: Start dev server
+        env:
+          DB_HOST: postgres
+          DB_PORT: 5432
+          DB_USER: postgres
+          DB_PASS: postgres
+          DB_NAME: kayndful
+          JWT_SECRET: supersecret
+        run: |
+          npm run start:dev &
+          sleep 30
