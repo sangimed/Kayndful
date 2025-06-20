@@ -24,3 +24,11 @@ docker compose up
 ```
 
 The API will then be available at `http://localhost:3000` with Swagger docs at `/api`.
+
+## Running in GitHub Actions
+
+The workflow file `.github/workflows/dev.yml` can spin up the development
+environment inside GitHub Actions using service containers. Trigger it from the
+**Actions** tab by selecting **Dev Environment** and choosing **Run workflow**.
+The job installs dependencies and starts the NestJS server with a PostgreSQL
+service so you can review logs directly in the workflow run.
