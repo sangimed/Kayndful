@@ -1,11 +1,16 @@
-import { Controller, Get, Post, Body, Param, Delete, Put, UseGuards, Req } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Param, Delete, Put, UseGuards, Req, SerializeOptions } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { ServiceOffersService } from './service-offers.service';
 import { CreateServiceOfferDto } from './dto/create-service-offer.dto';
 import { UpdateServiceOfferDto } from './dto/update-service-offer.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @ApiTags('offers')
+@ApiBearerAuth()
+@ApiUnauthorizedResponse({ description: `User is not authorized` })
+@SerializeOptions({
+    excludeExtraneousValues: true,
+})
 @Controller('offers')
 export class ServiceOffersController {
   constructor(private readonly offersService: ServiceOffersService) {}
