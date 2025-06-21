@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Param, Delete, Put, UseGuards, Req } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ServiceOffersService } from './service-offers.service';
 import { CreateServiceOfferDto } from './dto/create-service-offer.dto';
 import { UpdateServiceOfferDto } from './dto/update-service-offer.dto';
@@ -10,6 +10,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 export class ServiceOffersController {
   constructor(private readonly offersService: ServiceOffersService) {}
 
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() dto: CreateServiceOfferDto, @Req() req: any) {
@@ -26,12 +27,14 @@ export class ServiceOffersController {
     return this.offersService.findOne(+id);
   }
 
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Put(':id')
   update(@Param('id') id: string, @Body() dto: UpdateServiceOfferDto) {
     return this.offersService.update(+id, dto);
   }
 
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
