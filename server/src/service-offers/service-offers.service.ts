@@ -14,29 +14,32 @@ export class ServiceOffersService {
     private usersService: UsersService,
   ) {}
 
-  create(dto: CreateServiceOfferDto, userId: number) {
-    return this.usersService.findOne(userId).then((user) => {
-      const offer = this.offersRepository.create({ ...dto, provider: user });
-      return this.offersRepository.save(offer);
-    });
+  async create(dto: CreateServiceOfferDto, userId: number): Promise<ServiceOffer> {
+    const user = await this.usersService.findOne(userId);
+    const offer = this.offersRepository.create({ ...dto, provider: user });
+    return await this.offersRepository.save(offer);
   }
 
-  findAll() {
+  async findAll(): Promise<ServiceOffer[]> {
     return this.offersRepository.find({ relations: ['provider'] });
   }
 
-  findOne(id: number) {
-    return this.offersRepository.findOne({ where: { id }, relations: ['provider'] });
+  async findOne(id: number): Promise<ServiceOffer> {
+    const offer = await this.offersRepository.findOne({ where: { id }, relations: ['provider'] });
+    if (!offer) throw new NotFoundException('Offer not found');
+    return offer;
   }
 
-  async update(id: number, dto: UpdateServiceOfferDto) {
+  async update(id: number, dto: UpdateServiceOfferDto): Promise<ServiceOffer> {
     const offer = await this.findOne(id);
-    if (!offer) throw new NotFoundException();
     Object.assign(offer, dto);
     return this.offersRepository.save(offer);
   }
 
-  async remove(id: number) {
-    await this.offersRepository.delete(id);
+  async remove(id: number): Promise<void> {
+    const result = await this.offersRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException('Offer not found');
+    }
   }
 }

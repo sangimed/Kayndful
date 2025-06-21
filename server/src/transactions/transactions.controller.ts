@@ -2,6 +2,8 @@ import { Controller, Get, Post, Body, UseGuards, Req, SerializeOptions } from '@
 import { ApiBearerAuth, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
+import { TransactionDto } from './dto/transaction.dto';
+import { toTransactionDto } from '../utils/mappers';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @ApiTags('transactions')
@@ -16,13 +18,15 @@ export class TransactionsController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() dto: CreateTransactionDto, @Req() req: any) {
-    return this.transactionsService.create(dto, req.user.userId);
+  async create(@Body() dto: CreateTransactionDto, @Req() req: any): Promise<TransactionDto> {
+    const tx = await this.transactionsService.create(dto, req.user.userId);
+    return toTransactionDto(tx);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  findAll() {
-    return this.transactionsService.findAll();
+  async findAll(): Promise<TransactionDto[]> {
+    const txs = await this.transactionsService.findAll();
+    return txs.map(toTransactionDto);
   }
 }
