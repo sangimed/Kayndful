@@ -51,6 +51,7 @@ dist/
 # dotenv environment variables file
 .env
 .env.*
+!.env.example
 
 # Mac files
 .DS_Store

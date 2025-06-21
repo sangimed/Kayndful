@@ -12,25 +12,6 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
-  server:
-    build:
-      context: ./server
-    working_dir: /app
-    volumes:
-      - ./server:/app
-      - /app/node_modules
-    ports:
-      - "3000:3000"
-    environment:
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_USER: postgres
-      DB_PASS: postgres
-      DB_NAME: kayndful
-      JWT_SECRET: supersecret
-    depends_on:
-      - db
-    command: npm run start:dev
 
 volumes:
   pgdata:
