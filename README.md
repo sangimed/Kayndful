@@ -8,6 +8,7 @@ Detailed information about the existing modules and routes is available in [docs
 
 ```bash
 cd server
+cp .env.example .env
 npm install
 npm run start:dev
 ```
@@ -17,13 +18,19 @@ Swagger documentation is exposed at `http://localhost:3000/api` once the server 
 
 ## Running with Docker
 
-A `docker-compose.yml` is provided for local development. It starts PostgreSQL and the NestJS server:
+`docker-compose.yml` only starts a PostgreSQL container for development:
 
 ```bash
-docker compose up
+docker compose up -d
 ```
 
-The API will then be available at `http://localhost:3000` with Swagger docs at `/api`.
+Then run the NestJS server locally:
+
+```bash
+cd server && npm run start:dev
+```
+
+The API will be available at `http://localhost:3000` with Swagger docs at `/api`.
 
 ## Running in GitHub Actions
 
