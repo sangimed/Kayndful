@@ -14,7 +14,7 @@ describe('TransactionsService', () => {
   });
 
   it('throws NotFound when entity missing', async () => {
-    users.findOne.mockResolvedValue(undefined);
+    users.findOne.mockRejectedValue(new NotFoundException());
     await expect(
       service.create({ toUserId: 2, serviceId: 3, points: 5 } as any, 1),
     ).rejects.toBeInstanceOf(NotFoundException);

@@ -25,8 +25,10 @@ export class UsersService {
     return this.usersRepository.find();
   }
 
-  findOne(id: number): Promise<User> {
-    return this.usersRepository.findOne({ where: { id } });
+  async findOne(id: number): Promise<User> {
+    const user = await this.usersRepository.findOne({ where: { id } });
+    if (!user) throw new NotFoundException('User not found');
+    return user;
   }
 
   findByPhone(phone: string): Promise<User> {
@@ -35,7 +37,6 @@ export class UsersService {
 
   async update(id: number, dto: UpdateUserDto): Promise<User> {
     const user = await this.findOne(id);
-    if (!user) throw new NotFoundException();
     if (dto.password) {
       dto.password = await bcrypt.hash(dto.password, 10);
     }
@@ -44,6 +45,9 @@ export class UsersService {
   }
 
   async remove(id: number): Promise<void> {
-    await this.usersRepository.delete(id);
+    const result = await this.usersRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException('User not found');
+    }
   }
 }

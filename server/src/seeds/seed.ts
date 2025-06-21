@@ -3,7 +3,7 @@ import { AppModule } from '../app.module';
 import { UsersService } from '../users/users.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 
-async function bootstrap() {
+async function bootstrap(): Promise<void> {
   const app = await NestFactory.createApplicationContext(AppModule);
   const usersService = app.get(UsersService);
 

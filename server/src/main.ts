@@ -5,7 +5,7 @@ import { config as loadEnv } from 'dotenv';
 
 loadEnv();
 
-async function bootstrap() {
+async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
 
   const config = new DocumentBuilder()

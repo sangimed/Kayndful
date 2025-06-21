@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Transaction } from './transaction.entity';
@@ -15,11 +15,12 @@ export class TransactionsService {
     private offersService: ServiceOffersService,
   ) {}
 
-  async create(dto: CreateTransactionDto, fromUserId: number) {
-    const fromUser = await this.usersService.findOne(fromUserId);
-    const toUser = await this.usersService.findOne(dto.toUserId);
-    const service = await this.offersService.findOne(dto.serviceId);
-    if (!fromUser || !toUser || !service) throw new NotFoundException();
+  async create(dto: CreateTransactionDto, fromUserId: number): Promise<Transaction> {
+    const [fromUser, toUser, service] = await Promise.all([
+      this.usersService.findOne(fromUserId),
+      this.usersService.findOne(dto.toUserId),
+      this.offersService.findOne(dto.serviceId),
+    ]);
     if (fromUser.pointsBalance < dto.points) throw new BadRequestException('Insufficient points');
 
     fromUser.pointsBalance -= dto.points;
@@ -36,7 +37,7 @@ export class TransactionsService {
     return this.transactionsRepository.save(transaction);
   }
 
-  findAll() {
+  async findAll(): Promise<Transaction[]> {
     return this.transactionsRepository.find({ relations: ['fromUser', 'toUser', 'service'] });
   }
 }

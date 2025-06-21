@@ -43,9 +43,14 @@ describe('ServiceOffersService', () => {
   });
 
   it('removes offer', async () => {
-    repo.delete.mockResolvedValue(undefined);
+    repo.delete.mockResolvedValue({ affected: 1 });
     await service.remove(1);
     expect(repo.delete).toHaveBeenCalledWith(1);
+  });
+
+  it('throws when removing missing offer', async () => {
+    repo.delete.mockResolvedValue({ affected: 0 });
+    await expect(service.remove(1)).rejects.toBeInstanceOf(NotFoundException);
   });
 
   it('findAll returns offers', async () => {
@@ -57,5 +62,10 @@ describe('ServiceOffersService', () => {
     repo.findOne.mockResolvedValue({ id: 5 });
     await expect(service.findOne(5)).resolves.toEqual({ id: 5 });
     expect(repo.findOne).toHaveBeenCalledWith({ where: { id: 5 }, relations: ['provider'] });
+  });
+
+  it('throws when offer not found on findOne', async () => {
+    repo.findOne.mockResolvedValue(undefined);
+    await expect(service.findOne(5)).rejects.toBeInstanceOf(NotFoundException);
   });
 });
