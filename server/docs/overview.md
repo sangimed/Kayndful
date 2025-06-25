@@ -106,3 +106,22 @@ npx ts-node src/seeds/seed.ts
 ```
 
 It instantiates the NestJS application and inserts a `Demo User` which can be used for testing.
+
+## Authenticating requests
+
+After seeding the demo account you can obtain an access token via the login endpoint:
+
+```bash
+curl -X POST http://localhost:3000/auth/login \
+     -H 'Content-Type: application/json' \
+     -d '{"phone":"1234567890","password":"password"}'
+```
+
+The response contains an `accessToken`. Supply this token in the `Authorization` header when calling routes that require authentication, for example:
+
+```bash
+curl -X GET http://localhost:3000/users \
+     -H "Authorization: Bearer <accessToken>"
+```
+
+If you receive a `401 Unauthorized` error, verify that the token was generated using the same `JWT_SECRET` value as the running server.
