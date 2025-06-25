@@ -15,6 +15,13 @@ npm run start:dev
 
 Swagger documentation is exposed at `http://localhost:3000/api` once the server is running.
 
+To populate the database with a demo user for testing, run the seed script:
+
+```bash
+cd server
+npx ts-node src/seeds/seed.ts
+```
+
 
 ## Running with Docker
 
