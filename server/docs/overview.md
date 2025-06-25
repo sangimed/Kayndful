@@ -95,3 +95,14 @@ npm run start:dev
 ```
 
 Once running, the API is available at `http://localhost:3000` and Swagger docs are served at `/api`.
+
+## Seeding demo data
+
+To create a demo user in the database you can execute the seed script:
+
+```bash
+cd server
+npx ts-node src/seeds/seed.ts
+```
+
+It instantiates the NestJS application and inserts a `Demo User` which can be used for testing.
