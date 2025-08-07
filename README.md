@@ -1,4 +1,7 @@
-# Kayndful Backend
+# Kayndful - Monorepo codebase
+
+> EN : Turns free time into acts of kindness — offer support or ask for help, all in one place.
+> FR : Fait de votre temps libre une source de solidarité — pour aider ou être aidé, en toute simplicité.
 
 This repository contains the Kayndful REST API built with [NestJS](https://nestjs.com/).
 
