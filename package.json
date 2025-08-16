@@ -1,5 +1,14 @@
 {
   "name": "kayndful-root",
   "private": true,
-  "workspaces": ["server"]
+  "workspaces": [
+    "server",
+    "apps/*"
+  ],
+  "scripts": {
+    "mobile": "npm --workspace apps/mobile run start",
+    "mobile:android": "npm --workspace apps/mobile run android",
+    "mobile:ios": "npm --workspace apps/mobile run ios",
+    "mobile:lint": "npm --workspace apps/mobile run lint"
+  }
 }
