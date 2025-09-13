@@ -1,91 +1,122 @@
-# Kayndful - Monorepo codebase
+# Kayndful — Monorepo (API + Mobile)
 
-> EN : Turns free time into acts of kindness — offer support or ask for help, all in one place.
-> FR : Fait de votre temps libre une source de solidarité — pour aider ou être aidé, en toute simplicité.
+> EN: Turns free time into acts of kindness — offer support or ask for help, all in one place.
+> FR: Faites de votre temps libre une source de solidarité — pour aider ou être aidé, en toute simplicité.
 
-This repository contains the Kayndful REST API built with [NestJS](https://nestjs.com/).
+This repository is a monorepo containing:
 
-Detailed information about the existing modules and routes is available in [docs/overview.md](docs/overview.md).
+- server: REST API built with [NestJS](https://nestjs.com/)
+- apps/mobile: Mobile app built with [Expo](https://expo.dev/) / React Native and [Expo Router](https://expo.github.io/router/)
 
-## Quick start
+See API module and routes overview in `server/docs/overview.md`.
+
+## Prerequisites
+
+- Node.js (LTS) and npm
+- PostgreSQL (for the API)
+- For mobile: Android Studio or Xcode; optional `npx expo` tooling
+
+## Install (root)
+
+Install all workspace dependencies from the monorepo root:
 
 ```bash
-cd server
-cp .env.example .env
 npm install
-npm run start:dev
 ```
 
-Swagger documentation is exposed at `http://localhost:3000/api` once the server is running.
+## Quick Start
 
-To populate the database with a demo user for testing, run the seed script:
+### API (NestJS)
 
 ```bash
-cd server
-npx ts-node src/seeds/seed.ts
+cp server/.env.example server/.env
+npm --workspace server run start:dev
 ```
 
-### Obtaining a JWT token
+- Swagger: http://localhost:3000/api
+- Seed demo data (optional):
 
-After the server is running, generate a JWT using the `/auth/login` endpoint (or `/auth/register`).
-Tokens are signed with the `JWT_SECRET` value from your `.env` file. Using a token
-signed with a different secret will result in a `401 Unauthorized` response when
-calling protected routes such as `POST /offers`.
+  ```bash
+  npm --workspace server exec ts-node src/seeds/seed.ts
+  ```
 
-#### Example usage
+#### Obtain a JWT token
 
-1. Seed the database with the demo account:
+After the server is running, generate a JWT using `/auth/login` (or `/auth/register`). Tokens are signed with `JWT_SECRET` from your `.env`. Using a token signed with a different secret returns `401 Unauthorized` on protected routes (e.g. `POST /offers`).
 
-   ```bash
-   cd server
-   npx ts-node src/seeds/seed.ts
-   ```
+Example:
 
-2. Obtain a token by logging in with the seeded user:
+```bash
+curl -X POST http://localhost:3000/auth/login \
+     -H 'Content-Type: application/json' \
+     -d '{"phone":"1234567890","password":"password"}'
+```
 
-   ```bash
-   curl -X POST http://localhost:3000/auth/login \
-        -H 'Content-Type: application/json' \
-        -d '{"phone":"1234567890","password":"password"}'
-   ```
+Use the `accessToken` from the response as a Bearer token in subsequent requests.
 
-   The response JSON includes `accessToken` which should be provided as a Bearer
-   token in subsequent requests.
+### Mobile (Expo / React Native)
 
-3. Call a protected endpoint, e.g. creating an offer:
+From the repository root:
 
-   ```bash
-   curl -X POST http://localhost:3000/offers \
-        -H "Authorization: Bearer <your accessToken>" \
-        -H 'Content-Type: application/json' \
-        -d '{"title":"Help","description":"Demo","category":"general","pointCost":1,"availability":true}'
-   ```
+```bash
+# Start Metro and the app
+npm run mobile
 
-If you still receive `401 Unauthorized`, ensure that the server was started after
-copying `.env.example` to `.env` and that both the login request and the
-protected request use the same server instance.
+# Or target a platform directly
+npm run mobile:android
+npm run mobile:ios
+```
 
+Tips:
+- Ensure an Android emulator or iOS Simulator is running, or connect a device.
+- Press `a` / `i` in the Expo CLI to open Android / iOS.
 
-## Running with Docker
+### Equivalent per-workspace commands
 
-`docker-compose.yml` only starts a PostgreSQL container for development:
+You can also run commands directly inside workspaces:
+
+```bash
+# API
+cd server && npm run start:dev
+
+# Mobile
+cd apps/mobile && npm start
+```
+
+## Repository Structure
+
+```
+.
+├── server/              # NestJS REST API
+└── apps/
+    └── mobile/         # Expo React Native app (Expo Router)
+```
+
+## Environment (API)
+
+Configure `server/.env` using `server/.env.example` as a base. Key variables:
+
+- `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASS`, `DB_NAME`
+- `JWT_SECRET`
+
+## Running with Docker (Database)
+
+If you use Docker for the database:
 
 ```bash
 docker compose up -d
 ```
 
-Then run the NestJS server locally:
+Then start the API locally:
 
 ```bash
-cd server && npm run start:dev
+npm --workspace server run start:dev
 ```
 
-The API will be available at `http://localhost:3000` with Swagger docs at `/api`.
+API will be available at `http://localhost:3000` (Swagger at `/api`).
 
-## Running in GitHub Actions
+## Notes on Monorepo Setup
 
-The workflow file `.github/workflows/dev.yml` can spin up the development
-environment inside GitHub Actions using service containers. Trigger it from the
-**Actions** tab by selecting **Dev Environment** and choosing **Run workflow**.
-The job installs dependencies and starts the NestJS server with a PostgreSQL
-service so you can review logs directly in the workflow run.
+- npm workspaces are defined at the repo root and include `server` and `apps/*`.
+- Metro is configured to work in a monorepo (`apps/mobile/metro.config.js`).
+
