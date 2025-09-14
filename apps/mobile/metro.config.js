@@ -6,8 +6,8 @@ const workspaceRoot = path.resolve(projectRoot, '../..');
 
 const config = getDefaultConfig(projectRoot);
 
-// Allow Metro to follow packages above (monorepo)
-config.watchFolders = [workspaceRoot];
+// Allow Metro to follow packages above (monorepo) without dropping Expo defaults
+config.watchFolders = [...config.watchFolders, workspaceRoot];
 
 // Resolve modules from app and workspace to avoid conflicts
 config.resolver.nodeModulesPaths = [
