@@ -6,6 +6,7 @@ export default function (api) {
     // If build succeeds, re-add NativeWind below expo-router.
     plugins: [
       "expo-router/babel",
+      "nativewind/babel",
       "react-native-worklets/plugin", // must be last
     ],
   };
