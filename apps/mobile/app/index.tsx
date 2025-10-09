@@ -1,17 +1,17 @@
-import React from 'react';
-import { View, Text, StyleSheet, Pressable, Platform } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { StatusBar } from 'expo-status-bar';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import React from "react";
+import { View, Text, StyleSheet, Pressable, Platform } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { StatusBar } from "expo-status-bar";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { router } from "expo-router";
 
 export default function Index() {
-  const goSignUp = () => router.push('/register');
-  const goLogin = () => router.push('/login');
+  const goSignUp = () => router.push("/register");
+  const goLogin = () => router.push("/login");
 
   return (
     <LinearGradient
-      colors={["#E8ECFF", "#F0E9FF", "#FFE9DD"]}
+      colors={["#d1affd", "#e6d9f7", "#ece4f7"]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={styles.screen}
@@ -34,23 +34,37 @@ export default function Index() {
 
         <Text style={styles.title}>Kayndful</Text>
         <Text style={styles.subtitle}>
-          Turns free time into acts of kindness.
+          Turns free time into acts of kindness 🫶
         </Text>
 
-        <Pressable onPress={goSignUp} style={({ pressed }) => [styles.ctaContainer, pressed && { opacity: 0.95 }] }>
-          <LinearGradient
-            colors={["#A8D5FF", "#BFE5FF"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.primaryBtn}
+        <View style={styles.actions}>
+          <Pressable
+            onPress={goSignUp}
+            style={({ pressed }) => [
+              styles.ctaContainer,
+              pressed && { opacity: 0.95 },
+            ]}
           >
-            <Text style={styles.primaryLabel}>Sign Up</Text>
-          </LinearGradient>
-        </Pressable>
-
-        <Pressable onPress={goLogin} style={({ pressed }) => [styles.secondaryBtn, pressed && { opacity: 0.9 }] }>
-          <Text style={styles.secondaryLabel}>Log In</Text>
-        </Pressable>
+            <LinearGradient
+              colors={["#A8D5FF", "#b1e0ff"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.primaryBtn}
+            >
+              <Text style={styles.primaryLabel}>Sign Up</Text>
+            </LinearGradient>
+          </Pressable>
+          
+          <Pressable
+            onPress={goLogin}
+            style={({ pressed }) => [
+              styles.secondaryBtn,
+              pressed && { opacity: 0.9 },
+            ]}
+          >
+            <Text style={styles.secondaryLabel}>Log In</Text>
+          </Pressable>
+        </View>      
       </View>
 
       <Text style={styles.footer}>New users require phone verification.</Text>
@@ -64,20 +78,18 @@ const styles = StyleSheet.create({
   },
   centerBlock: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: "center",
     // Reduce side padding so buttons get wider.
     paddingHorizontal: 16,
-    // Ensure children can stretch to full width
-    alignSelf: 'stretch',
   },
   appIcon: {
+    alignSelf: "center",
+    alignItems: "center",
     width: 160,
     height: 160,
     borderRadius: 36,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
+    justifyContent: "center",
+    shadowColor: "#000",
     shadowOpacity: 0.2,
     shadowRadius: 16,
     shadowOffset: { width: 0, height: 12 },
@@ -85,69 +97,64 @@ const styles = StyleSheet.create({
     marginBottom: 28,
   },
   title: {
+    alignSelf: "center",
     fontSize: 48,
-    fontWeight: '800',
-    color: '#111827',
+    fontWeight: "800",
+    color: "#111827",
     letterSpacing: -0.5,
     marginBottom: 12,
   },
   subtitle: {
+    alignItems: "center",
     fontSize: 20,
     lineHeight: 28,
-    color: '#6B7280',
-    textAlign: 'center',
+    color: "#6B7280",
+    textAlign: "center",
     marginHorizontal: 8,
     marginBottom: 28,
   },
   ctaContainer: {
-    width: '100%',
+    alignSelf: "stretch",
+    width: "100%",
     borderRadius: 20,
-    // Space between the two buttons
-    marginBottom: 24,
-    // Stretch across even when parent has alignItems: 'center'
-    alignSelf: 'stretch',
-    shadowColor: '#60A5FA',
+    shadowColor: "#60A5FA",
     shadowOpacity: 0.35,
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 8 },
     elevation: 6,
   },
   primaryBtn: {
+    alignItems: "center",
     height: 68,
-    width: '100%',
+    width: "100%",
     borderRadius: 15,
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
+    justifyContent: "center",
+    overflow: "hidden",
   },
   primaryLabel: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 20,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   secondaryBtn: {
-    height: 68,
-    width: '100%',
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    // Stretch across even when parent has alignItems: 'center'
     alignSelf: 'stretch',
-    backgroundColor: '#FFFFFF',
-    shadowColor: '#000',
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 4,
+    alignItems: "center",
+    justifyContent: "center",
+    height: 68,
   },
   secondaryLabel: {
-    color: '#111827',
+    textAlign: 'center',  
+    color: "#111827",
     fontSize: 20,
-    fontWeight: '700',
+    fontWeight: "600",
+  },
+  actions: {
+    alignItems: "stretch",
+    gap: 16,
   },
   footer: {
-    textAlign: 'center',
-    color: '#9CA3AF',
+    textAlign: "center",
+    color: "#9CA3AF",
     marginBottom: Platform.select({ ios: 24, android: 32 }),
     fontSize: 14,
   },
