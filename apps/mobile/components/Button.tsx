@@ -1,13 +1,8 @@
 import React, { ReactNode } from "react";
-import {
-  Text,
-  Pressable,
-  StyleSheet,
-  ViewStyle,
-  TextStyle,
-} from "react-native";
+import { Text, Pressable, StyleSheet, ViewStyle, TextStyle, Animated } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { colors, radius } from "../theme";
+import { usePressFeedback, addAlphaToHex } from "../hooks/usePressFeedback";
 
 type CommonButtonProps = {
   title?: string;
@@ -26,28 +21,33 @@ export function PrimaryButton({
   textStyle,
   disabled,
 }: CommonButtonProps) {
+  // Android ripple derived from theme, using foreground overlay
+  const rippleColor = addAlphaToHex(colors.brand.text, 0.16);
+  const { animatedStyle, pressableProps } = usePressFeedback({
+    androidRipple: { color: rippleColor, foreground: true },
+    hitSlop: 8,
+  });
   return (
     <Pressable
       accessibilityRole="button"
       onPress={onPress}
       disabled={disabled}
-      style={({ pressed }) => [
-        styles.ctaContainer,
-        pressed && { opacity: 0.95 },
-        disabled && { opacity: 0.6 },
-        style as any,
-      ]}
+      {...pressableProps}
+      style={[styles.ctaContainer, disabled && { opacity: 0.6 }, style as any]}
     >
-      <LinearGradient
-        colors={[colors.brand.primaryGradient[0], colors.brand.primaryGradient[1]]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.primaryBtn}
-      >
-        {children ?? (
-          <Text style={[styles.primaryLabel, textStyle as any]}>{title}</Text>
-        )}
-      </LinearGradient>
+      {/* Animated wrapper provides subtle scale and opacity on press */}
+      <Animated.View style={animatedStyle}>
+        <LinearGradient
+          colors={[colors.brand.primaryGradient[0], colors.brand.primaryGradient[1]]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.primaryBtn}
+        >
+          {children ?? (
+            <Text style={[styles.primaryLabel, textStyle as any]}>{title}</Text>
+          )}
+        </LinearGradient>
+      </Animated.View>
     </Pressable>
   );
 }
@@ -60,21 +60,26 @@ export function SecondaryButton({
   textStyle,
   disabled,
 }: CommonButtonProps) {
+  // Same ripple for secondary, kept consistent across buttons
+  const rippleColor = addAlphaToHex(colors.brand.text, 0.16);
+  const { animatedStyle, pressableProps } = usePressFeedback({
+    androidRipple: { color: rippleColor, foreground: true },
+    hitSlop: 8,
+  });
   return (
     <Pressable
       accessibilityRole="button"
       onPress={onPress}
       disabled={disabled}
-      style={({ pressed }) => [
-        styles.secondaryBtn,
-        pressed && { opacity: 0.9 },
-        disabled && { opacity: 0.6 },
-        style as any,
-      ]}
+      {...pressableProps}
+      style={[styles.secondaryBtn, disabled && { opacity: 0.6 }, style as any]}
     >
-      {children ?? (
-        <Text style={[styles.secondaryLabel, textStyle as any]}>{title}</Text>
-      )}
+      {/* Animated wrapper provides subtle scale and opacity on press */}
+      <Animated.View style={animatedStyle}>
+        {children ?? (
+          <Text style={[styles.secondaryLabel, textStyle as any]}>{title}</Text>
+        )}
+      </Animated.View>
     </Pressable>
   );
 }
