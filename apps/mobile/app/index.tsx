@@ -1,9 +1,10 @@
 import React from "react";
-import { View, Text, StyleSheet, Pressable, Platform } from "react-native";
+import { View, Text, StyleSheet, Platform } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { StatusBar } from "expo-status-bar";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { AppLogo } from "../components/Logo";
+import { PrimaryButton, SecondaryButton } from "../components/Button";
 
 export default function Index() {
   const goSignUp = () => router.push("/register");
@@ -11,7 +12,7 @@ export default function Index() {
 
   return (
     <LinearGradient
-      colors={["#d1affd", "#e6d9f7", "#ece4f7"]}
+      colors={["#ede0ff", "#ece4f7", "#f7f2ff"]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={styles.screen}
@@ -19,18 +20,7 @@ export default function Index() {
       <StatusBar style="dark" />
 
       <View style={styles.centerBlock}>
-        <LinearGradient
-          colors={["#FFD9BE", "#F7BFC0"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.appIcon}
-        >
-          <MaterialCommunityIcons
-            name="hand-heart-outline"
-            size={72}
-            color="#fff"
-          />
-        </LinearGradient>
+        <AppLogo />
 
         <Text style={styles.title}>Kayndful</Text>
         <Text style={styles.subtitle}>
@@ -38,33 +28,9 @@ export default function Index() {
         </Text>
 
         <View style={styles.actions}>
-          <Pressable
-            onPress={goSignUp}
-            style={({ pressed }) => [
-              styles.ctaContainer,
-              pressed && { opacity: 0.95 },
-            ]}
-          >
-            <LinearGradient
-              colors={["#A8D5FF", "#b1e0ff"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.primaryBtn}
-            >
-              <Text style={styles.primaryLabel}>Sign Up</Text>
-            </LinearGradient>
-          </Pressable>
-          
-          <Pressable
-            onPress={goLogin}
-            style={({ pressed }) => [
-              styles.secondaryBtn,
-              pressed && { opacity: 0.9 },
-            ]}
-          >
-            <Text style={styles.secondaryLabel}>Log In</Text>
-          </Pressable>
-        </View>      
+          <PrimaryButton title="Sign Up" onPress={goSignUp} />
+          <SecondaryButton title="Log In" onPress={goLogin} />
+         </View>      
       </View>
 
       <Text style={styles.footer}>New users require phone verification.</Text>
@@ -82,20 +48,6 @@ const styles = StyleSheet.create({
     // Reduce side padding so buttons get wider.
     paddingHorizontal: 16,
   },
-  appIcon: {
-    alignSelf: "center",
-    alignItems: "center",
-    width: 160,
-    height: 160,
-    borderRadius: 36,
-    justifyContent: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 12 },
-    elevation: 12,
-    marginBottom: 28,
-  },
   title: {
     alignSelf: "center",
     fontSize: 48,
@@ -112,41 +64,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginHorizontal: 8,
     marginBottom: 28,
-  },
-  ctaContainer: {
-    alignSelf: "stretch",
-    width: "100%",
-    borderRadius: 20,
-    shadowColor: "#60A5FA",
-    shadowOpacity: 0.35,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 6,
-  },
-  primaryBtn: {
-    alignItems: "center",
-    height: 68,
-    width: "100%",
-    borderRadius: 15,
-    justifyContent: "center",
-    overflow: "hidden",
-  },
-  primaryLabel: {
-    color: "#FFFFFF",
-    fontSize: 20,
-    fontWeight: "700",
-  },
-  secondaryBtn: {
-    alignSelf: 'stretch',
-    alignItems: "center",
-    justifyContent: "center",
-    height: 68,
-  },
-  secondaryLabel: {
-    textAlign: 'center',  
-    color: "#111827",
-    fontSize: 20,
-    fontWeight: "600",
   },
   actions: {
     alignItems: "stretch",
