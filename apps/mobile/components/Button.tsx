@@ -104,7 +104,8 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   primaryLabel: {
-    color: colors.white,
+    // Use a mid-contrast label so text doesn't overpower the light gradient
+    color: addAlphaToHex(colors.brand.text, 0.85),
     fontSize: 20,
     fontWeight: "700",
   },

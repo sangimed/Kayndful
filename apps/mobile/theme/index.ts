@@ -24,6 +24,7 @@ export const colors = {
     },
   },
   white: "#FFFFFF",
+  gray: "#F3F4F6",
 } as const;
 
 export const radius = {
@@ -39,4 +40,3 @@ export const spacing = {
   lg: 20,
   xl: 28,
 } as const;
-

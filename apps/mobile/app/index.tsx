@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   footer: {
     textAlign: "center",
     color: "#9CA3AF",
-    marginBottom: Platform.select({ ios: 24, android: 32 }),
-    fontSize: 14,
+    marginBottom: Platform.select({ ios: 34, android: 42 }),
+    fontSize: 17,
   },
 });
