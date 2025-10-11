@@ -24,8 +24,11 @@ export default function RegisterScreen() {
   const isValid = useMemo(() => phone.trim().length >= 6, [phone]);
 
   const onSendCode = () => {
-    // TODO: wire with backend verification flow
-    // For now, just noop or navigate to the next screen
+    if (!isValid) return;
+    router.push({
+      pathname: "/verify-code",
+      params: { phone: phone.trim() },
+    });
   };
 
   return (
