@@ -14,7 +14,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import PrimaryButton, { SecondaryButton } from "../../components/Button";
 import { colors, spacing, radius } from "../../theme";
 
-const BG = "#FFF6EF";
+const BG = "#FFF6EF"; // TODO : move to theme and match to design system
 const CODE_LENGTH = 6;
 
 function maskPhone(value?: string) {
@@ -49,6 +49,7 @@ export default function VerifyCodeScreen() {
   };
 
   const handleResend = () => {
+    setCode(''); // Clear the input
     // TODO: hook into resend code endpoint
   };
 
