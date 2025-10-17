@@ -5,6 +5,7 @@ import {
   Text,
   TextInput,
   StyleSheet,
+  Pressable,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -12,7 +13,6 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import PrimaryButton from "../../components/Button";
-import BackButton from "../../components/BackButton";
 import { colors, spacing, radius } from "../../theme";
 
 // Soft warm background to match the mock
@@ -42,7 +42,14 @@ export default function RegisterScreen() {
           keyboardShouldPersistTaps="handled"
         >
           {/* Back button */}
-          <BackButton style={styles.backSpacer} />
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => router.back()}
+            hitSlop={12}
+            style={styles.backBtn}
+          >
+            <Text style={styles.backIcon}>â€¹</Text>
+          </Pressable>
 
           {/* Headline */}
           <Text style={styles.title}>Verify your number</Text>
@@ -75,7 +82,8 @@ export default function RegisterScreen() {
           {/* Footer terms */}
           <View style={{ flex: 1 }} />
           <Text style={styles.footerText}>
-            By continuing, you agree to our{" "}
+            By continuing, you agree to our
+            {" "}
             <Text
               onPress={() => Linking.openURL("https://example.com/terms")}
               style={styles.footerLink}
@@ -101,7 +109,19 @@ const styles = StyleSheet.create({
     paddingTop: spacing.xl + 8,
     paddingBottom: spacing.xl,
   },
-  backSpacer: { marginBottom: spacing.lg },
+  backBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: spacing.lg,
+  },
+  backIcon: {
+    fontSize: 32,
+    color: colors.brand.text,
+    lineHeight: 32,
+  },
   title: {
     fontSize: 36,
     fontWeight: "800",
@@ -140,4 +160,3 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 });
-
