@@ -16,10 +16,16 @@ export function FormInput({ label, error, containerStyle, ...rest }: Props) {
           {label}
         </Text>
       )}
-      <View style={[styles.inputWrapper, !!error && styles.inputError]}>
+      <View
+        style={[
+          styles.inputWrapper,
+          (rest as any).multiline ? styles.textareaWrapper : undefined,
+          !!error && styles.inputError,
+        ]}
+      >
         <TextInput
           placeholderTextColor={colors.brand.muted}
-          style={styles.input}
+          style={[styles.input, (rest as any).multiline ? styles.textarea : undefined]}
           {...rest}
         />
       </View>
@@ -45,7 +51,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderRadius: radius.lg,
     paddingHorizontal: spacing.md,
-    height: 56,
     justifyContent: "center",
     shadowColor: colors.shadow.brand.color,
     shadowOpacity: 0.18,
@@ -56,6 +61,14 @@ const styles = StyleSheet.create({
   input: {
     fontSize: 16,
     color: colors.brand.text,
+  },
+  textareaWrapper: {
+    minHeight: 120,
+    paddingVertical: spacing.sm,
+  },
+  textarea: {
+    textAlignVertical: "top",
+    minHeight: 100,
   },
   inputError: {
     borderWidth: 1,
@@ -68,4 +81,3 @@ const styles = StyleSheet.create({
 });
 
 export default FormInput;
-

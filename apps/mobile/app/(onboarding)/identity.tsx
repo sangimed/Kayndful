@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import {
   SafeAreaView,
   View,
@@ -25,6 +25,9 @@ export default function IdentityStep() {
   const { state, dispatch } = useOnboarding();
   const { t } = useI18n();
 
+  const [touched, setTouched] = useState({ first: false, last: false, username: false });
+  const [submitAttempted, setSubmitAttempted] = useState(false);
+
   // TODO refactor to use a custom hook for form validation
   // This is a simple validation for demonstration purposes.
   // In a real app, you might want to use a library like Formik or React Hook Form.
@@ -43,10 +46,15 @@ export default function IdentityStep() {
   const preview = useMemo(() => formatDisplayName(state.identity), [state.identity]);
   const initialsMode = state.identity.visibility === "initial";
 
+  const isValid =
+    state.identity.firstName.trim().length > 0 &&
+    state.identity.lastName.trim().length > 0 &&
+    state.identity.username.trim().length > 0;
+
   const onNext = () => {
-    if (firstNameError || lastNameError || usernameError) return;
-    // Next screen to be implemented in following iteration
-    // Temporarily just keep the screen; you can push to the next step once it exists
+    setSubmitAttempted(true);
+    if (!isValid) return;
+    router.push("/location");
   };
 
   return (
@@ -63,10 +71,11 @@ export default function IdentityStep() {
               placeholder={t("first_name")}
               value={state.identity.firstName}
               onChangeText={(firstName) => dispatch({ type: "identity/update", payload: { firstName } })}
+              onBlur={() => setTouched((p) => ({ ...p, first: true }))}
               autoCapitalize="words"
               autoCorrect={false}
               accessibilityLabel={t("first_name")}
-              error={firstNameError}
+              error={touched.first || submitAttempted ? firstNameError : undefined}
             />
 
             <FormInput
@@ -74,10 +83,11 @@ export default function IdentityStep() {
               placeholder={t("last_name")}
               value={state.identity.lastName}
               onChangeText={(lastName) => dispatch({ type: "identity/update", payload: { lastName } })}
+              onBlur={() => setTouched((p) => ({ ...p, last: true }))}
               autoCapitalize="words"
               autoCorrect={false}
               accessibilityLabel={t("last_name")}
-              error={lastNameError}
+              error={touched.last || submitAttempted ? lastNameError : undefined}
             />
 
             <FormInput
@@ -85,10 +95,11 @@ export default function IdentityStep() {
               placeholder={t("username")}
               value={state.identity.username}
               onChangeText={(username) => dispatch({ type: "identity/update", payload: { username } })}
+              onBlur={() => setTouched((p) => ({ ...p, username: true }))}
               autoCapitalize="none"
               autoCorrect={false}
               accessibilityLabel={t("username")}
-              error={usernameError}
+              error={touched.username || submitAttempted ? usernameError : undefined}
             />
 
             <View style={styles.toggleRow}>
@@ -115,7 +126,7 @@ export default function IdentityStep() {
             onBack={router.back}
             nextLabel={t("next")}
             backLabel={t("back")}
-            disabledNext={!!firstNameError || !!lastNameError || !!usernameError}
+            disabledNext={!isValid}
           />
         </ScrollView>
       </KeyboardAvoidingView>
