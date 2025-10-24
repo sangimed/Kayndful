@@ -30,12 +30,11 @@ export default function ProfileStep() {
   };
 
   const onNext = () => {
-    // Next step to be implemented next iteration (Skills)
-    // router.push("/skills");
+    router.push("/skills");
   };
 
   const onSkip = () => {
-    // router.push("/skills");
+    router.push("/skills");
   };
 
   return (
@@ -112,4 +111,3 @@ const styles = StyleSheet.create({
   uploadText: { color: colors.brand.text, fontWeight: "600" },
   helper: { color: colors.brand.muted, marginTop: spacing.sm },
 });
-
