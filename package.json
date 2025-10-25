@@ -10,11 +10,19 @@
     "mobile:android": "npm --workspace apps/mobile run android",
     "mobile:ios": "npm --workspace apps/mobile run ios",
     "mobile:lint": "npm --workspace apps/mobile run lint",
+    "lint": "eslint \"**/*.{ts,tsx}\"",
+    "lint:fix": "eslint \"**/*.{ts,tsx}\" --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "prepare": "husky"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
-    "husky": "^9.1.7"
+    "@typescript-eslint/eslint-plugin": "^8.12.1",
+    "@typescript-eslint/parser": "^8.12.1",
+    "eslint": "^9.14.0",
+    "husky": "^9.1.7",
+    "prettier": "^3.3.3"
   }
 }
