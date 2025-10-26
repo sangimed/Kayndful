@@ -33,17 +33,12 @@ describe('TransactionsService', () => {
   it('transfers points and saves transaction', async () => {
     const fromUser = { id: 1, pointsBalance: 20 };
     const toUser = { id: 2, pointsBalance: 0 };
-    users.findOne
-      .mockResolvedValueOnce(fromUser)
-      .mockResolvedValueOnce(toUser);
+    users.findOne.mockResolvedValueOnce(fromUser).mockResolvedValueOnce(toUser);
     offers.findOne.mockResolvedValue({ id: 3 });
     repo.create.mockReturnValue({ id: 9 });
     repo.save.mockResolvedValue({ id: 9 });
 
-    const result = await service.create(
-      { toUserId: 2, serviceId: 3, points: 10 } as any,
-      1,
-    );
+    const result = await service.create({ toUserId: 2, serviceId: 3, points: 10 } as any, 1);
 
     expect(users.update).toHaveBeenCalledTimes(2);
     expect(repo.save).toHaveBeenCalledWith({ id: 9 });

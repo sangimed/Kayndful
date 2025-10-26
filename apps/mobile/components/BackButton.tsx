@@ -1,8 +1,8 @@
-import React from "react";
-import { Pressable, StyleSheet, Text, ViewStyle } from "react-native";
-import { useRouter } from "expo-router";
-import { colors } from "../theme";
-import { addAlphaToHex, usePressFeedback } from "../hooks/usePressFeedback";
+import React from 'react';
+import { Pressable, StyleSheet, Text, ViewStyle } from 'react-native';
+import { useRouter } from 'expo-router';
+import { colors } from '../theme';
+import { addAlphaToHex, usePressFeedback } from '../hooks/usePressFeedback';
 
 type Props = {
   onPress?: () => void;
@@ -21,7 +21,7 @@ export default function BackButton({ onPress, style, accessibilityLabel }: Props
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={accessibilityLabel || "Go back"}
+      accessibilityLabel={accessibilityLabel || 'Go back'}
       onPress={onPress || router.back}
       style={[styles.container, style as any]}
       {...pressableProps}
@@ -38,8 +38,8 @@ const styles = StyleSheet.create({
     width: SIZE,
     height: SIZE,
     borderRadius: SIZE / 2,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   icon: {
     fontSize: 28,
@@ -47,4 +47,3 @@ const styles = StyleSheet.create({
     color: colors.brand.text,
   },
 });
-

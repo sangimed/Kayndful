@@ -34,7 +34,10 @@ export class AuthService {
       const payload = this.jwtService.verify(token);
       return {
         accessToken: this.jwtService.sign({ username: payload.username, sub: payload.sub }),
-        refreshToken: this.jwtService.sign({ username: payload.username, sub: payload.sub }, { expiresIn: '7d' }),
+        refreshToken: this.jwtService.sign(
+          { username: payload.username, sub: payload.sub },
+          { expiresIn: '7d' },
+        ),
       };
     } catch (e) {
       throw new UnauthorizedException('Invalid or expired token');

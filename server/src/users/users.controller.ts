@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Param, Delete, Put, UseGuards, SerializeOptions } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Put,
+  UseGuards,
+  SerializeOptions,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -11,7 +21,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 @ApiBearerAuth()
 @ApiUnauthorizedResponse({ description: `User is not authorized` })
 @SerializeOptions({
-    excludeExtraneousValues: true,
+  excludeExtraneousValues: true,
 })
 @Controller('users')
 export class UsersController {
@@ -24,7 +34,6 @@ export class UsersController {
     return toUserDto(user);
   }
 
-  
   @UseGuards(JwtAuthGuard)
   @Get()
   async findAll(): Promise<UserDto[]> {

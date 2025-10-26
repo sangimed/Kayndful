@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState } from 'react';
 import {
   SafeAreaView,
   View,
@@ -10,44 +10,39 @@ import {
   Platform,
   ScrollView,
   Linking,
-} from "react-native";
-import { useRouter } from "expo-router";
-import PrimaryButton from "../../components/Button";
-import BackButton from "../../components/BackButton";
-import { colors, spacing, radius } from "../../theme";
+} from 'react-native';
+import { useRouter } from 'expo-router';
+import PrimaryButton from '../../components/Button';
+import BackButton from '../../components/BackButton';
+import { colors, spacing, radius } from '../../theme';
 
 // Keep visuals consistent with register/verify screens
-const BG = "#FFF6EF";
+const BG = '#FFF6EF';
 
 export default function LoginScreen() {
   const router = useRouter();
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState('');
 
   const isValid = useMemo(() => phone.trim().length >= 6, [phone]);
 
   const onSendCode = () => {
     if (!isValid) return;
-    router.push({ pathname: "/verify-code", params: { phone: phone.trim() } });
+    router.push({ pathname: '/verify-code', params: { phone: phone.trim() } });
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
-        behavior={Platform.select({ ios: "padding", android: undefined })}
+        behavior={Platform.select({ ios: 'padding', android: undefined })}
       >
-        <ScrollView
-          contentContainerStyle={styles.content}
-          keyboardShouldPersistTaps="handled"
-        >
+        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
           {/* Back button */}
           <BackButton style={styles.backSpacer} />
 
           {/* Headline */}
           <Text style={styles.title}>Log in</Text>
-          <Text style={styles.subtitle}>
-            We’ll send a login code to your phone.
-          </Text>
+          <Text style={styles.subtitle}>We’ll send a login code to your phone.</Text>
 
           {/* Phone input */}
           <View style={styles.inputWrapper}>
@@ -70,9 +65,9 @@ export default function LoginScreen() {
           {/* Footer help */}
           <View style={{ flex: 1 }} />
           <Text style={styles.footerText}>
-            Trouble logging in? {" "}
+            Trouble logging in?{' '}
             <Text
-              onPress={() => Linking.openURL("https://example.com/help")}
+              onPress={() => Linking.openURL('https://example.com/help')}
               style={styles.footerLink}
             >
               Get help
@@ -99,7 +94,7 @@ const styles = StyleSheet.create({
   backSpacer: { marginBottom: spacing.lg },
   title: {
     fontSize: 36,
-    fontWeight: "800",
+    fontWeight: '800',
     color: colors.brand.text,
   },
   subtitle: {
@@ -113,7 +108,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     paddingHorizontal: spacing.md,
     height: 64,
-    justifyContent: "center",
+    justifyContent: 'center',
     shadowColor: colors.shadow.brand.color,
     shadowOpacity: 0.18,
     shadowRadius: 12,
@@ -125,12 +120,12 @@ const styles = StyleSheet.create({
     color: colors.brand.text,
   },
   footerText: {
-    textAlign: "center",
+    textAlign: 'center',
     color: colors.brand.muted,
     marginTop: spacing.xl,
   },
   footerLink: {
     color: colors.brand.text,
-    fontWeight: "600",
+    fontWeight: '600',
   },
 });

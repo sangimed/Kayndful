@@ -5,14 +5,7 @@
  */
 module.exports = {
   root: true,
-  ignorePatterns: [
-    'node_modules/',
-    'dist/',
-    'build/',
-    'coverage/',
-    '.expo/',
-    '**/*.d.ts',
-  ],
+  ignorePatterns: ['node_modules/', 'dist/', 'build/', 'coverage/', '.expo/', '**/*.d.ts'],
   env: { es2021: true, node: true, jest: true, browser: true },
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -35,4 +28,3 @@ module.exports = {
     },
   ],
 };
-

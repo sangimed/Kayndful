@@ -10,4 +10,5 @@ coverage/
 **/.DS_Store
 **/*.min.js
 **/*.min.css
+package-lock.json
 
