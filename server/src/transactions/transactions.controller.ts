@@ -10,7 +10,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 @ApiBearerAuth()
 @ApiUnauthorizedResponse({ description: `User is not authorized` })
 @SerializeOptions({
-    excludeExtraneousValues: true,
+  excludeExtraneousValues: true,
 })
 @Controller('transactions')
 export class TransactionsController {

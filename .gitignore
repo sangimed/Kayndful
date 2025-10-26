@@ -58,3 +58,5 @@ dist/
 
 # TypeScript cache
 *.tsbuildinfo
+
+*.tmp

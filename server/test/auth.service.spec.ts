@@ -36,11 +36,16 @@ describe('AuthService', () => {
   it('refreshes token when verify succeeds', async () => {
     jwt.verify.mockReturnValue({ username: 'p', sub: 1 });
     jwt.sign.mockReturnValueOnce('a').mockReturnValueOnce('b');
-    await expect(service.refreshToken('t')).resolves.toEqual({ accessToken: 'a', refreshToken: 'b' });
+    await expect(service.refreshToken('t')).resolves.toEqual({
+      accessToken: 'a',
+      refreshToken: 'b',
+    });
   });
 
   it('throws when verify fails', async () => {
-    jwt.verify.mockImplementation(() => { throw new Error(); });
+    jwt.verify.mockImplementation(() => {
+      throw new Error();
+    });
     await expect(service.refreshToken('t')).rejects.toBeInstanceOf(UnauthorizedException);
   });
 });

@@ -13,7 +13,10 @@ import { toUserDto } from '../utils/mappers';
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService, private usersService: UsersService) {}
+  constructor(
+    private authService: AuthService,
+    private usersService: UsersService,
+  ) {}
 
   @Post('register')
   async register(@Body() dto: CreateUserDto): Promise<AuthResponseDto> {

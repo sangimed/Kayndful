@@ -25,16 +25,18 @@ The codebase provides a basic time‑bank system with the following functionalit
 ## Main entities
 
 ### User
+
 - `id` — primary key
 - `phone` — unique phone number used for login
 - `password` — hashed password
 - `name`
-- `location` *(optional)*
+- `location` _(optional)_
 - `pointsBalance` — points owned by the user (default 100)
 - `accountType` — `FREE` or `PREMIUM`
 - `createdAt`, `updatedAt`
 
 ### ServiceOffer
+
 - `id`
 - `title`, `description`, `category`
 - `pointCost` — cost in points to purchase
@@ -43,6 +45,7 @@ The codebase provides a basic time‑bank system with the following functionalit
 - `createdAt`, `updatedAt`
 
 ### Transaction
+
 - `id`
 - `fromUser`, `toUser` — users involved in the exchange
 - `service` — reference to the purchased offer
@@ -52,28 +55,32 @@ The codebase provides a basic time‑bank system with the following functionalit
 ## Modules and routes
 
 ### Auth (`/auth`)
+
 - `POST /register` — create a new user and immediately return a token
 - `POST /login` — log in and receive JWT + refresh token
 - `POST /profile` — return the profile of the authenticated user
 - `POST /refresh` — obtain a new access token with a refresh token
 
 ### Users (`/users`)
+
 - `POST /` — create a user
-- `GET /` — list users *(JWT required)*
-- `GET /:id` — get user details *(JWT required)*
-- `PUT /:id` — update user *(JWT required)*
-- `DELETE /:id` — delete user *(JWT required)*
+- `GET /` — list users _(JWT required)_
+- `GET /:id` — get user details _(JWT required)_
+- `PUT /:id` — update user _(JWT required)_
+- `DELETE /:id` — delete user _(JWT required)_
 
 ### Offers (`/offers`)
-- `POST /` — create an offer *(JWT required)*
+
+- `POST /` — create an offer _(JWT required)_
 - `GET /` — list all offers
 - `GET /:id` — get a single offer
-- `PUT /:id` — update an offer *(JWT required)*
-- `DELETE /:id` — delete an offer *(JWT required)*
+- `PUT /:id` — update an offer _(JWT required)_
+- `DELETE /:id` — delete an offer _(JWT required)_
 
 ### Transactions (`/transactions`)
-- `POST /` — transfer points between users for a given offer *(JWT required)*
-- `GET /` — list all transactions *(JWT required)*
+
+- `POST /` — transfer points between users for a given offer _(JWT required)_
+- `GET /` — list all transactions _(JWT required)_
 
 ## Scheduled tasks
 

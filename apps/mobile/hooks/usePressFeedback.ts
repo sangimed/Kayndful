@@ -1,7 +1,7 @@
-import { useMemo, useRef } from "react";
-import { Animated, PressableAndroidRippleConfig, Insets } from "react-native";
+import { useMemo, useRef } from 'react';
+import { Animated, PressableAndroidRippleConfig, Insets } from 'react-native';
 
-type HapticsLevel = "light" | "medium" | "heavy" | "selection";
+type HapticsLevel = 'light' | 'medium' | 'heavy' | 'selection';
 
 export type UsePressFeedbackOptions = {
   // Target values when pressed
@@ -32,8 +32,8 @@ export function usePressFeedback(options: UsePressFeedbackOptions = {}) {
   const runHaptics = async () => {
     if (!haptics) return;
     try {
-      const Haptics = await import("expo-haptics");
-      if (haptics === true || haptics === "selection") {
+      const Haptics = await import('expo-haptics');
+      if (haptics === true || haptics === 'selection') {
         await Haptics.selectionAsync();
       } else {
         const styleMap = {
@@ -41,7 +41,7 @@ export function usePressFeedback(options: UsePressFeedbackOptions = {}) {
           medium: Haptics.ImpactFeedbackStyle.Medium,
           heavy: Haptics.ImpactFeedbackStyle.Heavy,
         } as const;
-        const style = styleMap[(haptics as Exclude<HapticsLevel, "selection">) || "light"];
+        const style = styleMap[(haptics as Exclude<HapticsLevel, 'selection'>) || 'light'];
         await Haptics.impactAsync(style);
       }
     } catch {
@@ -67,10 +67,7 @@ export function usePressFeedback(options: UsePressFeedbackOptions = {}) {
     ]).start();
   };
 
-  const animatedStyle = useMemo(
-    () => ({ transform: [{ scale }], opacity }),
-    [opacity, scale]
-  );
+  const animatedStyle = useMemo(() => ({ transform: [{ scale }], opacity }), [opacity, scale]);
 
   return {
     animatedStyle,
@@ -88,8 +85,8 @@ export function addAlphaToHex(hex: string, alpha: number) {
   // Clamp alpha [0,1]
   const a = Math.max(0, Math.min(1, alpha));
   const intA = Math.round(a * 255);
-  const hexA = intA.toString(16).padStart(2, "0");
-  const clean = hex.replace("#", "");
+  const hexA = intA.toString(16).padStart(2, '0');
+  const clean = hex.replace('#', '');
   if (clean.length === 6) return `#${clean}${hexA}`;
   if (clean.length === 8) return `#${clean.slice(0, 6)}${hexA}`;
   // Fallback: return original if format unknown

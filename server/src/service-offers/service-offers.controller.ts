@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Param, Delete, Put, UseGuards, Req, SerializeOptions } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Put,
+  UseGuards,
+  Req,
+  SerializeOptions,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { ServiceOffersService } from './service-offers.service';
 import { CreateServiceOfferDto } from './dto/create-service-offer.dto';
@@ -11,7 +22,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 @ApiBearerAuth()
 @ApiUnauthorizedResponse({ description: `User is not authorized` })
 @SerializeOptions({
-    excludeExtraneousValues: true,
+  excludeExtraneousValues: true,
 })
 @Controller('offers')
 export class ServiceOffersController {
@@ -40,7 +51,10 @@ export class ServiceOffersController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Put(':id')
-  async update(@Param('id') id: string, @Body() dto: UpdateServiceOfferDto): Promise<ServiceOfferDto> {
+  async update(
+    @Param('id') id: string,
+    @Body() dto: UpdateServiceOfferDto,
+  ): Promise<ServiceOfferDto> {
     const offer = await this.offersService.update(+id, dto);
     return toServiceOfferDto(offer);
   }

@@ -22,7 +22,13 @@ describe('ServiceOffersService', () => {
     users.findOne.mockResolvedValue({ id: 1 });
     repo.create.mockReturnValue({ id: 2 });
     repo.save.mockResolvedValue({ id: 2 });
-    const dto: any = { title: 't', description: 'd', category: 'c', pointCost: 1, availability: true };
+    const dto: any = {
+      title: 't',
+      description: 'd',
+      category: 'c',
+      pointCost: 1,
+      availability: true,
+    };
     const result = await service.create(dto, 1);
     expect(repo.create).toHaveBeenCalledWith({ ...dto, provider: { id: 1 } });
     expect(repo.save).toHaveBeenCalledWith({ id: 2 });

@@ -1,0 +1,14 @@
+node_modules/
+dist/
+build/
+coverage/
+.expo/
+.turbo/
+.next/
+*.log
+*.lock
+**/.DS_Store
+**/*.min.js
+**/*.min.css
+package-lock.json
+

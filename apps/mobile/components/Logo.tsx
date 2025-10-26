@@ -1,8 +1,8 @@
-import React from "react";
-import { ViewStyle, StyleSheet } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { colors, radius, type Gradient } from "../theme";
+import React from 'react';
+import { ViewStyle, StyleSheet } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { colors, radius, type Gradient } from '../theme';
 
 type AppLogoProps = {
   size?: number;
@@ -16,7 +16,7 @@ export function AppLogo({
   size = 160,
   iconSize = 72,
   gradient = colors.brand.iconGradient,
-  iconColor = "#fff",
+  iconColor = '#fff',
   style,
 }: AppLogoProps) {
   return (
@@ -39,20 +39,16 @@ export function AppLogo({
         style as any,
       ]}
     >
-      <MaterialCommunityIcons
-        name="hand-heart-outline"
-        size={iconSize}
-        color={iconColor}
-      />
+      <MaterialCommunityIcons name="hand-heart-outline" size={iconSize} color={iconColor} />
     </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   logo: {
-    alignSelf: "center",
-    alignItems: "center",
-    justifyContent: "center",
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: 28,
   },
 });
