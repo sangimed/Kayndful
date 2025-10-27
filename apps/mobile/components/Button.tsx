@@ -13,6 +13,8 @@ type CommonButtonProps = {
   disabled?: boolean;
 };
 
+type PrimaryVariant = 'primary' | 'success' | 'danger' | 'ghost';
+
 export function PrimaryButton({
   title,
   children,
@@ -20,13 +22,25 @@ export function PrimaryButton({
   style,
   textStyle,
   disabled,
-}: CommonButtonProps) {
+  // variant option kept lightweight and backward-compatible
+  variant = 'primary',
+}: CommonButtonProps & { variant?: PrimaryVariant }) {
   // Android ripple derived from theme, using foreground overlay
   const rippleColor = addAlphaToHex(colors.brand.text, 0.16);
   const { animatedStyle, pressableProps } = usePressFeedback({
     androidRipple: { color: rippleColor, foreground: true },
     hitSlop: 8,
   });
+  const isGhost = variant === 'ghost';
+
+  // Choose gradient or plain background based on variant
+  const gradientColors =
+    variant === 'success'
+      ? colors.semantic.successGradient
+      : variant === 'danger'
+      ? colors.semantic.dangerGradient
+      : colors.brand.primaryGradient;
+
   return (
     <Pressable
       accessibilityRole="button"
@@ -35,16 +49,33 @@ export function PrimaryButton({
       {...pressableProps}
       style={[styles.ctaContainer, disabled && { opacity: 0.6 }, style as any]}
     >
-      {/* Animated wrapper provides subtle scale and opacity on press */}
       <Animated.View style={animatedStyle}>
-        <LinearGradient
-          colors={[colors.brand.primaryGradient[0], colors.brand.primaryGradient[1]]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.primaryBtn}
-        >
-          {children ?? <Text style={[styles.primaryLabel, textStyle as any]}>{title}</Text>}
-        </LinearGradient>
+        {isGhost ? (
+          <Animated.View
+            style={[
+              styles.primaryBtn,
+              {
+                backgroundColor: colors.brand.surface,
+                borderWidth: 1,
+                borderColor: colors.brand.border,
+                shadowOpacity: 0,
+              },
+            ]}
+          >
+            {children ?? (
+              <Text style={[styles.secondaryLabel, textStyle as any]}>{title}</Text>
+            )}
+          </Animated.View>
+        ) : (
+          <LinearGradient
+            colors={[gradientColors[0], gradientColors[1]]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.primaryBtn}
+          >
+            {children ?? <Text style={[styles.primaryLabel, textStyle as any]}>{title}</Text>}
+          </LinearGradient>
+        )}
       </Animated.View>
     </Pressable>
   );
