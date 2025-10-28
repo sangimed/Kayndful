@@ -56,7 +56,6 @@ export function usePressFeedback(options: UsePressFeedbackOptions = {}) {
     ]).start();
     // Fire haptics on press-in for immediate feedback
     // Do not await to avoid delaying UI feedback
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     runHaptics();
   };
 
