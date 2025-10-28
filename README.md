@@ -1,4 +1,5 @@
 # Kayndful — Monorepo (API + Mobile)
+![Kayndful Logo](apps/mobile/assets/kayndful-logo.svg)
 
 Turns free time into acts of kindness — offer support or ask for help, all in one place.
 
