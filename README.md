@@ -1,4 +1,5 @@
 # Kayndful — Monorepo (API + Mobile)
+
 <p align="center">
   <img src="apps/mobile/assets/kayndful-logo.svg" alt="Kayndful Logo" width="200" />
 </p>
