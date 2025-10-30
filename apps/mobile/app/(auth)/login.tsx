@@ -15,6 +15,7 @@ import { useRouter } from 'expo-router';
 import PrimaryButton from '../../components/Button';
 import BackButton from '../../components/BackButton';
 import { colors, spacing, radius } from '../../theme';
+import { useAuthStore } from '../../store/auth';
 
 // Keep visuals consistent with register/verify screens
 const BG = '#FFF6EF';
@@ -27,7 +28,10 @@ export default function LoginScreen() {
 
   const onSendCode = () => {
     if (!isValid) return;
-    router.push({ pathname: '/verify-code', params: { phone: phone.trim() } });
+    // TODO(dev): Temporary mocked auth. Bypass verification and mark user as authenticated with mocked profile.
+    // Replace with real auth flow when backend/session is ready.
+    useAuthStore.getState().loginWithMock();
+    router.replace('/feed');
   };
 
   return (
