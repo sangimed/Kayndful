@@ -1,7 +1,9 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
+  Animated,
   FlatList,
+  Image,
   Modal,
   Platform,
   Pressable,
@@ -9,12 +11,14 @@ import {
   SafeAreaView,
   StatusBar,
   Text,
+  TextInput,
   View,
+  useColorScheme,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { colors, spacing } from '../../theme';
+import { colors, radius, spacing } from '../../theme';
 import { RequestCard } from '../../components/RequestCard';
 import { REQUEST_CATEGORIES } from '../../constants/requests';
 import { PrimaryButton } from '../../components/Button';
@@ -26,23 +30,49 @@ import {
   isMockOffline,
   setMockOffline,
   NEIGHBORHOODS,
+  getCurrentUserSnapshot,
+  type FeedChannel,
   type Request,
+  type RequestSortOption,
 } from '../../services/mockApi';
 import { isOfflineError } from '../../utils/errors';
+import { addAlphaToHex, usePressFeedback } from '../../hooks/usePressFeedback';
 
+// -------------------- Types & constants --------------------
 type Filters = {
   category?: string;
-  maxEta?: number;
+  maxDistanceMeters?: number;
+  minXp?: number;
   area?: string;
   neighborhoodId?: string;
   radiusMeters?: number;
   query?: string;
+  channel: FeedChannel;
+  sortBy: RequestSortOption;
 };
 
-const ETA_OPTIONS = [15, 30, 45, 60] as const;
+const DEFAULT_FILTERS: Filters = { channel: 'latest', sortBy: 'recent' };
+const DISTANCE_OPTIONS = [500, 1000, 1500, 2000] as const;
+const XP_OPTIONS = [10, 20, 30, 40, 50, 60] as const;
+const SORT_OPTIONS: { value: RequestSortOption; label: string }[] = [
+  { value: 'recent', label: 'Plus récent' },
+  { value: 'distance', label: 'Distance' },
+  { value: 'xp', label: 'XP décroissant' },
+];
 
+const TABS: { key: FeedChannel; label: string }[] = [
+  { key: 'latest', label: 'Dernières' },
+  { key: 'community', label: 'Communauté' },
+  { key: 'following', label: 'Suivis' },
+];
+
+// -------------------- Screen --------------------
 export default function FeedScreen() {
   const router = useRouter();
+  const currentUser = useMemo(() => getCurrentUserSnapshot(), []);
+  const scheme = useColorScheme();
+  const isDark = scheme === 'dark';
+
   const [items, setItems] = useState<Request[]>([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -51,9 +81,22 @@ export default function FeedScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [offline, setOffline] = useState<boolean>(isMockOffline());
-  const [filters, setFilters] = useState<Filters>({});
+
+  const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
   const [sheetVisible, setSheetVisible] = useState(false);
-  const [draftFilters, setDraftFilters] = useState<Filters>({});
+  const [draftFilters, setDraftFilters] = useState<Filters>(DEFAULT_FILTERS);
+  const [searchTerm, setSearchTerm] = useState(filters.query ?? '');
+  const [tabCounts, setTabCounts] = useState<Record<FeedChannel, number>>({ latest: 0, community: 0, following: 0 });
+
+  const hasActiveFilters = Boolean(
+    filters.category ||
+      filters.maxDistanceMeters ||
+      filters.minXp ||
+      filters.radiusMeters ||
+      filters.neighborhoodId ||
+      filters.query ||
+      filters.sortBy !== 'recent'
+  );
 
   const load = useCallback(
     async (nextPage: number, replace = false) => {
@@ -63,7 +106,7 @@ export default function FeedScreen() {
       setError(null);
       try {
         const response = await getRequests({ page: nextPage, pageSize: 10, filters });
-        setItems((previous) => (replace ? response.items : [...previous, ...response.items]));
+        setItems((prev) => (replace ? response.items : [...prev, ...response.items]));
         setHasMore(response.hasMore);
         setPage(nextPage);
         setOffline(false);
@@ -86,6 +129,33 @@ export default function FeedScreen() {
     load(1, true);
   }, [load]);
 
+  // Best-effort tab counts
+  useEffect(() => {
+    if (offline) return;
+    let cancelled = false;
+    const { channel, ...rest } = filters;
+    (async () => {
+      try {
+        const [a, b, c] = await Promise.all(
+          TABS.map((tab) => getRequests({ page: 1, pageSize: 100, filters: { ...rest, channel: tab.key } }))
+        );
+        if (!cancelled) setTabCounts({ latest: a.items.length, community: b.items.length, following: c.items.length });
+      } catch {}
+    })();
+    return () => { cancelled = true; };
+  }, [filters, offline]);
+
+  // Debounced search
+  useEffect(() => {
+    const trimmed = searchTerm.trim();
+    const t = setTimeout(() => {
+      setFilters((prev) => ({ ...prev, query: trimmed.length ? trimmed : undefined }));
+    }, 280);
+    return () => clearTimeout(t);
+  }, [searchTerm]);
+
+  useEffect(() => { setSearchTerm(filters.query ?? ''); }, [filters.query]);
+
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     setError(null);
@@ -94,23 +164,16 @@ export default function FeedScreen() {
     setRefreshing(false);
   }, [load]);
 
-  const hasActiveFilters = Boolean(filters.category || filters.maxEta || filters.area);
-
   const handleRetry = () => {
     setOffline(false);
     setError(null);
     load(1, true);
   };
 
-  const openFilters = () => {
-    setDraftFilters(filters);
-    setSheetVisible(true);
-  };
-
+  const openFilters = () => { setDraftFilters(filters); setSheetVisible(true); };
   const closeFilters = () => setSheetVisible(false);
-
   const applyDraftFilters = () => {
-    setFilters({ ...draftFilters });
+    setFilters({ ...draftFilters, channel: filters.channel, sortBy: draftFilters.sortBy ?? 'recent' });
     setSheetVisible(false);
     setError(null);
     setOffline(false);
@@ -120,201 +183,82 @@ export default function FeedScreen() {
     const next = !isMockOffline();
     setMockOffline(next);
     setOffline(next);
-    if (!next) {
-      handleRetry();
-    } else {
-      setItems([]);
-    }
+    if (!next) handleRetry(); else setItems([]);
+  };
+
+  const onSelectChannel = (channel: FeedChannel) => {
+    setFilters((prev) => (prev.channel === channel ? prev : { ...prev, channel }));
   };
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        backgroundColor: colors.gray,
-        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight ?? 0 : 0,
-      }}
-    >
+    <SafeAreaView style={{ flex: 1, backgroundColor: isDark ? colors.app.backgroundDark : colors.app.backgroundLight, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight ?? 0 : 0 }}>
       <FlatList
-        data={items}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={{ padding: spacing.lg, gap: spacing.lg, paddingBottom: spacing.xl }}
-        ListHeaderComponent={
-          <View style={{ paddingBottom: spacing.lg }}>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginBottom: spacing.md,
-              }}
-            >
-              <Pressable
-                accessibilityRole="button"
-                onPress={() => router.push('/account')}
-                style={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: 12,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: colors.brand.surface,
-                  borderWidth: 1,
-                  borderColor: colors.brand.border,
-                  shadowColor: colors.shadow.brand.color,
-                  shadowOpacity: 0.08,
-                  shadowRadius: 8,
-                  shadowOffset: { width: 0, height: 6 },
-                  elevation: 2,
-                }}
-              >
-                <Ionicons name="menu-outline" size={22} color={colors.brand.text} />
-              </Pressable>
-
-              <Text style={{ fontSize: 22, fontWeight: '700', color: colors.brand.text }}>
-                Demandes
-              </Text>
-
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
-                <Pressable
-                  accessibilityRole="button"
-                  onPress={() => router.push('/search')}
-                  style={{
-                    width: 44,
-                    height: 44,
-                    borderRadius: 12,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: colors.brand.surface,
-                    borderWidth: 1,
-                    borderColor: colors.brand.border,
-                    shadowColor: colors.shadow.brand.color,
-                    shadowOpacity: 0.08,
-                    shadowRadius: 8,
-                    shadowOffset: { width: 0, height: 6 },
-                    elevation: 2,
-                  }}
-                >
-                  <Ionicons name="search" size={20} color={colors.brand.text} />
-                </Pressable>
-                <Pressable
-                  accessibilityRole="button"
-                  onPress={openFilters}
-                  onLongPress={toggleOffline}
-                  style={{
-                    width: 44,
-                    height: 44,
-                    borderRadius: 12,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: colors.brand.surface,
-                    borderWidth: hasActiveFilters ? 2 : 1,
-                    borderColor: hasActiveFilters ? colors.brand.text : colors.brand.border,
-                    shadowColor: colors.shadow.brand.color,
-                    shadowOpacity: 0.08,
-                    shadowRadius: 8,
-                    shadowOffset: { width: 0, height: 6 },
-                    elevation: 2,
-                  }}
-                >
-                  <Ionicons name="options-outline" size={22} color={colors.brand.text} />
-                  {hasActiveFilters ? (
-                    <View
-                      style={{
-                        position: 'absolute',
-                        top: 8,
-                        right: 8,
-                        width: 8,
-                        height: 8,
-                        borderRadius: 4,
-                        backgroundColor: colors.semantic.success,
-                      }}
-                    />
-                  ) : null}
-                </Pressable>
+        data={[{ __type: 'segment' } as any, ...items]}
+        keyExtractor={(item, index) => ((item as any).__type === 'segment' ? `seg-${index}` : (item as any).id)}
+        renderItem={({ item }) => (
+          (item as any).__type === 'segment' ? (
+            <View style={{ paddingHorizontal: 16, paddingTop: 8 }}>
+              <SegmentedTabs activeKey={filters.channel} counts={tabCounts} onChange={onSelectChannel} />
+            </View>
+          ) : (
+            <View style={{ paddingHorizontal: 16, paddingTop: 8, alignItems: 'center' }}>
+              <View style={{ width: '100%', maxWidth: 380 }}>
+                <RequestCard item={item as Request} onPress={(id) => router.push(`/request/${id}`)} />
               </View>
             </View>
-
-            <Text style={{ color: colors.brand.muted }}>
-              Trouve les demandes proches et reponds en quelques minutes.
-            </Text>
+          )
+        )}
+        contentContainerStyle={{ paddingBottom: 24 }}
+        stickyHeaderIndices={[1]}
+        ListHeaderComponent={
+          <View style={{ paddingHorizontal: 16, paddingTop: 8 }}>
+            <FeedHeader
+              currentUserAvatar={currentUser.avatar}
+              hasActiveFilters={hasActiveFilters}
+              offline={offline}
+              searchValue={searchTerm}
+              onSearchChange={setSearchTerm}
+              onFiltersPress={openFilters}
+              onFiltersLongPress={toggleOffline}
+              onRetry={handleRetry}
+              onOpenProfile={() => router.push('/account')}
+              onOpenNotifications={() => router.push('/inbox')}
+              onOpenSaved={() => router.push('/request/saved')}
+            />
           </View>
         }
-        renderItem={({ item }) => (
-          <RequestCard item={item} onPress={(id) => router.push(`/request/${id}`)} />
-        )}
-        ListEmptyComponent={(() => {
-          if (offline) {
-            return (
-              <OfflineState
-                title="Mode hors ligne"
-                subtitle="Reviens en ligne pour voir les nouvelles demandes."
-                ctaLabel="Reessayer"
-                onPress={handleRetry}
-              />
-            );
-          }
-          if (error) {
-            return (
-              <ErrorState
-                title="Chargement indisponible"
-                subtitle={error}
-                ctaLabel="Reessayer"
-                onPress={handleRetry}
-              />
-            );
-          }
-          if (loading) {
-            return (
-              <View style={{ gap: spacing.lg }}>
-                {[0, 1, 2].map((key) => (
-                  <SkeletonRequestCard key={key} />
-                ))}
-              </View>
-            );
-          }
-          return (
-            <EmptyState
-              title="Aucune demande"
-              subtitle="Essaye d'autres filtres ou cree ta propre demande."
-              ctaLabel="Reessayer"
-              onPress={handleRetry}
-            />
-          );
-        })()}
+        ListEmptyComponent={
+          loading ? (
+            <View style={{ paddingHorizontal: 16, paddingTop: 8, gap: spacing.md, alignItems: 'center' }}>
+              {[0,1,2].map((k) => (
+                <View key={k} style={{ width: '100%', maxWidth: 380 }}>
+                  <SkeletonRequestCard />
+                </View>
+              ))}
+            </View>
+          ) : offline ? (
+            <OfflineState title="Mode hors ligne" subtitle="Connecte-toi pour voir les nouvelles demandes." />
+          ) : error ? (
+            <ErrorState title="Erreur" subtitle={error ?? 'Impossible de charger les demandes.'} />
+          ) : (
+            <EmptyState title="Aucune demande" subtitle="Aucune demande ne correspond à tes filtres." />
+          )
+        }
         ListFooterComponent={
           !offline && !error && items.length > 0 ? (
             <View style={{ padding: spacing.lg, alignItems: 'center' }}>
-              {loading ? (
-                <ActivityIndicator color={colors.brand.text} />
-              ) : hasMore ? (
-                <PrimaryButton title="Charger plus" onPress={() => load(page + 1)} />
-              ) : null}
+              {loading ? <ActivityIndicator color={colors.brand.text} /> : hasMore ? <PrimaryButton title="Charger plus" onPress={() => load(page + 1)} /> : null}
             </View>
           ) : null
         }
         onEndReachedThreshold={0.4}
-        onEndReached={() => {
-          if (!loadingRef.current && hasMore) {
-            load(page + 1);
-          }
-        }}
-        refreshControl={
-          <RefreshControl tintColor={colors.brand.text} refreshing={refreshing} onRefresh={onRefresh} />
-        }
+        onEndReached={() => { if (!loadingRef.current && hasMore && !loading) load(page + 1); }}
+        refreshControl={<RefreshControl tintColor={colors.brand.text} refreshing={refreshing} onRefresh={onRefresh} />}
       />
 
       {error && items.length > 0 ? (
-        <View style={{ position: 'absolute', left: 0, right: 0, bottom: 24, alignItems: 'center' }}>
-          <View
-            style={{
-              backgroundColor: '#fee2e2',
-              borderColor: colors.semantic.danger,
-              borderWidth: 1,
-              padding: 12,
-              borderRadius: 12,
-            }}
-          >
+        <View style={{ position: 'absolute', left: spacing.lg, right: spacing.lg, bottom: 24 }}>
+          <View style={{ backgroundColor: '#fee2e2', borderColor: colors.semantic.danger, borderWidth: 1, padding: spacing.sm, borderRadius: radius.md }}>
             <Text style={{ color: colors.semantic.danger }}>{error}</Text>
           </View>
         </View>
@@ -323,169 +267,259 @@ export default function FeedScreen() {
       <Pressable
         accessibilityRole="button"
         onPress={() => router.push('/request/new')}
-        style={{
-          position: 'absolute',
-          bottom: spacing.xl,
-          right: spacing.lg,
-          shadowColor: colors.shadow.brand.color,
-          shadowOpacity: 0.25,
-          shadowRadius: 16,
-          shadowOffset: { width: 0, height: 12 },
-          elevation: 6,
-        }}
+        style={{ position: 'absolute', bottom: spacing.xl, right: spacing.lg, shadowColor: colors.shadow.softCard.color, shadowOpacity: colors.shadow.softCard.opacity, shadowRadius: colors.shadow.softCard.radius, shadowOffset: { width: 0, height: colors.shadow.softCard.offsetY }, elevation: colors.shadow.softCard.elevation }}
       >
-        <LinearGradient
-          colors={colors.brand.primaryGradient}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={{
-            width: 64,
-            height: 64,
-            borderRadius: 24,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Ionicons name="add" size={30} color={colors.brand.text} />
+        <LinearGradient colors={colors.brand.primaryGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ width: 60, height: 60, borderRadius: 30, alignItems: 'center', justifyContent: 'center' }}>
+          <Ionicons name="add" size={28} color={colors.brand.text} />
         </LinearGradient>
       </Pressable>
 
-      <Modal visible={sheetVisible} animationType="slide" transparent onRequestClose={closeFilters}>
-        <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-          <Pressable style={{ flex: 1, backgroundColor: colors.overlay }} onPress={closeFilters} />
-          <View
-            style={{
-              backgroundColor: colors.brand.surface,
-              padding: spacing.lg,
-              paddingBottom: spacing.xl,
-              borderTopLeftRadius: 28,
-              borderTopRightRadius: 28,
-              gap: spacing.lg,
-            }}
-          >
+      <FiltersSheet
+        visible={sheetVisible}
+        draftFilters={draftFilters}
+        onChangeDraft={setDraftFilters}
+        onClose={closeFilters}
+        onApply={applyDraftFilters}
+      />
+    </SafeAreaView>
+  );
+}
+
+// -------------------- Header (flat, not card) --------------------
+type FeedHeaderProps = {
+  currentUserAvatar?: string;
+  hasActiveFilters: boolean;
+  offline: boolean;
+  searchValue: string;
+  onSearchChange: (value: string) => void;
+  onFiltersPress: () => void;
+  onFiltersLongPress: () => void;
+  onRetry: () => void;
+  onOpenProfile: () => void;
+  onOpenNotifications: () => void;
+  onOpenSaved: () => void;
+};
+
+function SegmentedTabs({ activeKey, counts, onChange }: { activeKey: FeedChannel; counts: Record<FeedChannel, number>; onChange: (k: FeedChannel) => void }) {
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
+      {TABS.map((tab) => {
+        const active = tab.key === activeKey;
+        return (
+          <Pressable key={tab.key} accessibilityRole="button" onPress={() => onChange(tab.key)}>
             <View
               style={{
-                width: 48,
-                height: 4,
-                borderRadius: 999,
-                backgroundColor: colors.brand.border,
-                alignSelf: 'center',
-                marginTop: 4,
+                flexDirection: 'row',
+                alignItems: 'center',
+                paddingHorizontal: 14,
+                paddingVertical: 8,
+                borderRadius: 18,
+                backgroundColor: colors.brand.surface,
+                borderWidth: 1,
+                borderColor: active ? colors.brand.text : colors.brand.border,
+                gap: 8,
               }}
-            />
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <View>
-                <Text style={{ fontSize: 20, fontWeight: '700', color: colors.brand.text }}>Filtres</Text>
-                <Text style={{ color: colors.brand.muted, marginTop: 4 }}>
-                  Ajuste les categories, le temps estime ou ta zone.
-                </Text>
-              </View>
-              <Pressable
-                accessibilityRole="button"
-                onPress={closeFilters}
-                style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: 12,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: colors.brand.surfaceStrong,
-                }}
-              >
-                <Ionicons name="close" size={20} color={colors.brand.text} />
-              </Pressable>
-            </View>
-
-            <View>
-              <Text style={{ fontWeight: '600', color: colors.brand.text, marginBottom: spacing.sm }}>
-                Categorie
-              </Text>
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
-                {REQUEST_CATEGORIES.map((category) => {
-                  const selected = draftFilters.category === category;
-                  return (
-                    <Pressable
-                      key={category}
-                      onPress={() =>
-                        setDraftFilters((previous) => ({
-                          ...previous,
-                          category: selected ? undefined : category,
-                        }))
-                      }
-                      style={{
-                        paddingVertical: 10,
-                        paddingHorizontal: 14,
-                        borderRadius: 16,
-                        backgroundColor: selected ? colors.brand.surfaceStrong : colors.brand.surfaceMuted,
-                        borderWidth: selected ? 1 : 0,
-                        borderColor: selected ? colors.brand.text : 'transparent',
-                      }}
-                    >
-                      <Text style={{ color: colors.brand.text, fontSize: 14 }}>{category}</Text>
-                    </Pressable>
-                  );
-                })}
+            >
+              <Text style={{ fontSize: 14, fontWeight: active ? '700' : '600', color: colors.brand.text }}>{tab.label}</Text>
+              <View style={{ minWidth: 22, height: 22, borderRadius: 11, backgroundColor: active ? '#e5f5ff' : colors.brand.surfaceStrong, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 6 }}>
+                <Text style={{ fontSize: 12, color: colors.brand.text }}>{counts[tab.key] ?? 0}</Text>
               </View>
             </View>
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+}
 
-            <View>
-              <Text style={{ fontWeight: '600', color: colors.brand.text, marginBottom: spacing.sm }}>
-                Temps estime max
-              </Text>
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
-                {ETA_OPTIONS.map((eta) => {
-                  const selected = draftFilters.maxEta === eta;
-                  return (
-                    <Pressable
-                      key={eta}
-                      onPress={() =>
-                        setDraftFilters((previous) => ({
-                          ...previous,
-                          maxEta: selected ? undefined : eta,
-                        }))
-                      }
-                      style={{
-                        paddingVertical: 10,
-                        paddingHorizontal: 16,
-                        borderRadius: 16,
-                        backgroundColor: selected ? '#dcfce7' : colors.brand.surfaceStrong,
-                        borderWidth: selected ? 1 : 0,
-                        borderColor: selected ? colors.semantic.success : 'transparent',
-                      }}
-                    >
-                      <Text style={{ color: selected ? colors.semantic.success : colors.brand.muted, fontSize: 14 }}>
-                        {'<= '} {eta} min
-                      </Text>
-                    </Pressable>
-                  );
-                })}
-              </View>
-            </View>
+function FeedHeader({
+  currentUserAvatar,
+  hasActiveFilters,
+  offline,
+  searchValue,
+  onSearchChange,
+  onFiltersPress,
+  onFiltersLongPress,
+  onRetry,
+  onOpenProfile,
+  onOpenNotifications,
+  onOpenSaved,
+}: FeedHeaderProps) {
+  const { animatedStyle: profileAnimatedStyle, pressableProps: profilePressableProps } = usePressFeedback({
+    scaleTo: 0.95,
+    opacityTo: 0.9,
+    durationMs: 90,
+    androidRipple: { color: addAlphaToHex(colors.brand.text, 0.08), foreground: true },
+    haptics: 'selection',
+  });
 
-            <ZoneSelector
-              selectedNeighborhoodId={draftFilters.neighborhoodId}
-              selectedRadius={draftFilters.radiusMeters}
-              onChange={({ neighborhoodId, radiusMeters }) => {
-                const hood = NEIGHBORHOODS.find((item) => item.id === neighborhoodId);
-                const km = Math.round((radiusMeters / 1000) * 10) / 10;
-                setDraftFilters((previous) => ({
-                  ...previous,
-                  neighborhoodId,
-                  radiusMeters,
-                  area: hood ? `${hood.name} (~${km} km)` : previous.area,
-                }));
-              }}
-            />
-
-            <PrimaryButton
-              title="Reinitialiser"
-              variant="ghost"
-              onPress={() => setDraftFilters({})}
-            />
-            <PrimaryButton title="Afficher les demandes" variant="success" onPress={applyDraftFilters} />
-          </View>
+  return (
+    <View style={{ paddingVertical: spacing.lg, gap: spacing.sm }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.md }}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Voir mon profil" onPress={onOpenProfile} {...profilePressableProps}>
+          <Animated.View style={[{ width: 46, height: 46, borderRadius: 16, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.brand.surface, borderWidth: 1, borderColor: colors.brand.border }, profileAnimatedStyle]}>
+            {currentUserAvatar ? (
+              <Image source={{ uri: currentUserAvatar }} style={{ width: 42, height: 42, borderRadius: 14 }} />
+            ) : (
+              <Ionicons name="person-circle-outline" size={28} color={colors.brand.text} />
+            )}
+          </Animated.View>
+        </Pressable>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 24, fontWeight: '700', color: colors.brand.text }}>Demandes</Text>
         </View>
-      </Modal>
-    </SafeAreaView>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
+          <HeaderActionButton icon="notifications-outline" accessibilityLabel="Ouvrir les notifications" onPress={onOpenNotifications} />
+          <HeaderActionButton icon="bookmark-outline" accessibilityLabel="Voir mes favoris" onPress={onOpenSaved} />
+          <FilterButton hasActiveFilters={hasActiveFilters} onPress={onFiltersPress} onLongPress={onFiltersLongPress} />
+        </View>
+      </View>
+      {offline ? (
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.sm, paddingVertical: 10, paddingHorizontal: 14, borderRadius: radius.md, backgroundColor: colors.brand.surfaceStrong }}>
+          <Ionicons name="cloud-offline-outline" size={18} color={colors.brand.text} />
+          <Text style={{ flex: 1, fontSize: 12, color: colors.brand.text }}>Mode hors ligne - contenu en cache</Text>
+          <Pressable accessibilityRole="button" onPress={onRetry}>
+            <Text style={{ fontSize: 12, fontWeight: '600', color: colors.semantic.success }}>Revenir en ligne</Text>
+          </Pressable>
+        </View>
+      ) : null}
+    </View>
+  );
+}
+
+// -------------------- Filters bottom sheet --------------------
+function FiltersSheet({
+  visible,
+  draftFilters,
+  onChangeDraft,
+  onClose,
+  onApply,
+}: {
+  visible: boolean;
+  draftFilters: Filters;
+  onChangeDraft: (f: Filters | ((p: Filters) => Filters)) => void;
+  onClose: () => void;
+  onApply: () => void;
+}) {
+  return (
+    <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
+      <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+        <Pressable style={{ flex: 1, backgroundColor: colors.overlay }} onPress={onClose} />
+        <View style={{ backgroundColor: colors.brand.surface, padding: spacing.lg, paddingBottom: spacing.xl, borderTopLeftRadius: 28, borderTopRightRadius: 28, gap: spacing.lg }}>
+          <View style={{ width: 48, height: 4, borderRadius: 999, backgroundColor: colors.brand.border, alignSelf: 'center', marginTop: 4 }} />
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <View>
+              <Text style={{ fontSize: 20, fontWeight: '700', color: colors.brand.text }}>Filtres</Text>
+              <Text style={{ color: colors.brand.muted, marginTop: 4 }}>Ajuste la portée, l'XP minimum et la catégorie.</Text>
+            </View>
+            <Pressable accessibilityRole="button" onPress={onClose} style={{ width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.brand.surfaceStrong }}>
+              <Ionicons name="close" size={20} color={colors.brand.text} />
+            </Pressable>
+          </View>
+
+          <View>
+            <Text style={{ fontWeight: '600', color: colors.brand.text, marginBottom: spacing.sm }}>Catégorie</Text>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
+              {REQUEST_CATEGORIES.map((category) => {
+                const selected = draftFilters.category === category;
+                return (
+                  <Pressable
+                    key={category}
+                    onPress={() => onChangeDraft((p) => ({ ...p, category: selected ? undefined : category }))}
+                    style={{ paddingVertical: 10, paddingHorizontal: 16, borderRadius: 16, backgroundColor: selected ? colors.brand.surfaceStrong : colors.brand.surfaceMuted, borderWidth: selected ? 1 : 0, borderColor: selected ? colors.brand.text : 'transparent' }}
+                  >
+                    <Text style={{ color: colors.brand.text, fontSize: 14 }}>{category}</Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+          </View>
+
+          <View>
+            <Text style={{ fontWeight: '600', color: colors.brand.text, marginBottom: spacing.sm }}>Distance maximale</Text>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
+              {DISTANCE_OPTIONS.map((value) => {
+                const selected = draftFilters.maxDistanceMeters === value;
+                return (
+                  <Pressable
+                    key={value}
+                    onPress={() => onChangeDraft((p) => ({ ...p, maxDistanceMeters: selected ? undefined : value }))}
+                    style={{ paddingVertical: 10, paddingHorizontal: 16, borderRadius: 16, backgroundColor: selected ? '#dbeafe' : colors.brand.surfaceStrong, borderWidth: selected ? 1 : 0, borderColor: selected ? '#2563eb' : 'transparent' }}
+                  >
+                    <Text style={{ color: selected ? '#1d4ed8' : colors.brand.muted, fontSize: 14 }}>{'≤ '}{value >= 1000 ? `${value / 1000} km` : `${value} m`}</Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+          </View>
+
+          <View>
+            <Text style={{ fontWeight: '600', color: colors.brand.text, marginBottom: spacing.sm }}>XP minimum</Text>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
+              {XP_OPTIONS.map((value) => {
+                const selected = draftFilters.minXp === value;
+                return (
+                  <Pressable
+                    key={value}
+                    onPress={() => onChangeDraft((p) => ({ ...p, minXp: selected ? undefined : value }))}
+                    style={{ paddingVertical: 10, paddingHorizontal: 16, borderRadius: 16, backgroundColor: selected ? '#dcfce7' : colors.brand.surfaceStrong, borderWidth: selected ? 1 : 0, borderColor: selected ? colors.semantic.success : 'transparent' }}
+                  >
+                    <Text style={{ color: selected ? colors.semantic.success : colors.brand.muted, fontSize: 14 }}>{'≥ '}{value} XP</Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+          </View>
+
+          <ZoneSelector
+            selectedNeighborhoodId={draftFilters.neighborhoodId}
+            selectedRadius={draftFilters.radiusMeters}
+            onChange={({ neighborhoodId, radiusMeters }) => {
+              const hood = NEIGHBORHOODS.find((n) => n.id === neighborhoodId);
+              const km = Math.round((radiusMeters / 1000) * 10) / 10;
+              onChangeDraft((p) => ({ ...p, neighborhoodId, radiusMeters, area: hood ? `${hood.name} (~${km} km)` : p.area }));
+            }}
+          />
+
+          <PrimaryButton title="Réinitialiser" variant="ghost" onPress={() => onChangeDraft({ ...DEFAULT_FILTERS, channel: draftFilters.channel, query: draftFilters.query })} />
+          <PrimaryButton title="Afficher les demandes" variant="success" onPress={onApply} />
+        </View>
+      </View>
+    </Modal>
+  );
+}
+
+function HeaderActionButton({ icon, onPress, accessibilityLabel }: { icon: keyof typeof Ionicons.glyphMap; onPress: () => void; accessibilityLabel: string }) {
+  const { animatedStyle, pressableProps } = usePressFeedback({
+    scaleTo: 0.92,
+    opacityTo: 0.85,
+    durationMs: 90,
+    androidRipple: { color: addAlphaToHex(colors.brand.text, 0.08), foreground: true },
+    haptics: 'selection',
+  });
+  return (
+    <Pressable accessibilityRole="button" accessibilityLabel={accessibilityLabel} onPress={onPress} {...pressableProps}>
+      <Animated.View style={[{ width: 46, height: 46, borderRadius: 16, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.brand.surface, borderWidth: 1, borderColor: colors.brand.border }, animatedStyle]}>
+        <Ionicons name={icon} size={18} color={colors.brand.text} />
+      </Animated.View>
+    </Pressable>
+  );
+}
+
+function FilterButton({ hasActiveFilters, onPress, onLongPress }: { hasActiveFilters: boolean; onPress: () => void; onLongPress: () => void }) {
+  const { animatedStyle, pressableProps } = usePressFeedback({
+    scaleTo: 0.94,
+    opacityTo: 0.86,
+    durationMs: 90,
+    androidRipple: { color: addAlphaToHex(colors.brand.text, 0.08), foreground: true },
+    haptics: 'selection',
+  });
+  return (
+    <Pressable accessibilityRole="button" accessibilityLabel="Ouvrir les filtres" onPress={onPress} onLongPress={onLongPress} {...pressableProps}>
+      <Animated.View style={[{ width: 48, height: 48, borderRadius: 18, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.brand.surface, borderWidth: 1, borderColor: colors.brand.border }, animatedStyle, hasActiveFilters && { borderColor: colors.brand.text, borderWidth: 1.5 }]}>
+        <Ionicons name="options-outline" size={20} color={colors.brand.text} />
+        {hasActiveFilters ? <View style={{ position: 'absolute', top: 10, right: 10, width: 8, height: 8, borderRadius: 4, backgroundColor: colors.semantic.success }} /> : null}
+      </Animated.View>
+    </Pressable>
   );
 }

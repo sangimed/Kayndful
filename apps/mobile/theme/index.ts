@@ -1,6 +1,7 @@
 export type Gradient = readonly [string, string];
 
 export const colors = {
+  // Brand and base palette
   brand: {
     iconGradient: ['#FFD9BE', '#F7BFC0'] as const,
     primaryGradient: ['#A8D5FF', '#b1e0ff'] as const,
@@ -11,6 +12,7 @@ export const colors = {
     surfaceMuted: '#F8FAFC',
     surfaceStrong: '#F1F5F9',
   },
+  // Semantic status colors
   semantic: {
     success: '#16a34a',
     danger: '#dc2626',
@@ -18,6 +20,17 @@ export const colors = {
     dangerGradient: ['#FECACA', '#EF4444'] as const,
     neutral: '#0f172a',
   },
+  // App level surfaces (light/dark aware usage in components)
+  app: {
+    backgroundLight: '#F7F8FA',
+    backgroundDark: '#0E1114',
+    cardLight: '#FFFFFF',
+    cardDark: '#151A1E',
+    // Subtle surface tint used for gradients/overlays
+    tintLight: 'rgba(0,0,0,0.04)',
+    tintDark: 'rgba(255,255,255,0.06)',
+  },
+  // Shadow presets for soft, diffuse elevation
   shadow: {
     brand: {
       color: '#000',
@@ -25,6 +38,13 @@ export const colors = {
       radius: 16,
       offsetY: 12,
       elevation: 12,
+    },
+    softCard: {
+      color: '#000',
+      opacity: 0.12,
+      radius: 18,
+      offsetY: 8,
+      elevation: 6,
     },
     primaryBtn: {
       color: '#60A5FA',
@@ -40,9 +60,14 @@ export const colors = {
 } as const;
 
 export const radius = {
+  // Global sizes
   xl: 36,
   lg: 20,
   md: 15,
+  // Component-specific presets
+  card: 16,
+  chip: 18,
+  image: 12,
 } as const;
 
 export const spacing = {

@@ -28,6 +28,20 @@ export type User = {
   avatar?: string;
 };
 
+export type RequestMedia = {
+  id: string;
+  type: 'image' | 'video';
+  thumbnail: string;
+  source: string;
+  durationSeconds?: number;
+};
+
+export type RequestSupporter = {
+  id: string;
+  name: string;
+  avatar?: string;
+};
+
 export type Request = {
   id: string;
   title: string;
@@ -39,6 +53,14 @@ export type Request = {
   author: { id: string; name: string; avatar?: string };
   coordinates: Coordinates;
   neighborhoodId: string;
+  xp: number;
+  distanceMeters: number;
+  media?: RequestMedia[];
+  supporters: RequestSupporter[];
+  supportCount: number;
+  tags: string[];
+  isFollowed?: boolean;
+  isCommunity?: boolean;
 };
 
 export type Message = {
@@ -71,6 +93,10 @@ type GetRequestsParams = {
     query?: string;
     neighborhoodId?: string;
     radiusMeters?: number;
+    maxDistanceMeters?: number;
+    minXp?: number;
+    channel?: FeedChannel;
+    sortBy?: RequestSortOption;
   };
 };
 
@@ -88,7 +114,14 @@ export type CreateRequestInput = {
   authorId: string;
   coordinates?: Coordinates;
   neighborhoodId?: string;
+  xp?: number;
+  distanceMeters?: number;
+  media?: RequestMedia[];
+  tags?: string[];
 };
+
+export type FeedChannel = 'latest' | 'community' | 'following';
+export type RequestSortOption = 'recent' | 'distance' | 'xp';
 
 export type UpdateProfileInput = {
   name?: string;
@@ -170,6 +203,7 @@ const users: User[] = [
     bio: 'Toujours partant pour filer un coup de main dans le quartier.',
     skills: ['Bricolage', 'Courses', 'Conseil'],
     area: 'Belleville (~800 m)',
+    avatar: 'https://i.pravatar.cc/150?img=5',
   },
   {
     id: 'u1',
@@ -177,36 +211,42 @@ const users: User[] = [
     bio: 'Fan de DIY et de bricolage.',
     skills: ['Bricolage'],
     area: 'Belleville (~800 m)',
+    avatar: 'https://i.pravatar.cc/150?img=12',
   },
   {
     id: 'u2',
     name: 'Ali',
     skills: ['Courses', 'Livraison'],
     area: 'Canal Saint-Martin (~1 km)',
+    avatar: 'https://i.pravatar.cc/150?img=32',
   },
   {
     id: 'u3',
     name: 'Lina',
     skills: ['Conseil', 'Mentorat'],
     area: 'Republique (~1.2 km)',
+    avatar: 'https://i.pravatar.cc/150?img=47',
   },
   {
     id: 'u4',
     name: 'Max',
     skills: ['Services'],
     area: 'Jourdain (~700 m)',
+    avatar: 'https://i.pravatar.cc/150?img=55',
   },
   {
     id: 'u5',
     name: 'Zoe',
     skills: ['Discussion'],
     area: 'Oberkampf (~1 km)',
+    avatar: 'https://i.pravatar.cc/150?img=24',
   },
   {
     id: 'u6',
     name: 'Noah',
     skills: ['Services', 'Impression'],
     area: 'Couronnes (~600 m)',
+    avatar: 'https://i.pravatar.cc/150?img=68',
   },
 ];
 
@@ -236,6 +276,21 @@ let requests: Request[] = [
     author: authorSnapshot('u1'),
     coordinates: { lat: 48.8728, lng: 2.3815 },
     neighborhoodId: 'belleville',
+    xp: 45,
+    distanceMeters: 800,
+    media: [
+      {
+        id: 'r1-media-1',
+        type: 'image',
+        thumbnail: 'https://images.unsplash.com/photo-1582719478350-4bafb00c99f3?auto=format&fit=crop&w=600&q=80',
+        source: 'https://images.unsplash.com/photo-1582719478350-4bafb00c99f3?auto=format&fit=crop&w=1200&q=80',
+      },
+    ],
+    supporters: [authorSnapshot('u2'), authorSnapshot('u3'), authorSnapshot('u5')],
+    supportCount: 18,
+    tags: ['Perceuse', 'Installation', 'Bricolage'],
+    isFollowed: true,
+    isCommunity: true,
   },
   {
     id: 'r2',
@@ -247,6 +302,33 @@ let requests: Request[] = [
     author: authorSnapshot('u2'),
     coordinates: { lat: 48.8725, lng: 2.3662 },
     neighborhoodId: 'republique',
+    xp: 35,
+    distanceMeters: 1000,
+    media: [
+      {
+        id: 'r2-media-1',
+        type: 'image',
+        thumbnail: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=600&q=80',
+        source: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=1200&q=80',
+      },
+      {
+        id: 'r2-media-2',
+        type: 'image',
+        thumbnail: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80',
+        source: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=80',
+      },
+      {
+        id: 'r2-media-3',
+        type: 'image',
+        thumbnail: 'https://images.unsplash.com/photo-1437750769465-301382cdf094?auto=format&fit=crop&w=600&q=80',
+        source: 'https://images.unsplash.com/photo-1437750769465-301382cdf094?auto=format&fit=crop&w=1200&q=80',
+      },
+    ],
+    supporters: [authorSnapshot('u1'), authorSnapshot('u4'), authorSnapshot('u6')],
+    supportCount: 42,
+    tags: ['Courses', 'Courses express', 'Alimentation'],
+    isFollowed: false,
+    isCommunity: true,
   },
   {
     id: 'r3',
@@ -259,6 +341,27 @@ let requests: Request[] = [
     author: authorSnapshot('u3'),
     coordinates: { lat: 48.8679, lng: 2.3621 },
     neighborhoodId: 'republique',
+    xp: 60,
+    distanceMeters: 1200,
+    media: [
+      {
+        id: 'r3-media-1',
+        type: 'image',
+        thumbnail: 'https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=600&q=80',
+        source: 'https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=1200&q=80',
+      },
+      {
+        id: 'r3-media-2',
+        type: 'image',
+        thumbnail: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=600&q=80',
+        source: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1200&q=80',
+      },
+    ],
+    supporters: [authorSnapshot('u2'), authorSnapshot('u5')],
+    supportCount: 27,
+    tags: ['Relecture', 'CV', 'Conseils'],
+    isFollowed: true,
+    isCommunity: true,
   },
   {
     id: 'r4',
@@ -270,6 +373,28 @@ let requests: Request[] = [
     author: authorSnapshot('u4'),
     coordinates: { lat: 48.8751, lng: 2.3926 },
     neighborhoodId: 'belleville',
+    xp: 40,
+    distanceMeters: 700,
+    media: [
+      {
+        id: 'r4-media-1',
+        type: 'video',
+        thumbnail: 'https://images.unsplash.com/photo-1507146426996-ef05306b995a?auto=format&fit=crop&w=600&q=80',
+        source: 'https://videos.pexels.com/video-files/2874899/2874899-hd_1280_720_30fps.mp4',
+        durationSeconds: 34,
+      },
+      {
+        id: 'r4-media-2',
+        type: 'image',
+        thumbnail: 'https://images.unsplash.com/photo-1525253086316-d0c936c814f8?auto=format&fit=crop&w=600&q=80',
+        source: 'https://images.unsplash.com/photo-1525253086316-d0c936c814f8?auto=format&fit=crop&w=1200&q=80',
+      },
+    ],
+    supporters: [authorSnapshot('u1'), authorSnapshot('u6')],
+    supportCount: 31,
+    tags: ['Animaux', 'Promenade', 'Services'],
+    isFollowed: false,
+    isCommunity: false,
   },
   {
     id: 'r5',
@@ -281,6 +406,21 @@ let requests: Request[] = [
     author: authorSnapshot('u5'),
     coordinates: { lat: 48.8649, lng: 2.3714 },
     neighborhoodId: 'oberkampf',
+    xp: 25,
+    distanceMeters: 1000,
+    media: [
+      {
+        id: 'r5-media-1',
+        type: 'image',
+        thumbnail: 'https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=600&q=80',
+        source: 'https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=1200&q=80',
+      },
+    ],
+    supporters: [authorSnapshot('u3'), authorSnapshot('u4')],
+    supportCount: 12,
+    tags: ['Social', 'Cafe', 'Rencontre'],
+    isFollowed: true,
+    isCommunity: true,
   },
   {
     id: 'r6',
@@ -292,6 +432,39 @@ let requests: Request[] = [
     author: authorSnapshot('u6'),
     coordinates: { lat: 48.8687, lng: 2.377 },
     neighborhoodId: 'oberkampf',
+    xp: 30,
+    distanceMeters: 600,
+    media: [
+      {
+        id: 'r6-media-1',
+        type: 'image',
+        thumbnail: 'https://images.unsplash.com/photo-1585776245991-cf89dd7fc73e?auto=format&fit=crop&w=600&q=80',
+        source: 'https://images.unsplash.com/photo-1585776245991-cf89dd7fc73e?auto=format&fit=crop&w=1200&q=80',
+      },
+      {
+        id: 'r6-media-2',
+        type: 'image',
+        thumbnail: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=600&q=80',
+        source: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=80',
+      },
+      {
+        id: 'r6-media-3',
+        type: 'image',
+        thumbnail: 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=600&q=80',
+        source: 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=1200&q=80',
+      },
+      {
+        id: 'r6-media-4',
+        type: 'image',
+        thumbnail: 'https://images.unsplash.com/photo-1580894894513-541e068a3e2f?auto=format&fit=crop&w=600&q=80',
+        source: 'https://images.unsplash.com/photo-1580894894513-541e068a3e2f?auto=format&fit=crop&w=1200&q=80',
+      },
+    ],
+    supporters: [authorSnapshot('u2'), authorSnapshot('u5'), authorSnapshot('u1')],
+    supportCount: 54,
+    tags: ['Impression', 'Services', 'Urgent'],
+    isFollowed: false,
+    isCommunity: false,
   },
 ];
 
@@ -395,6 +568,17 @@ export async function getRequests(params: GetRequestsParams): Promise<GetRequest
   if (typeof filters?.maxEta === 'number') {
     data = data.filter((item) => item.eta <= (filters.maxEta as number));
   }
+  if (typeof filters?.maxDistanceMeters === 'number') {
+    data = data.filter((item) => item.distanceMeters <= (filters.maxDistanceMeters as number));
+  }
+  if (typeof filters?.minXp === 'number') {
+    data = data.filter((item) => item.xp >= (filters.minXp as number));
+  }
+  if (filters?.channel === 'community') {
+    data = data.filter((item) => item.isCommunity);
+  } else if (filters?.channel === 'following') {
+    data = data.filter((item) => item.isFollowed);
+  }
   if (filters?.area) {
     const query = filters.area.toLowerCase();
     data = data.filter((item) => item.area.toLowerCase().includes(query));
@@ -414,6 +598,18 @@ export async function getRequests(params: GetRequestsParams): Promise<GetRequest
     data = data.filter((item) => matchesNeighborhood(item, filters.neighborhoodId, filters.radiusMeters));
   }
 
+  if (filters?.sortBy === 'distance') {
+    data = [...data].sort((a, b) => {
+      const delta = a.distanceMeters - b.distanceMeters;
+      return delta === 0 ? sortByDateDesc(a, b) : delta;
+    });
+  } else if (filters?.sortBy === 'xp') {
+    data = [...data].sort((a, b) => {
+      const delta = b.xp - a.xp;
+      return delta === 0 ? sortByDateDesc(a, b) : delta;
+    });
+  }
+
   const start = (page - 1) * pageSize;
   const end = start + pageSize;
   const items = data.slice(start, end);
@@ -428,13 +624,21 @@ export type SearchParams = {
   radiusMeters?: number;
   category?: string;
   maxEta?: number;
+  maxDistanceMeters?: number;
+  minXp?: number;
+  sortBy?: RequestSortOption;
+  channel?: FeedChannel;
 };
 
 export async function searchRequests(params: SearchParams): Promise<Request[]> {
   await delay(200);
   ensureOnline();
-  const { query, neighborhoodId, radiusMeters, category, maxEta } = params;
-  const result = await getRequests({ page: 1, pageSize: 100, filters: { query, neighborhoodId, radiusMeters, category, maxEta } });
+  const { query, neighborhoodId, radiusMeters, category, maxEta, maxDistanceMeters, minXp, sortBy, channel } = params;
+  const result = await getRequests({
+    page: 1,
+    pageSize: 100,
+    filters: { query, neighborhoodId, radiusMeters, category, maxEta, maxDistanceMeters, minXp, sortBy, channel },
+  });
   return result.items;
 }
 
@@ -507,6 +711,9 @@ export async function createRequest(input: CreateRequestInput): Promise<Request>
       lat: baseNeighborhood.center.lat + (Math.random() - 0.5) * 0.01,
       lng: baseNeighborhood.center.lng + (Math.random() - 0.5) * 0.01,
     };
+  const distanceMeters =
+    input.distanceMeters ?? Math.round(distanceInMeters(baseNeighborhood.center, coordinates));
+  const defaultXp = 30 + Math.round(Math.random() * 30);
   const request: Request = {
     id: `r-${uid()}`,
     title: input.title.trim(),
@@ -518,6 +725,14 @@ export async function createRequest(input: CreateRequestInput): Promise<Request>
     author,
     coordinates,
     neighborhoodId,
+    xp: input.xp ?? defaultXp,
+    distanceMeters,
+    media: input.media,
+    supporters: [],
+    supportCount: 0,
+    tags: input.tags?.length ? input.tags : [input.category],
+    isFollowed: true,
+    isCommunity: true,
   };
   requests = [request, ...requests];
   return request;
