@@ -1,7 +1,7 @@
-import React from "react";
-import { View, Pressable, Text, StyleSheet, ViewStyle } from "react-native";
-import { colors, spacing } from "../theme";
-import { PrimaryButton } from "./Button";
+import React from 'react';
+import { View, Pressable, Text, StyleSheet, ViewStyle } from 'react-native';
+import { colors, spacing } from '../theme';
+import { PrimaryButton } from './Button';
 
 type Props = {
   onNext: () => void;
@@ -17,8 +17,8 @@ type Props = {
 export default function StepFooter({
   onNext,
   onBack,
-  nextLabel = "Next",
-  backLabel = "Back",
+  nextLabel = 'Next',
+  backLabel = 'Back',
   disabledNext,
   skipLabel,
   onSkip,
@@ -43,9 +43,8 @@ export default function StepFooter({
 
 const styles = StyleSheet.create({
   container: { gap: spacing.sm },
-  backBtn: { alignSelf: "center", padding: spacing.xs },
-  backText: { color: colors.brand.text, fontWeight: "600" },
-  skipBtn: { alignSelf: "center", padding: spacing.xs },
+  backBtn: { alignSelf: 'center', padding: spacing.xs },
+  backText: { color: colors.brand.text, fontWeight: '600' },
+  skipBtn: { alignSelf: 'center', padding: spacing.xs },
   skipText: { color: colors.brand.muted },
 });
-

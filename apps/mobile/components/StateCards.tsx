@@ -23,7 +23,14 @@ const toneColor = (tone: BaseStateProps['tone']) => {
   }
 };
 
-function StateCard({ title, subtitle, ctaLabel, onPress, iconName = 'leaf-outline', tone = 'default' }: BaseStateProps) {
+function StateCard({
+  title,
+  subtitle,
+  ctaLabel,
+  onPress,
+  iconName = 'leaf-outline',
+  tone = 'default',
+}: BaseStateProps) {
   const color = toneColor(tone);
   return (
     <View
@@ -48,7 +55,9 @@ function StateCard({ title, subtitle, ctaLabel, onPress, iconName = 'leaf-outlin
       </View>
       <Text style={{ fontSize: 18, fontWeight: '600', color }}>{title}</Text>
       {subtitle ? (
-        <Text style={{ color: colors.brand.muted, fontSize: 14, textAlign: 'center' }}>{subtitle}</Text>
+        <Text style={{ color: colors.brand.muted, fontSize: 14, textAlign: 'center' }}>
+          {subtitle}
+        </Text>
       ) : null}
       {ctaLabel && onPress ? (
         <Pressable

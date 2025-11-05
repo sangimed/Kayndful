@@ -37,7 +37,9 @@ export default function ChatScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ id?: string }>();
   const chatId = params.id as string | undefined;
-  const currentUser = useAuthStore((state) => state.currentUser ?? { id: 'me', name: 'Moi', skills: [], area: '' });
+  const currentUser = useAuthStore(
+    (state) => state.currentUser ?? { id: 'me', name: 'Moi', skills: [], area: '' },
+  );
 
   const [header, setHeader] = useState<ChatHeader>({ title: 'Discussion' });
   const [items, setItems] = useState<Message[]>([]);
@@ -105,7 +107,7 @@ export default function ChatScreen() {
     } catch (err) {
       if (isOfflineError(err)) {
         setOffline(true);
-        showErrorToast('Impossible d\'envoyer le message hors ligne.');
+        showErrorToast("Impossible d'envoyer le message hors ligne.");
       } else {
         showErrorToast('Envoi du message impossible.');
       }
@@ -147,7 +149,14 @@ export default function ChatScreen() {
 
   if (!chatId) {
     return (
-      <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.gray }}>
+      <SafeAreaView
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: colors.gray,
+        }}
+      >
         <Text style={{ color: colors.brand.muted }}>Discussion introuvable.</Text>
       </SafeAreaView>
     );
@@ -160,8 +169,16 @@ export default function ChatScreen() {
         behavior={Platform.select({ ios: 'padding', android: undefined })}
         keyboardVerticalOffset={90}
       >
-        <View style={{ paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.md }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <View
+          style={{
+            paddingHorizontal: spacing.lg,
+            paddingTop: spacing.lg,
+            paddingBottom: spacing.md,
+          }}
+        >
+          <View
+            style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
+          >
             <Pressable
               accessibilityRole="button"
               onPress={() => router.back()}
@@ -179,7 +196,10 @@ export default function ChatScreen() {
               <Ionicons name="chevron-back" size={22} color={colors.brand.text} />
             </Pressable>
             <View style={{ flex: 1, marginHorizontal: spacing.md }}>
-              <Text style={{ fontSize: 18, fontWeight: '700', color: colors.brand.text }} numberOfLines={1}>
+              <Text
+                style={{ fontSize: 18, fontWeight: '700', color: colors.brand.text }}
+                numberOfLines={1}
+              >
                 {header.title}
               </Text>
               {header.subtitle ? (

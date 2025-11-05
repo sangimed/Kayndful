@@ -29,7 +29,8 @@ function timeLabel(createdAt: string) {
 }
 
 export function ConversationCard({ item, onPress }: Props) {
-  const iconName = (item.requestCategory && categoryIcon[item.requestCategory]) || 'chatbubbles-outline';
+  const iconName =
+    (item.requestCategory && categoryIcon[item.requestCategory]) || 'chatbubbles-outline';
   const unread = item.unreadCount ?? 0;
   return (
     <Pressable
@@ -61,9 +62,17 @@ export function ConversationCard({ item, onPress }: Props) {
         <Ionicons name={iconName} size={24} color={colors.brand.text} />
       </View>
       <View style={{ flex: 1 }}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+          }}
+        >
           <Text style={{ fontWeight: '700', color: colors.brand.text }}>{item.requestTitle}</Text>
-          <Text style={{ color: colors.brand.muted, fontSize: 12 }}>{timeLabel(item.lastMessage.createdAt)}</Text>
+          <Text style={{ color: colors.brand.muted, fontSize: 12 }}>
+            {timeLabel(item.lastMessage.createdAt)}
+          </Text>
         </View>
         <Text style={{ color: colors.brand.muted, marginTop: 4 }}>{item.peer.name}</Text>
         <Text style={{ color: colors.brand.muted }} numberOfLines={1}>

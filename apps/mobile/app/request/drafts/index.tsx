@@ -60,7 +60,13 @@ export default function DraftsScreen() {
               gap: spacing.sm,
             }}
           >
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
               <Text style={{ fontSize: 16, fontWeight: '700', color: colors.brand.text }}>
                 {item.title || 'Brouillon sans titre'}
               </Text>
@@ -78,9 +84,15 @@ export default function DraftsScreen() {
             <Text style={{ color: colors.brand.muted }} numberOfLines={2}>
               {item.description || 'Ajoute une description pour attirer les voisins.'}
             </Text>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
               <Text style={{ color: colors.brand.muted, fontSize: 12 }}>
-                {item.category ?? 'Categorie a definir'} • {item.eta ? `${item.eta} min` : 'Temps?' }
+                {item.category ?? 'Categorie a definir'} • {item.eta ? `${item.eta} min` : 'Temps?'}
               </Text>
               <Text style={{ color: colors.brand.muted, fontSize: 12 }}>
                 Modifie le {new Date(item.updatedAt).toLocaleDateString()}
@@ -90,15 +102,34 @@ export default function DraftsScreen() {
         )}
       />
       <View style={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.lg }}>
-        <PrimaryButton title="Nouvelle demande" onPress={() => router.push('/request/new')} variant="success" />
+        <PrimaryButton
+          title="Nouvelle demande"
+          onPress={() => router.push('/request/new')}
+          variant="success"
+        />
       </View>
     </SafeAreaView>
   );
 }
 
-function Header({ onPressBack, onPressClear, showClear }: { onPressBack: () => void; onPressClear: () => void; showClear: boolean }) {
+function Header({
+  onPressBack,
+  onPressClear,
+  showClear,
+}: {
+  onPressBack: () => void;
+  onPressClear: () => void;
+  showClear: boolean;
+}) {
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.md }}>
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: spacing.md,
+      }}
+    >
       <Pressable
         accessibilityRole="button"
         onPress={onPressBack}
@@ -115,7 +146,9 @@ function Header({ onPressBack, onPressClear, showClear }: { onPressBack: () => v
       >
         <Ionicons name="chevron-back" size={22} color={colors.brand.text} />
       </Pressable>
-      <Text style={{ fontSize: 22, fontWeight: '700', color: colors.brand.text }}>Mes brouillons</Text>
+      <Text style={{ fontSize: 22, fontWeight: '700', color: colors.brand.text }}>
+        Mes brouillons
+      </Text>
       {showClear ? (
         <Pressable accessibilityRole="button" onPress={onPressClear}>
           <Text style={{ color: colors.brand.muted }}>Tout effacer</Text>

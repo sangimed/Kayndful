@@ -1,12 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import {
-  FlatList,
-  RefreshControl,
-  SafeAreaView,
-  Text,
-  View,
-  Pressable,
-} from 'react-native';
+import { FlatList, RefreshControl, SafeAreaView, Text, View, Pressable } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing } from '../../theme';
@@ -53,7 +46,7 @@ export default function InboxScreen() {
   useFocusEffect(
     useCallback(() => {
       load();
-    }, [load])
+    }, [load]),
   );
 
   const onRefresh = useCallback(async () => {
@@ -67,14 +60,16 @@ export default function InboxScreen() {
   const openChat = async (chatId: string) => {
     try {
       await markConversationAsRead(chatId, 'me');
-      setItems((prev) => prev.map((conv) => (conv.chatId === chatId ? { ...conv, unreadCount: 0 } : conv)));
+      setItems((prev) =>
+        prev.map((conv) => (conv.chatId === chatId ? { ...conv, unreadCount: 0 } : conv)),
+      );
       router.push({ pathname: '/chat/[id]', params: { id: chatId } });
     } catch (err) {
       if (isOfflineError(err)) {
         setOffline(true);
         showErrorToast('Indisponible hors ligne.');
       } else {
-        showErrorToast('Impossible d\'ouvrir la discussion.');
+        showErrorToast("Impossible d'ouvrir la discussion.");
       }
     }
   };
@@ -112,8 +107,12 @@ export default function InboxScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.gray }}>
-      <View style={{ paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.md }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+      <View
+        style={{ paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.md }}
+      >
+        <View
+          style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
+        >
           <Pressable
             accessibilityRole="button"
             onPress={() => router.back()}
@@ -130,7 +129,9 @@ export default function InboxScreen() {
           >
             <Ionicons name="chevron-back" size={22} color={colors.brand.text} />
           </Pressable>
-          <Text style={{ fontSize: 22, fontWeight: '700', color: colors.brand.text }}>Discussions</Text>
+          <Text style={{ fontSize: 22, fontWeight: '700', color: colors.brand.text }}>
+            Discussions
+          </Text>
           <Pressable
             accessibilityRole="button"
             onPress={load}
@@ -154,10 +155,20 @@ export default function InboxScreen() {
         <FlatList
           data={items}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.xl, gap: spacing.lg }}
+          contentContainerStyle={{
+            paddingHorizontal: spacing.lg,
+            paddingBottom: spacing.xl,
+            gap: spacing.lg,
+          }}
           renderItem={({ item }) => <ConversationCard item={item} onPress={openChat} />}
           ListEmptyComponent={renderEmpty()}
-          refreshControl={<RefreshControl tintColor={colors.brand.text} refreshing={refreshing} onRefresh={onRefresh} />}
+          refreshControl={
+            <RefreshControl
+              tintColor={colors.brand.text}
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          }
         />
       )}
     </SafeAreaView>

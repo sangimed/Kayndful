@@ -1,7 +1,7 @@
-import React from "react";
-import { Pressable, Text, StyleSheet, ViewStyle } from "react-native";
-import { colors, radius, spacing } from "../theme";
-import { addAlphaToHex, usePressFeedback } from "../hooks/usePressFeedback";
+import React from 'react';
+import { Pressable, Text, StyleSheet, ViewStyle } from 'react-native';
+import { colors, radius, spacing } from '../theme';
+import { addAlphaToHex, usePressFeedback } from '../hooks/usePressFeedback';
 
 type Props = {
   label: string;
@@ -40,18 +40,18 @@ const styles = StyleSheet.create({
   },
   unselected: {
     backgroundColor: colors.white,
-    borderColor: "#E5E7EB",
+    borderColor: '#E5E7EB',
   },
   selected: {
     backgroundColor: colors.brand.primaryGradient[0],
-    borderColor: "#60A5FA",
+    borderColor: '#60A5FA',
   },
   label: {
     color: colors.brand.text,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   labelSelected: {
     color: colors.brand.text,
-    fontWeight: "700",
+    fontWeight: '700',
   },
 });

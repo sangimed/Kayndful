@@ -1,10 +1,6 @@
 import { create } from 'zustand';
 import type { UpdateProfileInput, User } from '../services/mockApi';
-import {
-  getCurrentUserSnapshot,
-  getUserById,
-  updateUserProfile,
-} from '../services/mockApi';
+import { getCurrentUserSnapshot, getUserById, updateUserProfile } from '../services/mockApi';
 
 export type AuthState = {
   isAuthenticated: boolean;
