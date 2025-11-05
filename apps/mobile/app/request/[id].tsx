@@ -31,7 +31,7 @@ function formatRelative(dateIso?: string) {
   if (!dateIso) return '';
   const diff = Date.now() - new Date(dateIso).getTime();
   const minutes = Math.floor(diff / (1000 * 60));
-  if (minutes < 1) return 'A l\'instant';
+  if (minutes < 1) return "A l'instant";
   if (minutes < 60) return `Il y a ${minutes} min`;
   const hours = Math.floor(minutes / 60);
   if (hours < 24) return `Il y a ${hours} h`;
@@ -50,7 +50,9 @@ export default function RequestDetailScreen() {
   const [thread, setThread] = useState<Message[]>([]);
   const [threadLoading, setThreadLoading] = useState(true);
   const toggleBookmark = useRequestStore((state) => state.toggleBookmark);
-  const isBookmarked = useRequestStore((state) => (requestId ? state.bookmarks.includes(requestId) : false));
+  const isBookmarked = useRequestStore((state) =>
+    requestId ? state.bookmarks.includes(requestId) : false,
+  );
 
   useEffect(() => {
     let mounted = true;
@@ -68,7 +70,12 @@ export default function RequestDetailScreen() {
           setError(data ? null : 'Demande introuvable.');
         }
       } catch (err) {
-        if (mounted) setError(isOfflineError(err) ? 'Demande indisponible hors ligne.' : 'Impossible de charger la demande.');
+        if (mounted)
+          setError(
+            isOfflineError(err)
+              ? 'Demande indisponible hors ligne.'
+              : 'Impossible de charger la demande.',
+          );
       } finally {
         if (mounted) setLoading(false);
       }
@@ -145,7 +152,14 @@ export default function RequestDetailScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.gray }}>
+      <SafeAreaView
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: colors.gray,
+        }}
+      >
         <ActivityIndicator color={colors.brand.text} />
       </SafeAreaView>
     );
@@ -153,17 +167,36 @@ export default function RequestDetailScreen() {
 
   if (error || !request) {
     return (
-      <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: spacing.lg, backgroundColor: colors.gray }}>
-        <Text style={{ color: colors.brand.muted, textAlign: 'center' }}>{error ?? 'Demande introuvable.'}</Text>
-        <PrimaryButton title="Retour" variant="ghost" onPress={() => router.back()} style={{ marginTop: spacing.md }} />
+      <SafeAreaView
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: spacing.lg,
+          backgroundColor: colors.gray,
+        }}
+      >
+        <Text style={{ color: colors.brand.muted, textAlign: 'center' }}>
+          {error ?? 'Demande introuvable.'}
+        </Text>
+        <PrimaryButton
+          title="Retour"
+          variant="ghost"
+          onPress={() => router.back()}
+          style={{ marginTop: spacing.md }}
+        />
       </SafeAreaView>
     );
   }
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.gray }}>
-      <ScrollView contentContainerStyle={{ padding: spacing.lg, gap: spacing.lg, paddingBottom: spacing.xl }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+      <ScrollView
+        contentContainerStyle={{ padding: spacing.lg, gap: spacing.lg, paddingBottom: spacing.xl }}
+      >
+        <View
+          style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
+        >
           <Pressable
             onPress={() => router.back()}
             accessibilityRole="button"
@@ -235,13 +268,18 @@ export default function RequestDetailScreen() {
           }}
         >
           <View style={{ gap: spacing.xs }}>
-            <Text style={{ fontSize: 18, fontWeight: '700', color: colors.brand.text }}>{request.title}</Text>
+            <Text style={{ fontSize: 18, fontWeight: '700', color: colors.brand.text }}>
+              {request.title}
+            </Text>
             <Text style={{ color: colors.brand.muted }}>{formatRelative(request.createdAt)}</Text>
           </View>
 
           <View style={{ gap: spacing.sm }}>
             {infoRows.map((row) => (
-              <View key={row.icon} style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
+              <View
+                key={row.icon}
+                style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}
+              >
                 <Ionicons name={row.icon} size={18} color={colors.brand.muted} />
                 <Text style={{ color: colors.brand.muted }}>{row.label}</Text>
               </View>
@@ -251,7 +289,9 @@ export default function RequestDetailScreen() {
           {request.description ? (
             <View style={{ gap: spacing.xs }}>
               <Text style={{ fontWeight: '600', color: colors.brand.text }}>Details</Text>
-              <Text style={{ color: colors.brand.muted, lineHeight: 20 }}>{request.description}</Text>
+              <Text style={{ color: colors.brand.muted, lineHeight: 20 }}>
+                {request.description}
+              </Text>
             </View>
           ) : null}
 
@@ -280,13 +320,20 @@ export default function RequestDetailScreen() {
               <Ionicons name="person-outline" size={22} color={colors.brand.text} />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={{ fontWeight: '600', color: colors.brand.text }}>{request.author.name}</Text>
+              <Text style={{ fontWeight: '600', color: colors.brand.text }}>
+                {request.author.name}
+              </Text>
               <Text style={{ color: colors.brand.muted }}>Localise a {request.area}</Text>
             </View>
             <Pressable
               accessibilityRole="button"
               onPress={handleOfferHelp}
-              style={{ paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderRadius: 999, backgroundColor: '#dcfce7' }}
+              style={{
+                paddingHorizontal: spacing.md,
+                paddingVertical: spacing.xs,
+                borderRadius: 999,
+                backgroundColor: '#dcfce7',
+              }}
             >
               <Text style={{ color: colors.semantic.success, fontWeight: '600' }}>Contacter</Text>
             </Pressable>
@@ -296,7 +343,16 @@ export default function RequestDetailScreen() {
         <View style={{ gap: spacing.sm }}>
           <Text style={{ fontWeight: '700', color: colors.brand.text }}>Echanges</Text>
           {threadLoading && !thread.length ? (
-            <View style={{ padding: spacing.md, alignItems: 'center', backgroundColor: colors.brand.surface, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.brand.border }}>
+            <View
+              style={{
+                padding: spacing.md,
+                alignItems: 'center',
+                backgroundColor: colors.brand.surface,
+                borderRadius: radius.lg,
+                borderWidth: 1,
+                borderColor: colors.brand.border,
+              }}
+            >
               <ActivityIndicator color={colors.brand.text} />
             </View>
           ) : !thread.length ? (
@@ -321,9 +377,13 @@ export default function RequestDetailScreen() {
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
                   <View style={{ marginBottom: spacing.sm }}>
-                    <Text style={{ fontWeight: '600', color: colors.brand.text }}>{item.fromId === 'me' ? 'Moi' : 'Voisin'}</Text>
+                    <Text style={{ fontWeight: '600', color: colors.brand.text }}>
+                      {item.fromId === 'me' ? 'Moi' : 'Voisin'}
+                    </Text>
                     <Text style={{ color: colors.brand.muted }}>{item.body}</Text>
-                    <Text style={{ color: colors.brand.muted, fontSize: 12 }}>{formatRelative(item.createdAt)}</Text>
+                    <Text style={{ color: colors.brand.muted, fontSize: 12 }}>
+                      {formatRelative(item.createdAt)}
+                    </Text>
                   </View>
                 )}
                 scrollEnabled={false}
@@ -343,7 +403,11 @@ export default function RequestDetailScreen() {
         </View>
       </ScrollView>
 
-      <ReportModal visible={reportVisible} onClose={() => setReportVisible(false)} onConfirm={handleReport} />
+      <ReportModal
+        visible={reportVisible}
+        onClose={() => setReportVisible(false)}
+        onConfirm={handleReport}
+      />
     </SafeAreaView>
   );
 }

@@ -36,8 +36,13 @@ export default function SearchScreen() {
   const [refreshing, setRefreshing] = useState(false);
 
   const filters = useMemo(
-    () => ({ query, neighborhoodId: selectedNeighborhoodId, radiusMeters: selectedRadius, category: selectedCategory }),
-    [query, selectedNeighborhoodId, selectedRadius, selectedCategory]
+    () => ({
+      query,
+      neighborhoodId: selectedNeighborhoodId,
+      radiusMeters: selectedRadius,
+      category: selectedCategory,
+    }),
+    [query, selectedNeighborhoodId, selectedRadius, selectedCategory],
   );
 
   const fetchData = React.useCallback(async () => {
@@ -94,17 +99,18 @@ export default function SearchScreen() {
       );
     }
     return (
-      <EmptyState
-        title="Aucun resultat"
-        subtitle="Essaie de modifier ton rayon ou le mot-cle."
-      />
+      <EmptyState title="Aucun resultat" subtitle="Essaie de modifier ton rayon ou le mot-cle." />
     );
   };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.gray }}>
-      <View style={{ paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.md }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+      <View
+        style={{ paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.md }}
+      >
+        <View
+          style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
+        >
           <Pressable
             accessibilityRole="button"
             onPress={() => router.back()}
@@ -121,7 +127,9 @@ export default function SearchScreen() {
           >
             <Ionicons name="chevron-back" size={22} color={colors.brand.text} />
           </Pressable>
-          <Text style={{ fontSize: 22, fontWeight: '700', color: colors.brand.text }}>Recherche</Text>
+          <Text style={{ fontSize: 22, fontWeight: '700', color: colors.brand.text }}>
+            Recherche
+          </Text>
           <View style={{ width: 44 }} />
         </View>
       </View>
@@ -138,7 +146,12 @@ export default function SearchScreen() {
             borderColor: colors.brand.border,
           }}
         >
-          <Ionicons name="search" size={18} color={colors.brand.muted} style={{ marginRight: spacing.sm }} />
+          <Ionicons
+            name="search"
+            size={18}
+            color={colors.brand.muted}
+            style={{ marginRight: spacing.sm }}
+          />
           <TextInput
             value={query}
             onChangeText={setQuery}
@@ -159,7 +172,9 @@ export default function SearchScreen() {
                   paddingHorizontal: spacing.md,
                   paddingVertical: spacing.sm,
                   borderRadius: 16,
-                  backgroundColor: selected ? colors.brand.surfaceStrong : colors.brand.surfaceMuted,
+                  backgroundColor: selected
+                    ? colors.brand.surfaceStrong
+                    : colors.brand.surfaceMuted,
                   borderWidth: selected ? 1 : 0,
                   borderColor: selected ? colors.brand.text : 'transparent',
                 }}
@@ -180,7 +195,15 @@ export default function SearchScreen() {
           }}
         />
 
-        <View style={{ flexDirection: 'row', backgroundColor: colors.brand.surface, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.brand.border }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            backgroundColor: colors.brand.surface,
+            borderRadius: radius.lg,
+            borderWidth: 1,
+            borderColor: colors.brand.border,
+          }}
+        >
           {(['list', 'map'] as ViewMode[]).map((mode) => {
             const selected = viewMode === mode;
             return (
@@ -195,7 +218,12 @@ export default function SearchScreen() {
                   borderRadius: radius.lg,
                 }}
               >
-                <Text style={{ color: selected ? colors.brand.text : colors.brand.muted, fontWeight: selected ? '700' : '500' }}>
+                <Text
+                  style={{
+                    color: selected ? colors.brand.text : colors.brand.muted,
+                    fontWeight: selected ? '700' : '500',
+                  }}
+                >
                   {mode === 'list' ? 'Liste' : 'Carte'}
                 </Text>
               </Pressable>
@@ -225,7 +253,13 @@ export default function SearchScreen() {
                 <RequestCard item={item} onPress={(id) => router.push(`/request/${id}`)} />
               </View>
             )}
-            refreshControl={<RefreshControl tintColor={colors.brand.text} refreshing={refreshing} onRefresh={onRefresh} />}
+            refreshControl={
+              <RefreshControl
+                tintColor={colors.brand.text}
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+              />
+            }
           />
         ) : (
           renderEmpty()

@@ -16,7 +16,8 @@ export function ZoneSelector({
   selectedRadius,
   onChange,
 }: ZoneSelectorProps) {
-  const currentNeighborhood = neighborhoods.find((item) => item.id === selectedNeighborhoodId) ?? neighborhoods[0];
+  const currentNeighborhood =
+    neighborhoods.find((item) => item.id === selectedNeighborhoodId) ?? neighborhoods[0];
   const currentRadius = selectedRadius ?? currentNeighborhood.options[0].radiusMeters;
 
   return (
@@ -27,7 +28,9 @@ export function ZoneSelector({
           return (
             <Pressable
               key={hood.id}
-              onPress={() => onChange({ neighborhoodId: hood.id, radiusMeters: hood.options[0].radiusMeters })}
+              onPress={() =>
+                onChange({ neighborhoodId: hood.id, radiusMeters: hood.options[0].radiusMeters })
+              }
               style={{
                 paddingHorizontal: spacing.md,
                 paddingVertical: spacing.sm,
@@ -50,7 +53,12 @@ export function ZoneSelector({
           return (
             <Pressable
               key={option.id}
-              onPress={() => onChange({ neighborhoodId: currentNeighborhood.id, radiusMeters: option.radiusMeters })}
+              onPress={() =>
+                onChange({
+                  neighborhoodId: currentNeighborhood.id,
+                  radiusMeters: option.radiusMeters,
+                })
+              }
               style={{
                 paddingHorizontal: spacing.md,
                 paddingVertical: spacing.sm,
@@ -60,7 +68,9 @@ export function ZoneSelector({
                 borderColor: selected ? colors.semantic.success : 'transparent',
               }}
             >
-              <Text style={{ color: selected ? colors.semantic.success : colors.brand.muted }}>{option.label}</Text>
+              <Text style={{ color: selected ? colors.semantic.success : colors.brand.muted }}>
+                {option.label}
+              </Text>
             </Pressable>
           );
         })}
@@ -76,7 +86,9 @@ export function ZoneSelector({
           gap: spacing.sm,
         }}
       >
-        <Text style={{ fontWeight: '600', color: colors.brand.text }}>{currentNeighborhood.name}</Text>
+        <Text style={{ fontWeight: '600', color: colors.brand.text }}>
+          {currentNeighborhood.name}
+        </Text>
         <Text style={{ color: colors.brand.muted }}>{currentNeighborhood.description}</Text>
         <View
           style={{

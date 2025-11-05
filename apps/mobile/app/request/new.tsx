@@ -20,7 +20,8 @@ import { RequestDraft, useRequestStore } from '../../store/requests';
 import ZoneSelector from '../../components/ZoneSelector';
 import { showErrorToast, showSuccessToast } from '../../utils/toast';
 
-const createDraftId = () => `draft-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
+const createDraftId = () =>
+  `draft-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
 
 export default function CreateRequestScreen() {
   const router = useRouter();
@@ -32,7 +33,8 @@ export default function CreateRequestScreen() {
     deleteDraft: state.deleteDraft,
   }));
 
-  const initialDraftId = params.draftId && drafts[params.draftId] ? params.draftId : createDraftId();
+  const initialDraftId =
+    params.draftId && drafts[params.draftId] ? params.draftId : createDraftId();
   const [draftId] = useState(initialDraftId);
   const existingDraft: RequestDraft | undefined = drafts[draftId];
 
@@ -41,8 +43,12 @@ export default function CreateRequestScreen() {
   const [eta, setEta] = useState(existingDraft?.eta ? String(existingDraft.eta) : '');
   const [area, setArea] = useState(existingDraft?.area ?? '');
   const [description, setDescription] = useState(existingDraft?.description ?? '');
-  const [selectedNeighborhoodId, setSelectedNeighborhoodId] = useState<string | undefined>(existingDraft?.neighborhoodId);
-  const [selectedRadius, setSelectedRadius] = useState<number | undefined>(existingDraft?.radiusMeters);
+  const [selectedNeighborhoodId, setSelectedNeighborhoodId] = useState<string | undefined>(
+    existingDraft?.neighborhoodId,
+  );
+  const [selectedRadius, setSelectedRadius] = useState<number | undefined>(
+    existingDraft?.radiusMeters,
+  );
   const [submitting, setSubmitting] = useState(false);
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
 
@@ -91,7 +97,18 @@ export default function CreateRequestScreen() {
       saveDraft(payload);
     }, 500);
     return () => clearTimeout(timeout);
-  }, [draftId, title, category, etaValue, area, description, selectedNeighborhoodId, selectedRadius, hasContent, saveDraft]);
+  }, [
+    draftId,
+    title,
+    category,
+    etaValue,
+    area,
+    description,
+    selectedNeighborhoodId,
+    selectedRadius,
+    hasContent,
+    saveDraft,
+  ]);
 
   const isValid = useMemo(() => {
     return (
@@ -103,7 +120,13 @@ export default function CreateRequestScreen() {
     );
   }, [title, category, etaValue, area]);
 
-  const handleZoneChange = ({ neighborhoodId, radiusMeters }: { neighborhoodId: string; radiusMeters: number }) => {
+  const handleZoneChange = ({
+    neighborhoodId,
+    radiusMeters,
+  }: {
+    neighborhoodId: string;
+    radiusMeters: number;
+  }) => {
     setSelectedNeighborhoodId(neighborhoodId);
     setSelectedRadius(radiusMeters);
     const hood = NEIGHBORHOODS.find((item) => item.id === neighborhoodId);
@@ -165,10 +188,16 @@ export default function CreateRequestScreen() {
         behavior={Platform.select({ ios: 'padding', android: undefined })}
       >
         <ScrollView
-          contentContainerStyle={{ padding: spacing.lg, gap: spacing.lg, paddingBottom: spacing.xl }}
+          contentContainerStyle={{
+            padding: spacing.lg,
+            gap: spacing.lg,
+            paddingBottom: spacing.xl,
+          }}
           keyboardShouldPersistTaps="handled"
         >
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <View
+            style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
+          >
             <Pressable
               onPress={() => router.back()}
               accessibilityRole="button"
@@ -185,7 +214,9 @@ export default function CreateRequestScreen() {
             >
               <Ionicons name="chevron-back" size={22} color={colors.brand.text} />
             </Pressable>
-            <Text style={{ fontSize: 22, fontWeight: '700', color: colors.brand.text }}>Nouvelle demande</Text>
+            <Text style={{ fontSize: 22, fontWeight: '700', color: colors.brand.text }}>
+              Nouvelle demande
+            </Text>
             <View style={{ width: 44 }} />
           </View>
 
@@ -233,7 +264,9 @@ export default function CreateRequestScreen() {
                       paddingVertical: 10,
                       paddingHorizontal: 16,
                       borderRadius: 16,
-                      backgroundColor: selected ? colors.brand.surfaceStrong : colors.brand.surfaceMuted,
+                      backgroundColor: selected
+                        ? colors.brand.surfaceStrong
+                        : colors.brand.surfaceMuted,
                       borderWidth: selected ? 1 : 0,
                       borderColor: selected ? colors.brand.text : 'transparent',
                     }}
@@ -334,7 +367,7 @@ export default function CreateRequestScreen() {
 
           <PrimaryButton
             title={submitting ? 'Publication...' : 'Publier la demande'}
-            variant='success'
+            variant="success"
             onPress={onSubmit}
             disabled={submitting}
           />

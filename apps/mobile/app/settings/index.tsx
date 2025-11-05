@@ -11,8 +11,12 @@ export default function SettingsScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.gray }}>
-      <ScrollView contentContainerStyle={{ padding: spacing.lg, gap: spacing.lg, paddingBottom: spacing.xl }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+      <ScrollView
+        contentContainerStyle={{ padding: spacing.lg, gap: spacing.lg, paddingBottom: spacing.xl }}
+      >
+        <View
+          style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
+        >
           <Pressable
             accessibilityRole="button"
             onPress={() => router.back()}
@@ -29,7 +33,9 @@ export default function SettingsScreen() {
           >
             <Ionicons name="chevron-back" size={22} color={colors.brand.text} />
           </Pressable>
-          <Text style={{ fontSize: 22, fontWeight: '700', color: colors.brand.text }}>Parametres</Text>
+          <Text style={{ fontSize: 22, fontWeight: '700', color: colors.brand.text }}>
+            Parametres
+          </Text>
           <View style={{ width: 44 }} />
         </View>
 
@@ -46,8 +52,12 @@ export default function SettingsScreen() {
             elevation: 2,
           }}
         >
-          <Text style={{ fontSize: 16, fontWeight: '700', color: colors.brand.text }}>Notifications</Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Text style={{ fontSize: 16, fontWeight: '700', color: colors.brand.text }}>
+            Notifications
+          </Text>
+          <View
+            style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
+          >
             <View style={{ flex: 1, paddingRight: spacing.md }}>
               <Text style={{ fontWeight: '600', color: colors.brand.text }}>Alertes push</Text>
               <Text style={{ color: colors.brand.muted }}>
@@ -72,8 +82,12 @@ export default function SettingsScreen() {
           }}
         >
           <Text style={{ fontSize: 16, fontWeight: '700', color: colors.brand.text }}>Theme</Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Text style={{ color: colors.brand.text, fontWeight: '600' }}>Mode sombre (bientot)</Text>
+          <View
+            style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
+          >
+            <Text style={{ color: colors.brand.text, fontWeight: '600' }}>
+              Mode sombre (bientot)
+            </Text>
             <Switch value={darkTheme} onValueChange={setDarkTheme} />
           </View>
         </View>
@@ -91,12 +105,17 @@ export default function SettingsScreen() {
             elevation: 2,
           }}
         >
-          <Text style={{ fontSize: 16, fontWeight: '700', color: colors.brand.text }}>Confidentialite</Text>
-          <Text style={{ color: colors.brand.muted, lineHeight: 20 }}>
-            Kayndful partage uniquement une localisation approximative. Nous affichons un quartier ou un rayon
-            indique par l\'utilisateur, jamais une adresse precise.
+          <Text style={{ fontSize: 16, fontWeight: '700', color: colors.brand.text }}>
+            Confidentialite
           </Text>
-          <Pressable onPress={() => Linking.openURL('https://kayndful.example/privacy')} accessibilityRole="link">
+          <Text style={{ color: colors.brand.muted, lineHeight: 20 }}>
+            Kayndful partage uniquement une localisation approximative. Nous affichons un quartier
+            ou un rayon indique par l\'utilisateur, jamais une adresse precise.
+          </Text>
+          <Pressable
+            onPress={() => Linking.openURL('https://kayndful.example/privacy')}
+            accessibilityRole="link"
+          >
             <Text style={{ color: colors.brand.text, fontWeight: '600' }}>En savoir plus</Text>
           </Pressable>
         </View>

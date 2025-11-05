@@ -87,8 +87,12 @@ export default function SavedRequestsScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.gray }}>
-      <View style={{ paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.md }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+      <View
+        style={{ paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.md }}
+      >
+        <View
+          style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
+        >
           <Pressable
             accessibilityRole="button"
             onPress={() => router.back()}
@@ -105,7 +109,9 @@ export default function SavedRequestsScreen() {
           >
             <Ionicons name="chevron-back" size={22} color={colors.brand.text} />
           </Pressable>
-          <Text style={{ fontSize: 22, fontWeight: '700', color: colors.brand.text }}>Sauvegardees</Text>
+          <Text style={{ fontSize: 22, fontWeight: '700', color: colors.brand.text }}>
+            Sauvegardees
+          </Text>
           <View style={{ width: 44 }} />
         </View>
         <Text style={{ color: colors.brand.muted, marginTop: spacing.sm }}>
@@ -121,12 +127,22 @@ export default function SavedRequestsScreen() {
         <FlatList
           data={items}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={{ padding: spacing.lg, gap: spacing.lg, paddingBottom: spacing.xl }}
+          contentContainerStyle={{
+            padding: spacing.lg,
+            gap: spacing.lg,
+            paddingBottom: spacing.xl,
+          }}
           renderItem={({ item }) => (
             <RequestCard item={item} onPress={(id) => router.push(`/request/${id}`)} />
           )}
           ListEmptyComponent={renderEmpty()}
-          refreshControl={<RefreshControl tintColor={colors.brand.text} refreshing={refreshing} onRefresh={onRefresh} />}
+          refreshControl={
+            <RefreshControl
+              tintColor={colors.brand.text}
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          }
         />
       )}
     </SafeAreaView>

@@ -75,6 +75,6 @@ export const useRequestStore = create<RequestStore>()(
         bookmarks: state.bookmarks,
         drafts: state.drafts,
       }),
-    }
-  )
+    },
+  ),
 );

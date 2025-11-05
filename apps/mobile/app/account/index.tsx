@@ -22,7 +22,9 @@ export default function AccountScreen() {
       <ScrollView
         contentContainerStyle={{ padding: spacing.lg, gap: spacing.lg, paddingBottom: spacing.xl }}
       >
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <View
+          style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
+        >
           <Pressable
             accessibilityRole="button"
             onPress={() => router.back()}
@@ -32,14 +34,16 @@ export default function AccountScreen() {
               borderRadius: 12,
               alignItems: 'center',
               justifyContent: 'center',
-                backgroundColor: colors.brand.surface,
-                borderWidth: 1,
-                borderColor: colors.brand.border,
+              backgroundColor: colors.brand.surface,
+              borderWidth: 1,
+              borderColor: colors.brand.border,
             }}
           >
             <Ionicons name="chevron-back" size={22} color={colors.brand.text} />
           </Pressable>
-          <Text style={{ fontSize: 22, fontWeight: '700', color: colors.brand.text }}>Mon compte</Text>
+          <Text style={{ fontSize: 22, fontWeight: '700', color: colors.brand.text }}>
+            Mon compte
+          </Text>
           <Pressable
             accessibilityRole="button"
             onPress={() => router.push('/settings')}
@@ -58,12 +62,12 @@ export default function AccountScreen() {
           </Pressable>
         </View>
 
-            <View
-              style={{
-                backgroundColor: colors.brand.surface,
-                borderRadius: radius.lg,
-                padding: spacing.lg,
-                gap: spacing.md,
+        <View
+          style={{
+            backgroundColor: colors.brand.surface,
+            borderRadius: radius.lg,
+            padding: spacing.lg,
+            gap: spacing.md,
             shadowColor: colors.shadow.brand.color,
             shadowOpacity: 0.08,
             shadowRadius: 12,
@@ -85,7 +89,9 @@ export default function AccountScreen() {
               <Ionicons name="person-circle-outline" size={48} color={colors.brand.text} />
             </View>
             <View style={{ flex: 1, justifyContent: 'center' }}>
-              <Text style={{ fontSize: 20, fontWeight: '700', color: colors.brand.text }}>{user.name}</Text>
+              <Text style={{ fontSize: 20, fontWeight: '700', color: colors.brand.text }}>
+                {user.name}
+              </Text>
               <Text style={{ color: colors.brand.muted, marginTop: 4 }}>{user.area}</Text>
             </View>
           </View>

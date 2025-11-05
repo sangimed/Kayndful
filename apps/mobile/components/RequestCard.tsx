@@ -358,15 +358,36 @@ function ActionIconButton({
   };
 
   return (
-    <Pressable accessibilityRole="button" accessibilityLabel={label} {...pressableProps} onPress={handlePress} style={{ width: 44 }}>
-      <Animated.View style={[styles.actionButton, animatedStyle, active && { backgroundColor: activeBackground, borderColor: addAlphaToHex(activeColor, 0.6) }]}>
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      {...pressableProps}
+      onPress={handlePress}
+      style={{ width: 44 }}
+    >
+      <Animated.View
+        style={[
+          styles.actionButton,
+          animatedStyle,
+          active && {
+            backgroundColor: activeBackground,
+            borderColor: addAlphaToHex(activeColor, 0.6),
+          },
+        ]}
+      >
         <Ionicons name={icon} size={18} color={active ? activeColor : defaultColor} />
       </Animated.View>
     </Pressable>
   );
 }
 
-function SupportersStack({ supporters, borderColor = colors.brand.surface }: { supporters: RequestSupporter[]; borderColor?: string }) {
+function SupportersStack({
+  supporters,
+  borderColor = colors.brand.surface,
+}: {
+  supporters: RequestSupporter[];
+  borderColor?: string;
+}) {
   if (!supporters.length) return null;
   const visible = supporters.slice(0, 3);
   return (
@@ -403,25 +424,26 @@ export function RequestCard({ item, onPress, showBookmarkButton = true }: Props)
   }, [mount]);
   const mountStyle = {
     opacity: mount,
-    transform: [
-      { translateY: mount.interpolate({ inputRange: [0, 1], outputRange: [8, 0] }) },
-    ],
+    transform: [{ translateY: mount.interpolate({ inputRange: [0, 1], outputRange: [8, 0] }) }],
   } as const;
 
-  const { animatedStyle: cardAnimatedStyle, pressableProps: cardPressableProps } = usePressFeedback({
-    scaleTo: 0.97,
-    opacityTo: 0.95,
-    durationMs: 110,
-    androidRipple: { color: addAlphaToHex(colors.brand.text, 0.05), foreground: true },
-    haptics: 'light',
-  });
-  const { animatedStyle: proposeAnimatedStyle, pressableProps: proposePressableProps } = usePressFeedback({
-    scaleTo: 0.92,
-    opacityTo: 0.9,
-    durationMs: 80,
-    androidRipple: { color: addAlphaToHex(colors.brand.text, 0.12), foreground: true },
-    haptics: 'medium',
-  });
+  const { animatedStyle: cardAnimatedStyle, pressableProps: cardPressableProps } = usePressFeedback(
+    {
+      scaleTo: 0.97,
+      opacityTo: 0.95,
+      durationMs: 110,
+      androidRipple: { color: addAlphaToHex(colors.brand.text, 0.05), foreground: true },
+      haptics: 'light',
+    },
+  );
+  const { animatedStyle: proposeAnimatedStyle, pressableProps: proposePressableProps } =
+    usePressFeedback({
+      scaleTo: 0.92,
+      opacityTo: 0.9,
+      durationMs: 80,
+      androidRipple: { color: addAlphaToHex(colors.brand.text, 0.12), foreground: true },
+      haptics: 'medium',
+    });
 
   const [expanded, setExpanded] = useState(false);
   const [liked, setLiked] = useState(false);
@@ -452,95 +474,138 @@ export function RequestCard({ item, onPress, showBookmarkButton = true }: Props)
 
   return (
     <Animated.View style={[styles.container, mountStyle]}>
-      <Pressable accessibilityRole="button" onPress={handleCardPress} style={styles.pressable} {...cardPressableProps}>
+      <Pressable
+        accessibilityRole="button"
+        onPress={handleCardPress}
+        style={styles.pressable}
+        {...cardPressableProps}
+      >
         <Animated.View style={[styles.cardWrapper, cardAnimatedStyle]}>
-          <LinearGradient colors={[cardBg, gradientEnd]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.card}>
-          <View style={styles.header}>
-            <Image source={{ uri: item.author.avatar ?? FALLBACK_AVATAR }} style={styles.avatar} resizeMode="cover" />
-            <View style={styles.headerInfo}>
-              <Text style={[styles.headerName, { color: textPrimary }]}>{item.author.name}</Text>
-              <View style={styles.headerMeta}>
+          <LinearGradient
+            colors={[cardBg, gradientEnd]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.card}
+          >
+            <View style={styles.header}>
+              <Image
+                source={{ uri: item.author.avatar ?? FALLBACK_AVATAR }}
+                style={styles.avatar}
+                resizeMode="cover"
+              />
+              <View style={styles.headerInfo}>
+                <Text style={[styles.headerName, { color: textPrimary }]}>{item.author.name}</Text>
+                <View style={styles.headerMeta}>
+                  <Ionicons name="time-outline" size={14} color={textMuted} />
+                  <Text style={[styles.headerMetaText, { color: textMuted }]}>{relativeTime}</Text>
+                </View>
+              </View>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={isFollowing ? 'Ne plus suivre' : 'Suivre cette demande'}
+                onPress={handleFollowToggle}
+                style={[styles.followChip, isFollowing && styles.followChipActive]}
+              >
+                <Text style={styles.followChipLabel}>{isFollowing ? 'Suivi' : 'Suivre'}</Text>
+              </Pressable>
+            </View>
+
+            <View style={styles.metaRow}>
+              <View style={[styles.metaChip, { backgroundColor: chipBg }]}>
+                <Ionicons name="navigate-outline" size={14} color={textMuted} />
+                <Text style={[styles.metaChipText, { color: textMuted }]}>{distanceLabel}</Text>
+              </View>
+              <View style={[styles.metaChip, { backgroundColor: chipBg }]}>
+                <Ionicons name="location-outline" size={14} color={textMuted} />
+                <Text style={[styles.metaChipText, { color: textMuted }]}>{areaLabel}</Text>
+              </View>
+              <View style={[styles.metaChip, { backgroundColor: chipBg }]}>
                 <Ionicons name="time-outline" size={14} color={textMuted} />
-                <Text style={[styles.headerMetaText, { color: textMuted }]}>{relativeTime}</Text>
+                <Text style={[styles.metaChipText, { color: textMuted }]}>{timeLabel}</Text>
               </View>
             </View>
-            <Pressable accessibilityRole="button" accessibilityLabel={isFollowing ? 'Ne plus suivre' : 'Suivre cette demande'} onPress={handleFollowToggle} style={[styles.followChip, isFollowing && styles.followChipActive]}>
-              <Text style={styles.followChipLabel}>{isFollowing ? 'Suivi' : 'Suivre'}</Text>
-            </Pressable>
-          </View>
 
-          <View style={styles.metaRow}>
-            <View style={[styles.metaChip, { backgroundColor: chipBg }]}>
-              <Ionicons name="navigate-outline" size={14} color={textMuted} />
-              <Text style={[styles.metaChipText, { color: textMuted }]}>{distanceLabel}</Text>
-            </View>
-            <View style={[styles.metaChip, { backgroundColor: chipBg }]}>
-              <Ionicons name="location-outline" size={14} color={textMuted} />
-              <Text style={[styles.metaChipText, { color: textMuted }]}>{areaLabel}</Text>
-            </View>
-            <View style={[styles.metaChip, { backgroundColor: chipBg }]}>
-              <Ionicons name="time-outline" size={14} color={textMuted} />
-              <Text style={[styles.metaChipText, { color: textMuted }]}>{timeLabel}</Text>
-            </View>
-          </View>
+            <View style={styles.bodyRow}>
+              <View style={styles.bodyContent}>
+                {segments.length ? (
+                  <Text
+                    style={[styles.description, { color: textPrimary }]}
+                    numberOfLines={expanded ? undefined : 3}
+                  >
+                    {segments.map((segment, index) => {
+                      if (segment.type === 'mention') {
+                        return (
+                          <Text
+                            key={`mention-${segment.value}-${index}`}
+                            style={styles.mention}
+                            accessibilityRole="link"
+                          >
+                            {segment.value}
+                          </Text>
+                        );
+                      }
+                      if (segment.type === 'hashtag') {
+                        return (
+                          <Text
+                            key={`hashtag-${segment.value}-${index}`}
+                            style={styles.hashtag}
+                            accessibilityRole="link"
+                          >
+                            {segment.value}
+                          </Text>
+                        );
+                      }
+                      return <Text key={`text-${index}`}>{segment.value}</Text>;
+                    })}
+                  </Text>
+                ) : null}
+                {showSeeMore ? (
+                  <Pressable onPress={() => setExpanded(true)} accessibilityRole="button">
+                    <Text
+                      style={[
+                        styles.seeMore,
+                        { color: isDark ? colors.semantic.success : colors.semantic.success },
+                      ]}
+                    >
+                      Voir plus
+                    </Text>
+                  </Pressable>
+                ) : null}
 
-          <View style={styles.bodyRow}>
-            <View style={styles.bodyContent}>
-              {segments.length ? (
-                <Text style={[styles.description, { color: textPrimary }]} numberOfLines={expanded ? undefined : 3}>
-                  {segments.map((segment, index) => {
-                    if (segment.type === 'mention') {
+                {media.length ? (
+                  <View style={styles.mediaGrid}>
+                    {media.slice(0, 4).map((mediaItem) => {
+                      const { width, height } = getMediaLayoutStyles(media.length);
                       return (
-                        <Text key={`mention-${segment.value}-${index}`} style={styles.mention} accessibilityRole="link">
-                          {segment.value}
-                        </Text>
+                        <View key={mediaItem.id} style={[styles.mediaItem, { width, height }]}>
+                          <Image
+                            source={{ uri: mediaItem.thumbnail }}
+                            style={{ width: '100%', height: '100%' }}
+                            resizeMode="cover"
+                          />
+                          {mediaItem.type === 'video' ? (
+                            <View style={styles.mediaOverlay}>
+                              <Ionicons name="play" size={20} color="#fff" />
+                              <Text style={styles.mediaDuration}>
+                                {formatDuration(mediaItem.durationSeconds)}
+                              </Text>
+                            </View>
+                          ) : null}
+                        </View>
                       );
-                    }
-                    if (segment.type === 'hashtag') {
-                      return (
-                        <Text key={`hashtag-${segment.value}-${index}`} style={styles.hashtag} accessibilityRole="link">
-                          {segment.value}
-                        </Text>
-                      );
-                    }
-                    return <Text key={`text-${index}`}>{segment.value}</Text>;
-                  })}
-                </Text>
-              ) : null}
-              {showSeeMore ? (
-                <Pressable onPress={() => setExpanded(true)} accessibilityRole="button">
-                  <Text style={[styles.seeMore, { color: isDark ? colors.semantic.success : colors.semantic.success }]}>Voir plus</Text>
-                </Pressable>
-              ) : null}
+                    })}
+                  </View>
+                ) : null}
+              </View>
 
-              {media.length ? (
-                <View style={styles.mediaGrid}>
-                  {media.slice(0, 4).map((mediaItem) => {
-                    const { width, height } = getMediaLayoutStyles(media.length);
-                    return (
-                      <View key={mediaItem.id} style={[styles.mediaItem, { width, height }]}>
-                        <Image source={{ uri: mediaItem.thumbnail }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
-                        {mediaItem.type === 'video' ? (
-                          <View style={styles.mediaOverlay}>
-                            <Ionicons name="play" size={20} color="#fff" />
-                            <Text style={styles.mediaDuration}>{formatDuration(mediaItem.durationSeconds)}</Text>
-                          </View>
-                        ) : null}
-                      </View>
-                    );
-                  })}
-                </View>
-              ) : null}
+              {/* rail vertical supprimÃ© */}
             </View>
 
-            {/* rail vertical supprimÃ© */}
-          </View>
-
-          <View style={styles.footer}>
-            <View style={styles.supportersRow}>
-              <SupportersStack supporters={supporters} borderColor={cardBg} />
-              <Text style={styles.supportCountText}>{supportCountLabel}</Text>
-            </View>
+            <View style={styles.footer}>
+              <View style={styles.supportersRow}>
+                <SupportersStack supporters={supporters} borderColor={cardBg} />
+                <Text style={styles.supportCountText}>{supportCountLabel}</Text>
+              </View>
               <View style={styles.footerChips}>
                 <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
                   {tags.slice(0, 3).map((tag) => (
@@ -549,17 +614,31 @@ export function RequestCard({ item, onPress, showBookmarkButton = true }: Props)
                     </View>
                   ))}
                 </View>
-                <LinearGradient colors={colors.semantic.successGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.xpPill}>
-                  <Text style={[styles.xpLabel, { color: addAlphaToHex(textPrimary, 0.85) }]}>{`${item.xp} XP`}</Text>
+                <LinearGradient
+                  colors={colors.semantic.successGradient}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.xpPill}
+                >
+                  <Text
+                    style={[styles.xpLabel, { color: addAlphaToHex(textPrimary, 0.85) }]}
+                  >{`${item.xp} XP`}</Text>
                 </LinearGradient>
-                <Pressable accessibilityRole="button" accessibilityLabel="Proposer mon aide" {...proposePressableProps} onPress={(event) => event.stopPropagation()}>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Proposer mon aide"
+                  {...proposePressableProps}
+                  onPress={(event) => event.stopPropagation()}
+                >
                   <Animated.View style={[styles.actionGhost, proposeAnimatedStyle]}>
                     <Ionicons name="add" size={16} color={addAlphaToHex(textPrimary, 0.9)} />
-                    <Text style={[styles.helpersLabel, { color: addAlphaToHex(textPrimary, 0.9) }]}>Proposer</Text>
+                    <Text style={[styles.helpersLabel, { color: addAlphaToHex(textPrimary, 0.9) }]}>
+                      Proposer
+                    </Text>
                   </Animated.View>
                 </Pressable>
               </View>
-          </View>
+            </View>
           </LinearGradient>
         </Animated.View>
       </Pressable>

@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useMemo, useReducer } from "react";
+import React, { createContext, useContext, useMemo, useReducer } from 'react';
 
-export type NameVisibility = "initial" | "hidden";
+export type NameVisibility = 'initial' | 'hidden';
 
 export type IdentityData = {
   firstName: string;
@@ -27,9 +27,9 @@ export type SkillsData = {
 };
 
 export type AvailabilityData = {
-  times: ("mornings" | "afternoons" | "evenings" | "weekends")[];
+  times: ('mornings' | 'afternoons' | 'evenings' | 'weekends')[];
   radiusKm: 1 | 5 | 10 | 20;
-  mode: "in_person" | "remote" | "both";
+  mode: 'in_person' | 'remote' | 'both';
 };
 
 export type OnboardingState = {
@@ -41,39 +41,39 @@ export type OnboardingState = {
 };
 
 type Action =
-  | { type: "identity/update"; payload: Partial<IdentityData> }
-  | { type: "location/update"; payload: Partial<LocationData> }
-  | { type: "profile/update"; payload: Partial<ProfileData> }
-  | { type: "skills/update"; payload: Partial<SkillsData> }
-  | { type: "availability/update"; payload: Partial<AvailabilityData> }
-  | { type: "reset" };
+  | { type: 'identity/update'; payload: Partial<IdentityData> }
+  | { type: 'location/update'; payload: Partial<LocationData> }
+  | { type: 'profile/update'; payload: Partial<ProfileData> }
+  | { type: 'skills/update'; payload: Partial<SkillsData> }
+  | { type: 'availability/update'; payload: Partial<AvailabilityData> }
+  | { type: 'reset' };
 
 const initialState: OnboardingState = {
   identity: {
-    firstName: "",
-    lastName: "",
-    username: "",
-    visibility: "initial",
+    firstName: '',
+    lastName: '',
+    username: '',
+    visibility: 'initial',
   },
   location: {},
   profile: {},
   skills: { skills: [] },
-  availability: { times: [], radiusKm: 5, mode: "both" },
+  availability: { times: [], radiusKm: 5, mode: 'both' },
 };
 
 function reducer(state: OnboardingState, action: Action): OnboardingState {
   switch (action.type) {
-    case "identity/update":
+    case 'identity/update':
       return { ...state, identity: { ...state.identity, ...action.payload } };
-    case "location/update":
+    case 'location/update':
       return { ...state, location: { ...state.location, ...action.payload } };
-    case "profile/update":
+    case 'profile/update':
       return { ...state, profile: { ...state.profile, ...action.payload } };
-    case "skills/update":
+    case 'skills/update':
       return { ...state, skills: { ...state.skills, ...action.payload } };
-    case "availability/update":
+    case 'availability/update':
       return { ...state, availability: { ...state.availability, ...action.payload } };
-    case "reset":
+    case 'reset':
       return initialState;
     default:
       return state;
@@ -95,15 +95,15 @@ export function OnboardingProvider({ children }: { children: React.ReactNode }) 
 
 export function useOnboarding() {
   const ctx = useContext(OnboardingContext);
-  if (!ctx) throw new Error("useOnboarding must be used within OnboardingProvider");
+  if (!ctx) throw new Error('useOnboarding must be used within OnboardingProvider');
   return ctx;
 }
 
 export function formatDisplayName(identity: IdentityData) {
   const f = identity.firstName?.trim();
   const l = identity.lastName?.trim();
-  if (!f && !l) return "";
-  if (identity.visibility === "hidden") return f || "";
-  const initial = l ? `${l.charAt(0).toUpperCase()}.` : "";
-  return [f, initial].filter(Boolean).join(" ");
+  if (!f && !l) return '';
+  if (identity.visibility === 'hidden') return f || '';
+  const initial = l ? `${l.charAt(0).toUpperCase()}.` : '';
+  return [f, initial].filter(Boolean).join(' ');
 }

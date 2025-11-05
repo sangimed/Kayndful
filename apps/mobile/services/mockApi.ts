@@ -255,7 +255,9 @@ const usersById = () => Object.fromEntries(users.map((user) => [user.id, user] a
 const authorSnapshot = (userId: string) => {
   const map = usersById();
   const user = map[userId];
-  return user ? { id: user.id, name: user.name, avatar: user.avatar } : { id: userId, name: 'Membre' };
+  return user
+    ? { id: user.id, name: user.name, avatar: user.avatar }
+    : { id: userId, name: 'Membre' };
 };
 
 const neighborhoodIdForArea = (area: string) => {
@@ -282,8 +284,10 @@ let requests: Request[] = [
       {
         id: 'r1-media-1',
         type: 'image',
-        thumbnail: 'https://images.unsplash.com/photo-1582719478350-4bafb00c99f3?auto=format&fit=crop&w=600&q=80',
-        source: 'https://images.unsplash.com/photo-1582719478350-4bafb00c99f3?auto=format&fit=crop&w=1200&q=80',
+        thumbnail:
+          'https://images.unsplash.com/photo-1582719478350-4bafb00c99f3?auto=format&fit=crop&w=600&q=80',
+        source:
+          'https://images.unsplash.com/photo-1582719478350-4bafb00c99f3?auto=format&fit=crop&w=1200&q=80',
       },
     ],
     supporters: [authorSnapshot('u2'), authorSnapshot('u3'), authorSnapshot('u5')],
@@ -308,20 +312,26 @@ let requests: Request[] = [
       {
         id: 'r2-media-1',
         type: 'image',
-        thumbnail: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=600&q=80',
-        source: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=1200&q=80',
+        thumbnail:
+          'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=600&q=80',
+        source:
+          'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=1200&q=80',
       },
       {
         id: 'r2-media-2',
         type: 'image',
-        thumbnail: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80',
-        source: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=80',
+        thumbnail:
+          'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80',
+        source:
+          'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=80',
       },
       {
         id: 'r2-media-3',
         type: 'image',
-        thumbnail: 'https://images.unsplash.com/photo-1437750769465-301382cdf094?auto=format&fit=crop&w=600&q=80',
-        source: 'https://images.unsplash.com/photo-1437750769465-301382cdf094?auto=format&fit=crop&w=1200&q=80',
+        thumbnail:
+          'https://images.unsplash.com/photo-1437750769465-301382cdf094?auto=format&fit=crop&w=600&q=80',
+        source:
+          'https://images.unsplash.com/photo-1437750769465-301382cdf094?auto=format&fit=crop&w=1200&q=80',
       },
     ],
     supporters: [authorSnapshot('u1'), authorSnapshot('u4'), authorSnapshot('u6')],
@@ -347,14 +357,18 @@ let requests: Request[] = [
       {
         id: 'r3-media-1',
         type: 'image',
-        thumbnail: 'https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=600&q=80',
-        source: 'https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=1200&q=80',
+        thumbnail:
+          'https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=600&q=80',
+        source:
+          'https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=1200&q=80',
       },
       {
         id: 'r3-media-2',
         type: 'image',
-        thumbnail: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=600&q=80',
-        source: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1200&q=80',
+        thumbnail:
+          'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=600&q=80',
+        source:
+          'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1200&q=80',
       },
     ],
     supporters: [authorSnapshot('u2'), authorSnapshot('u5')],
@@ -379,15 +393,18 @@ let requests: Request[] = [
       {
         id: 'r4-media-1',
         type: 'video',
-        thumbnail: 'https://images.unsplash.com/photo-1507146426996-ef05306b995a?auto=format&fit=crop&w=600&q=80',
+        thumbnail:
+          'https://images.unsplash.com/photo-1507146426996-ef05306b995a?auto=format&fit=crop&w=600&q=80',
         source: 'https://videos.pexels.com/video-files/2874899/2874899-hd_1280_720_30fps.mp4',
         durationSeconds: 34,
       },
       {
         id: 'r4-media-2',
         type: 'image',
-        thumbnail: 'https://images.unsplash.com/photo-1525253086316-d0c936c814f8?auto=format&fit=crop&w=600&q=80',
-        source: 'https://images.unsplash.com/photo-1525253086316-d0c936c814f8?auto=format&fit=crop&w=1200&q=80',
+        thumbnail:
+          'https://images.unsplash.com/photo-1525253086316-d0c936c814f8?auto=format&fit=crop&w=600&q=80',
+        source:
+          'https://images.unsplash.com/photo-1525253086316-d0c936c814f8?auto=format&fit=crop&w=1200&q=80',
       },
     ],
     supporters: [authorSnapshot('u1'), authorSnapshot('u6')],
@@ -412,8 +429,10 @@ let requests: Request[] = [
       {
         id: 'r5-media-1',
         type: 'image',
-        thumbnail: 'https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=600&q=80',
-        source: 'https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=1200&q=80',
+        thumbnail:
+          'https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=600&q=80',
+        source:
+          'https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=1200&q=80',
       },
     ],
     supporters: [authorSnapshot('u3'), authorSnapshot('u4')],
@@ -438,26 +457,34 @@ let requests: Request[] = [
       {
         id: 'r6-media-1',
         type: 'image',
-        thumbnail: 'https://images.unsplash.com/photo-1585776245991-cf89dd7fc73e?auto=format&fit=crop&w=600&q=80',
-        source: 'https://images.unsplash.com/photo-1585776245991-cf89dd7fc73e?auto=format&fit=crop&w=1200&q=80',
+        thumbnail:
+          'https://images.unsplash.com/photo-1585776245991-cf89dd7fc73e?auto=format&fit=crop&w=600&q=80',
+        source:
+          'https://images.unsplash.com/photo-1585776245991-cf89dd7fc73e?auto=format&fit=crop&w=1200&q=80',
       },
       {
         id: 'r6-media-2',
         type: 'image',
-        thumbnail: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=600&q=80',
-        source: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=80',
+        thumbnail:
+          'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=600&q=80',
+        source:
+          'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=80',
       },
       {
         id: 'r6-media-3',
         type: 'image',
-        thumbnail: 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=600&q=80',
-        source: 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=1200&q=80',
+        thumbnail:
+          'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=600&q=80',
+        source:
+          'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=1200&q=80',
       },
       {
         id: 'r6-media-4',
         type: 'image',
-        thumbnail: 'https://images.unsplash.com/photo-1580894894513-541e068a3e2f?auto=format&fit=crop&w=600&q=80',
-        source: 'https://images.unsplash.com/photo-1580894894513-541e068a3e2f?auto=format&fit=crop&w=1200&q=80',
+        thumbnail:
+          'https://images.unsplash.com/photo-1580894894513-541e068a3e2f?auto=format&fit=crop&w=600&q=80',
+        source:
+          'https://images.unsplash.com/photo-1580894894513-541e068a3e2f?auto=format&fit=crop&w=1200&q=80',
       },
     ],
     supporters: [authorSnapshot('u2'), authorSnapshot('u5'), authorSnapshot('u1')],
@@ -590,12 +617,14 @@ export async function getRequests(params: GetRequestsParams): Promise<GetRequest
         (item) =>
           item.title.toLowerCase().includes(q) ||
           item.description?.toLowerCase().includes(q) ||
-          item.category.toLowerCase().includes(q)
+          item.category.toLowerCase().includes(q),
       );
     }
   }
   if (filters?.neighborhoodId) {
-    data = data.filter((item) => matchesNeighborhood(item, filters.neighborhoodId, filters.radiusMeters));
+    data = data.filter((item) =>
+      matchesNeighborhood(item, filters.neighborhoodId, filters.radiusMeters),
+    );
   }
 
   if (filters?.sortBy === 'distance') {
@@ -633,11 +662,31 @@ export type SearchParams = {
 export async function searchRequests(params: SearchParams): Promise<Request[]> {
   await delay(200);
   ensureOnline();
-  const { query, neighborhoodId, radiusMeters, category, maxEta, maxDistanceMeters, minXp, sortBy, channel } = params;
+  const {
+    query,
+    neighborhoodId,
+    radiusMeters,
+    category,
+    maxEta,
+    maxDistanceMeters,
+    minXp,
+    sortBy,
+    channel,
+  } = params;
   const result = await getRequests({
     page: 1,
     pageSize: 100,
-    filters: { query, neighborhoodId, radiusMeters, category, maxEta, maxDistanceMeters, minXp, sortBy, channel },
+    filters: {
+      query,
+      neighborhoodId,
+      radiusMeters,
+      category,
+      maxEta,
+      maxDistanceMeters,
+      minXp,
+      sortBy,
+      channel,
+    },
   });
   return result.items;
 }
@@ -657,12 +706,16 @@ export async function getRequestById(id: string): Promise<Request | undefined> {
   return requests.find((item) => item.id === id);
 }
 
-export async function getRequestConversationSummary(requestId: string): Promise<ConversationSummary | undefined> {
+export async function getRequestConversationSummary(
+  requestId: string,
+): Promise<ConversationSummary | undefined> {
   await delay(150);
   ensureOnline();
   const map = usersById();
   const request = requests.find((item) => item.id === requestId);
-  const conversation = conversations.find((conv) => conv.requestId === requestId && conv.participantIds.includes('me'));
+  const conversation = conversations.find(
+    (conv) => conv.requestId === requestId && conv.participantIds.includes('me'),
+  );
   if (!conversation || !request) return undefined;
   const peerId = conversation.participantIds.find((id) => id !== 'me') ?? 'me';
   const peer = map[peerId] ?? { id: peerId, name: 'Voisin' };
@@ -677,15 +730,14 @@ export async function getRequestConversationSummary(requestId: string): Promise<
     requestTitle: request.title,
     requestCategory: request.category,
     peer: { id: peer.id, name: peer.name, avatar: peer.avatar },
-    lastMessage:
-      lastMessage ?? {
-        id: `placeholder-${conversation.chatId}`,
-        chatId: conversation.chatId,
-        fromId: peer.id,
-        toId: 'me',
-        body: 'Nouvelle conversation',
-        createdAt: new Date().toISOString(),
-      },
+    lastMessage: lastMessage ?? {
+      id: `placeholder-${conversation.chatId}`,
+      chatId: conversation.chatId,
+      fromId: peer.id,
+      toId: 'me',
+      body: 'Nouvelle conversation',
+      createdAt: new Date().toISOString(),
+    },
     unreadCount: conversation.unreadBy['me'] ?? 0,
   };
 }
@@ -705,12 +757,12 @@ export async function createRequest(input: CreateRequestInput): Promise<Request>
   ensureOnline();
   const author = authorSnapshot(input.authorId);
   const neighborhoodId = input.neighborhoodId ?? neighborhoodIdForArea(input.area);
-  const baseNeighborhood = NEIGHBORHOODS.find((hood) => hood.id === neighborhoodId) ?? NEIGHBORHOODS[0];
-  const coordinates =
-    input.coordinates ?? {
-      lat: baseNeighborhood.center.lat + (Math.random() - 0.5) * 0.01,
-      lng: baseNeighborhood.center.lng + (Math.random() - 0.5) * 0.01,
-    };
+  const baseNeighborhood =
+    NEIGHBORHOODS.find((hood) => hood.id === neighborhoodId) ?? NEIGHBORHOODS[0];
+  const coordinates = input.coordinates ?? {
+    lat: baseNeighborhood.center.lat + (Math.random() - 0.5) * 0.01,
+    lng: baseNeighborhood.center.lng + (Math.random() - 0.5) * 0.01,
+  };
   const distanceMeters =
     input.distanceMeters ?? Math.round(distanceInMeters(baseNeighborhood.center, coordinates));
   const defaultXp = 30 + Math.round(Math.random() * 30);
@@ -759,15 +811,14 @@ export async function getConversations(userId: string): Promise<ConversationSumm
         requestTitle: request?.title ?? 'Demande',
         requestCategory: request?.category,
         peer: { id: peer.id, name: peer.name, avatar: peer.avatar },
-        lastMessage:
-          lastMessage ?? {
-            id: `placeholder-${conv.id}`,
-            chatId: conv.chatId,
-            fromId: peer.id,
-            toId: userId,
-            body: 'Nouvelle conversation',
-            createdAt: new Date().toISOString(),
-          },
+        lastMessage: lastMessage ?? {
+          id: `placeholder-${conv.id}`,
+          chatId: conv.chatId,
+          fromId: peer.id,
+          toId: userId,
+          body: 'Nouvelle conversation',
+          createdAt: new Date().toISOString(),
+        },
         unreadCount: conv.unreadBy[userId] ?? 0,
       } satisfies ConversationSummary;
     })
@@ -819,9 +870,7 @@ export async function markConversationAsRead(chatId: string, userId: string) {
   await delay(80);
   ensureOnline();
   conversations = conversations.map((conv) =>
-    conv.chatId === chatId
-      ? { ...conv, unreadBy: { ...conv.unreadBy, [userId]: 0 } }
-      : conv
+    conv.chatId === chatId ? { ...conv, unreadBy: { ...conv.unreadBy, [userId]: 0 } } : conv,
   );
 }
 
@@ -831,10 +880,7 @@ export async function getUserById(id: string): Promise<User | undefined> {
   return users.find((user) => user.id === id);
 }
 
-export async function updateUserProfile(
-  id: string,
-  input: UpdateProfileInput
-): Promise<User> {
+export async function updateUserProfile(id: string, input: UpdateProfileInput): Promise<User> {
   await delay(150);
   ensureOnline();
   const index = users.findIndex((user) => user.id === id);
@@ -849,7 +895,7 @@ export async function updateUserProfile(
   users[index] = updated;
 
   requests = requests.map((req) =>
-    req.author.id === id ? { ...req, author: authorSnapshot(id) } : req
+    req.author.id === id ? { ...req, author: authorSnapshot(id) } : req,
   );
 
   return updated;

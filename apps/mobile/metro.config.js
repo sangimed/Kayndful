@@ -20,7 +20,7 @@ config.resolver.nodeModulesPaths = [
 config.resolver.extraNodeModules = {
   'react-native-safe-area-context': path.resolve(
     workspaceRoot,
-    'node_modules/react-native-safe-area-context'
+    'node_modules/react-native-safe-area-context',
   ),
   // Keep React singletons too (defensive)
   react: path.resolve(workspaceRoot, 'node_modules/react'),

@@ -16,12 +16,25 @@ import { PrimaryButton } from '../../components/Button';
 import { useAuthStore } from '../../store/auth';
 import { showErrorToast, showSuccessToast } from '../../utils/toast';
 
-const SKILLS = ['Bricolage', 'Courses', 'Conseil', 'Services', 'Discussion', 'Mentorat', 'Livraison'];
+const SKILLS = [
+  'Bricolage',
+  'Courses',
+  'Conseil',
+  'Services',
+  'Discussion',
+  'Mentorat',
+  'Livraison',
+];
 
 export default function EditProfileScreen() {
   const router = useRouter();
   const { currentUser, updateProfile } = useAuthStore();
-  const base = currentUser ?? { name: 'Alex Martin', bio: '', area: 'Belleville (~800 m)', skills: [] as string[] };
+  const base = currentUser ?? {
+    name: 'Alex Martin',
+    bio: '',
+    area: 'Belleville (~800 m)',
+    skills: [] as string[],
+  };
 
   const [name, setName] = useState(base.name);
   const [bio, setBio] = useState(base.bio ?? '');
@@ -32,7 +45,9 @@ export default function EditProfileScreen() {
   const isValid = useMemo(() => name.trim().length > 1 && area.trim().length > 3, [name, area]);
 
   const toggleSkill = (skill: string) => {
-    setSkills((prev) => (prev.includes(skill) ? prev.filter((item) => item !== skill) : [...prev, skill]));
+    setSkills((prev) =>
+      prev.includes(skill) ? prev.filter((item) => item !== skill) : [...prev, skill],
+    );
   };
 
   const onSave = async () => {
@@ -61,10 +76,16 @@ export default function EditProfileScreen() {
         behavior={Platform.select({ ios: 'padding', android: undefined })}
       >
         <ScrollView
-          contentContainerStyle={{ padding: spacing.lg, gap: spacing.lg, paddingBottom: spacing.xl }}
+          contentContainerStyle={{
+            padding: spacing.lg,
+            gap: spacing.lg,
+            paddingBottom: spacing.xl,
+          }}
           keyboardShouldPersistTaps="handled"
         >
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <View
+            style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
+          >
             <Pressable
               accessibilityRole="button"
               onPress={() => router.back()}
@@ -81,7 +102,9 @@ export default function EditProfileScreen() {
             >
               <Ionicons name="chevron-back" size={22} color={colors.brand.text} />
             </Pressable>
-            <Text style={{ fontSize: 22, fontWeight: '700', color: colors.brand.text }}>Editer le profil</Text>
+            <Text style={{ fontSize: 22, fontWeight: '700', color: colors.brand.text }}>
+              Editer le profil
+            </Text>
             <View style={{ width: 44 }} />
           </View>
 
@@ -162,12 +185,14 @@ export default function EditProfileScreen() {
                       paddingHorizontal: spacing.sm,
                       paddingVertical: spacing.xs,
                       borderRadius: 999,
-                    backgroundColor: selected ? '#dcfce7' : colors.brand.surfaceStrong,
-                    borderWidth: selected ? 1 : 0,
-                    borderColor: selected ? colors.semantic.success : 'transparent',
+                      backgroundColor: selected ? '#dcfce7' : colors.brand.surfaceStrong,
+                      borderWidth: selected ? 1 : 0,
+                      borderColor: selected ? colors.semantic.success : 'transparent',
                     }}
                   >
-                    <Text style={{ color: selected ? colors.semantic.success : colors.brand.text }}>{skill}</Text>
+                    <Text style={{ color: selected ? colors.semantic.success : colors.brand.text }}>
+                      {skill}
+                    </Text>
                   </Pressable>
                 );
               })}

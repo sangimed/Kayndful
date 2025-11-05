@@ -1,6 +1,6 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { colors, spacing } from "../theme";
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { colors, spacing } from '../theme';
 
 type Props = {
   step: number;
@@ -28,16 +28,15 @@ export default function ProgressHeader({ step, total, title }: Props) {
 const styles = StyleSheet.create({
   container: { marginBottom: spacing.xl },
   stepText: { color: colors.brand.muted, marginBottom: spacing.xs },
-  title: { fontSize: 28, fontWeight: "800", color: colors.brand.text, marginBottom: spacing.md },
+  title: { fontSize: 28, fontWeight: '800', color: colors.brand.text, marginBottom: spacing.md },
   progressTrack: {
     height: 6,
     borderRadius: 6,
-    backgroundColor: "#F2E7DF",
-    overflow: "hidden",
+    backgroundColor: '#F2E7DF',
+    overflow: 'hidden',
   },
   progressFill: {
     height: 6,
-    backgroundColor: "#A8D5FF",
+    backgroundColor: '#A8D5FF',
   },
 });
-

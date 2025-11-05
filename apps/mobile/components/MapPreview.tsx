@@ -14,7 +14,12 @@ type MapPreviewProps = {
 const MAP_WIDTH = 320;
 const MAP_HEIGHT = 240;
 
-export function MapPreview({ requests, neighborhoodId, radiusMeters, onSelectRequest }: MapPreviewProps) {
+export function MapPreview({
+  requests,
+  neighborhoodId,
+  radiusMeters,
+  onSelectRequest,
+}: MapPreviewProps) {
   if (!requests.length) {
     return (
       <View
@@ -33,11 +38,16 @@ export function MapPreview({ requests, neighborhoodId, radiusMeters, onSelectReq
     );
   }
 
-  const hood = neighborhoodId ? NEIGHBORHOODS.find((item) => item.id === neighborhoodId) : undefined;
+  const hood = neighborhoodId
+    ? NEIGHBORHOODS.find((item) => item.id === neighborhoodId)
+    : undefined;
   const center = hood?.center ?? averageCoordinates(requests.map((item) => item.coordinates));
   const radius = radiusMeters ?? hood?.options[hood.options.length - 1].radiusMeters ?? 800;
 
-  const bounds = computeBounds(requests.map((item) => item.coordinates), hood?.center);
+  const bounds = computeBounds(
+    requests.map((item) => item.coordinates),
+    hood?.center,
+  );
 
   return (
     <View
@@ -99,7 +109,17 @@ export function MapPreview({ requests, neighborhoodId, radiusMeters, onSelectReq
           />
         </View>
       </View>
-      <View style={{ position: 'absolute', bottom: spacing.sm, left: spacing.sm, backgroundColor: colors.brand.surface, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs, borderRadius: radius.md }}>
+      <View
+        style={{
+          position: 'absolute',
+          bottom: spacing.sm,
+          left: spacing.sm,
+          backgroundColor: colors.brand.surface,
+          paddingHorizontal: spacing.sm,
+          paddingVertical: spacing.xs,
+          borderRadius: radius.md,
+        }}
+      >
         <Text style={{ color: colors.brand.muted, fontSize: 12 }}>
           Rayon ~ {Math.round(radius / 100) / 10} km
         </Text>
@@ -111,7 +131,7 @@ export function MapPreview({ requests, neighborhoodId, radiusMeters, onSelectReq
 const averageCoordinates = (points: Coordinates[]) => {
   const total = points.reduce(
     (acc, point) => ({ lat: acc.lat + point.lat, lng: acc.lng + point.lng }),
-    { lat: 0, lng: 0 }
+    { lat: 0, lng: 0 },
   );
   return { lat: total.lat / points.length, lng: total.lng / points.length };
 };
@@ -137,8 +157,12 @@ const computeBounds = (points: Coordinates[], focus?: Coordinates) => {
 
 const projectPoint = (point: Coordinates, bounds: ReturnType<typeof computeBounds>) => {
   const { minLat, maxLat, minLng, maxLng } = bounds;
-  const x = ((point.lng - minLng) / (maxLng - minLng || 0.0001)) * (MAP_WIDTH - spacing.md * 2) + spacing.md;
-  const y = ((maxLat - point.lat) / (maxLat - minLat || 0.0001)) * (MAP_HEIGHT - spacing.md * 2) + spacing.md;
+  const x =
+    ((point.lng - minLng) / (maxLng - minLng || 0.0001)) * (MAP_WIDTH - spacing.md * 2) +
+    spacing.md;
+  const y =
+    ((maxLat - point.lat) / (maxLat - minLat || 0.0001)) * (MAP_HEIGHT - spacing.md * 2) +
+    spacing.md;
   return { x, y };
 };
 

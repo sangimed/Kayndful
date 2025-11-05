@@ -86,7 +86,11 @@ export default function FeedScreen() {
   const [sheetVisible, setSheetVisible] = useState(false);
   const [draftFilters, setDraftFilters] = useState<Filters>(DEFAULT_FILTERS);
   const [searchTerm, setSearchTerm] = useState(filters.query ?? '');
-  const [tabCounts, setTabCounts] = useState<Record<FeedChannel, number>>({ latest: 0, community: 0, following: 0 });
+  const [tabCounts, setTabCounts] = useState<Record<FeedChannel, number>>({
+    latest: 0,
+    community: 0,
+    following: 0,
+  });
 
   const hasActiveFilters = Boolean(
     filters.category ||
@@ -95,7 +99,7 @@ export default function FeedScreen() {
       filters.radiusMeters ||
       filters.neighborhoodId ||
       filters.query ||
-      filters.sortBy !== 'recent'
+      filters.sortBy !== 'recent',
   );
 
   const load = useCallback(
@@ -122,7 +126,7 @@ export default function FeedScreen() {
         loadingRef.current = false;
       }
     },
-    [filters]
+    [filters],
   );
 
   useEffect(() => {
@@ -137,12 +141,21 @@ export default function FeedScreen() {
     (async () => {
       try {
         const [a, b, c] = await Promise.all(
-          TABS.map((tab) => getRequests({ page: 1, pageSize: 100, filters: { ...rest, channel: tab.key } }))
+          TABS.map((tab) =>
+            getRequests({ page: 1, pageSize: 100, filters: { ...rest, channel: tab.key } }),
+          ),
         );
-        if (!cancelled) setTabCounts({ latest: a.items.length, community: b.items.length, following: c.items.length });
+        if (!cancelled)
+          setTabCounts({
+            latest: a.items.length,
+            community: b.items.length,
+            following: c.items.length,
+          });
       } catch {}
     })();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [filters, offline]);
 
   // Debounced search
@@ -154,7 +167,9 @@ export default function FeedScreen() {
     return () => clearTimeout(t);
   }, [searchTerm]);
 
-  useEffect(() => { setSearchTerm(filters.query ?? ''); }, [filters.query]);
+  useEffect(() => {
+    setSearchTerm(filters.query ?? '');
+  }, [filters.query]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -170,10 +185,17 @@ export default function FeedScreen() {
     load(1, true);
   };
 
-  const openFilters = () => { setDraftFilters(filters); setSheetVisible(true); };
+  const openFilters = () => {
+    setDraftFilters(filters);
+    setSheetVisible(true);
+  };
   const closeFilters = () => setSheetVisible(false);
   const applyDraftFilters = () => {
-    setFilters({ ...draftFilters, channel: filters.channel, sortBy: draftFilters.sortBy ?? 'recent' });
+    setFilters({
+      ...draftFilters,
+      channel: filters.channel,
+      sortBy: draftFilters.sortBy ?? 'recent',
+    });
     setSheetVisible(false);
     setError(null);
     setOffline(false);
@@ -183,7 +205,8 @@ export default function FeedScreen() {
     const next = !isMockOffline();
     setMockOffline(next);
     setOffline(next);
-    if (!next) handleRetry(); else setItems([]);
+    if (!next) handleRetry();
+    else setItems([]);
   };
 
   const onSelectChannel = (channel: FeedChannel) => {
@@ -191,23 +214,38 @@ export default function FeedScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: isDark ? colors.app.backgroundDark : colors.app.backgroundLight, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight ?? 0 : 0 }}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: isDark ? colors.app.backgroundDark : colors.app.backgroundLight,
+        paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? 0) : 0,
+      }}
+    >
       <FlatList
         data={[{ __type: 'segment' } as any, ...items]}
-        keyExtractor={(item, index) => ((item as any).__type === 'segment' ? `seg-${index}` : (item as any).id)}
-        renderItem={({ item }) => (
+        keyExtractor={(item, index) =>
+          (item as any).__type === 'segment' ? `seg-${index}` : (item as any).id
+        }
+        renderItem={({ item }) =>
           (item as any).__type === 'segment' ? (
             <View style={{ paddingHorizontal: 16, paddingTop: 8 }}>
-              <SegmentedTabs activeKey={filters.channel} counts={tabCounts} onChange={onSelectChannel} />
+              <SegmentedTabs
+                activeKey={filters.channel}
+                counts={tabCounts}
+                onChange={onSelectChannel}
+              />
             </View>
           ) : (
             <View style={{ paddingHorizontal: 16, paddingTop: 8, alignItems: 'center' }}>
               <View style={{ width: '100%', maxWidth: 380 }}>
-                <RequestCard item={item as Request} onPress={(id) => router.push(`/request/${id}`)} />
+                <RequestCard
+                  item={item as Request}
+                  onPress={(id) => router.push(`/request/${id}`)}
+                />
               </View>
             </View>
           )
-        )}
+        }
         contentContainerStyle={{ paddingBottom: 24 }}
         stickyHeaderIndices={[1]}
         ListHeaderComponent={
@@ -229,36 +267,69 @@ export default function FeedScreen() {
         }
         ListEmptyComponent={
           loading ? (
-            <View style={{ paddingHorizontal: 16, paddingTop: 8, gap: spacing.md, alignItems: 'center' }}>
-              {[0,1,2].map((k) => (
+            <View
+              style={{
+                paddingHorizontal: 16,
+                paddingTop: 8,
+                gap: spacing.md,
+                alignItems: 'center',
+              }}
+            >
+              {[0, 1, 2].map((k) => (
                 <View key={k} style={{ width: '100%', maxWidth: 380 }}>
                   <SkeletonRequestCard />
                 </View>
               ))}
             </View>
           ) : offline ? (
-            <OfflineState title="Mode hors ligne" subtitle="Connecte-toi pour voir les nouvelles demandes." />
+            <OfflineState
+              title="Mode hors ligne"
+              subtitle="Connecte-toi pour voir les nouvelles demandes."
+            />
           ) : error ? (
             <ErrorState title="Erreur" subtitle={error ?? 'Impossible de charger les demandes.'} />
           ) : (
-            <EmptyState title="Aucune demande" subtitle="Aucune demande ne correspond à tes filtres." />
+            <EmptyState
+              title="Aucune demande"
+              subtitle="Aucune demande ne correspond à tes filtres."
+            />
           )
         }
         ListFooterComponent={
           !offline && !error && items.length > 0 ? (
             <View style={{ padding: spacing.lg, alignItems: 'center' }}>
-              {loading ? <ActivityIndicator color={colors.brand.text} /> : hasMore ? <PrimaryButton title="Charger plus" onPress={() => load(page + 1)} /> : null}
+              {loading ? (
+                <ActivityIndicator color={colors.brand.text} />
+              ) : hasMore ? (
+                <PrimaryButton title="Charger plus" onPress={() => load(page + 1)} />
+              ) : null}
             </View>
           ) : null
         }
         onEndReachedThreshold={0.4}
-        onEndReached={() => { if (!loadingRef.current && hasMore && !loading) load(page + 1); }}
-        refreshControl={<RefreshControl tintColor={colors.brand.text} refreshing={refreshing} onRefresh={onRefresh} />}
+        onEndReached={() => {
+          if (!loadingRef.current && hasMore && !loading) load(page + 1);
+        }}
+        refreshControl={
+          <RefreshControl
+            tintColor={colors.brand.text}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }
       />
 
       {error && items.length > 0 ? (
         <View style={{ position: 'absolute', left: spacing.lg, right: spacing.lg, bottom: 24 }}>
-          <View style={{ backgroundColor: '#fee2e2', borderColor: colors.semantic.danger, borderWidth: 1, padding: spacing.sm, borderRadius: radius.md }}>
+          <View
+            style={{
+              backgroundColor: '#fee2e2',
+              borderColor: colors.semantic.danger,
+              borderWidth: 1,
+              padding: spacing.sm,
+              borderRadius: radius.md,
+            }}
+          >
             <Text style={{ color: colors.semantic.danger }}>{error}</Text>
           </View>
         </View>
@@ -267,9 +338,29 @@ export default function FeedScreen() {
       <Pressable
         accessibilityRole="button"
         onPress={() => router.push('/request/new')}
-        style={{ position: 'absolute', bottom: spacing.xl, right: spacing.lg, shadowColor: colors.shadow.softCard.color, shadowOpacity: colors.shadow.softCard.opacity, shadowRadius: colors.shadow.softCard.radius, shadowOffset: { width: 0, height: colors.shadow.softCard.offsetY }, elevation: colors.shadow.softCard.elevation }}
+        style={{
+          position: 'absolute',
+          bottom: spacing.xl,
+          right: spacing.lg,
+          shadowColor: colors.shadow.softCard.color,
+          shadowOpacity: colors.shadow.softCard.opacity,
+          shadowRadius: colors.shadow.softCard.radius,
+          shadowOffset: { width: 0, height: colors.shadow.softCard.offsetY },
+          elevation: colors.shadow.softCard.elevation,
+        }}
       >
-        <LinearGradient colors={colors.brand.primaryGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ width: 60, height: 60, borderRadius: 30, alignItems: 'center', justifyContent: 'center' }}>
+        <LinearGradient
+          colors={colors.brand.primaryGradient}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={{
+            width: 60,
+            height: 60,
+            borderRadius: 30,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
           <Ionicons name="add" size={28} color={colors.brand.text} />
         </LinearGradient>
       </Pressable>
@@ -300,7 +391,15 @@ type FeedHeaderProps = {
   onOpenSaved: () => void;
 };
 
-function SegmentedTabs({ activeKey, counts, onChange }: { activeKey: FeedChannel; counts: Record<FeedChannel, number>; onChange: (k: FeedChannel) => void }) {
+function SegmentedTabs({
+  activeKey,
+  counts,
+  onChange,
+}: {
+  activeKey: FeedChannel;
+  counts: Record<FeedChannel, number>;
+  onChange: (k: FeedChannel) => void;
+}) {
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
       {TABS.map((tab) => {
@@ -320,9 +419,29 @@ function SegmentedTabs({ activeKey, counts, onChange }: { activeKey: FeedChannel
                 gap: 8,
               }}
             >
-              <Text style={{ fontSize: 14, fontWeight: active ? '700' : '600', color: colors.brand.text }}>{tab.label}</Text>
-              <View style={{ minWidth: 22, height: 22, borderRadius: 11, backgroundColor: active ? '#e5f5ff' : colors.brand.surfaceStrong, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 6 }}>
-                <Text style={{ fontSize: 12, color: colors.brand.text }}>{counts[tab.key] ?? 0}</Text>
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontWeight: active ? '700' : '600',
+                  color: colors.brand.text,
+                }}
+              >
+                {tab.label}
+              </Text>
+              <View
+                style={{
+                  minWidth: 22,
+                  height: 22,
+                  borderRadius: 11,
+                  backgroundColor: active ? '#e5f5ff' : colors.brand.surfaceStrong,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  paddingHorizontal: 6,
+                }}
+              >
+                <Text style={{ fontSize: 12, color: colors.brand.text }}>
+                  {counts[tab.key] ?? 0}
+                </Text>
               </View>
             </View>
           </Pressable>
@@ -345,41 +464,100 @@ function FeedHeader({
   onOpenNotifications,
   onOpenSaved,
 }: FeedHeaderProps) {
-  const { animatedStyle: profileAnimatedStyle, pressableProps: profilePressableProps } = usePressFeedback({
-    scaleTo: 0.95,
-    opacityTo: 0.9,
-    durationMs: 90,
-    androidRipple: { color: addAlphaToHex(colors.brand.text, 0.08), foreground: true },
-    haptics: 'selection',
-  });
+  const { animatedStyle: profileAnimatedStyle, pressableProps: profilePressableProps } =
+    usePressFeedback({
+      scaleTo: 0.95,
+      opacityTo: 0.9,
+      durationMs: 90,
+      androidRipple: { color: addAlphaToHex(colors.brand.text, 0.08), foreground: true },
+      haptics: 'selection',
+    });
 
   return (
     <View style={{ paddingVertical: spacing.lg, gap: spacing.sm }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.md }}>
-        <Pressable accessibilityRole="button" accessibilityLabel="Voir mon profil" onPress={onOpenProfile} {...profilePressableProps}>
-          <Animated.View style={[{ width: 46, height: 46, borderRadius: 16, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.brand.surface, borderWidth: 1, borderColor: colors.brand.border }, profileAnimatedStyle]}>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: spacing.md,
+        }}
+      >
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Voir mon profil"
+          onPress={onOpenProfile}
+          {...profilePressableProps}
+        >
+          <Animated.View
+            style={[
+              {
+                width: 46,
+                height: 46,
+                borderRadius: 16,
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: colors.brand.surface,
+                borderWidth: 1,
+                borderColor: colors.brand.border,
+              },
+              profileAnimatedStyle,
+            ]}
+          >
             {currentUserAvatar ? (
-              <Image source={{ uri: currentUserAvatar }} style={{ width: 42, height: 42, borderRadius: 14 }} />
+              <Image
+                source={{ uri: currentUserAvatar }}
+                style={{ width: 42, height: 42, borderRadius: 14 }}
+              />
             ) : (
               <Ionicons name="person-circle-outline" size={28} color={colors.brand.text} />
             )}
           </Animated.View>
         </Pressable>
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 24, fontWeight: '700', color: colors.brand.text }}>Demandes</Text>
+          <Text style={{ fontSize: 24, fontWeight: '700', color: colors.brand.text }}>
+            Demandes
+          </Text>
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
-          <HeaderActionButton icon="notifications-outline" accessibilityLabel="Ouvrir les notifications" onPress={onOpenNotifications} />
-          <HeaderActionButton icon="bookmark-outline" accessibilityLabel="Voir mes favoris" onPress={onOpenSaved} />
-          <FilterButton hasActiveFilters={hasActiveFilters} onPress={onFiltersPress} onLongPress={onFiltersLongPress} />
+          <HeaderActionButton
+            icon="notifications-outline"
+            accessibilityLabel="Ouvrir les notifications"
+            onPress={onOpenNotifications}
+          />
+          <HeaderActionButton
+            icon="bookmark-outline"
+            accessibilityLabel="Voir mes favoris"
+            onPress={onOpenSaved}
+          />
+          <FilterButton
+            hasActiveFilters={hasActiveFilters}
+            onPress={onFiltersPress}
+            onLongPress={onFiltersLongPress}
+          />
         </View>
       </View>
       {offline ? (
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.sm, paddingVertical: 10, paddingHorizontal: 14, borderRadius: radius.md, backgroundColor: colors.brand.surfaceStrong }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: spacing.sm,
+            paddingVertical: 10,
+            paddingHorizontal: 14,
+            borderRadius: radius.md,
+            backgroundColor: colors.brand.surfaceStrong,
+          }}
+        >
           <Ionicons name="cloud-offline-outline" size={18} color={colors.brand.text} />
-          <Text style={{ flex: 1, fontSize: 12, color: colors.brand.text }}>Mode hors ligne - contenu en cache</Text>
+          <Text style={{ flex: 1, fontSize: 12, color: colors.brand.text }}>
+            Mode hors ligne - contenu en cache
+          </Text>
           <Pressable accessibilityRole="button" onPress={onRetry}>
-            <Text style={{ fontSize: 12, fontWeight: '600', color: colors.semantic.success }}>Revenir en ligne</Text>
+            <Text style={{ fontSize: 12, fontWeight: '600', color: colors.semantic.success }}>
+              Revenir en ligne
+            </Text>
           </Pressable>
         </View>
       ) : null}
@@ -405,28 +583,76 @@ function FiltersSheet({
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
       <View style={{ flex: 1, justifyContent: 'flex-end' }}>
         <Pressable style={{ flex: 1, backgroundColor: colors.overlay }} onPress={onClose} />
-        <View style={{ backgroundColor: colors.brand.surface, padding: spacing.lg, paddingBottom: spacing.xl, borderTopLeftRadius: 28, borderTopRightRadius: 28, gap: spacing.lg }}>
-          <View style={{ width: 48, height: 4, borderRadius: 999, backgroundColor: colors.brand.border, alignSelf: 'center', marginTop: 4 }} />
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <View
+          style={{
+            backgroundColor: colors.brand.surface,
+            padding: spacing.lg,
+            paddingBottom: spacing.xl,
+            borderTopLeftRadius: 28,
+            borderTopRightRadius: 28,
+            gap: spacing.lg,
+          }}
+        >
+          <View
+            style={{
+              width: 48,
+              height: 4,
+              borderRadius: 999,
+              backgroundColor: colors.brand.border,
+              alignSelf: 'center',
+              marginTop: 4,
+            }}
+          />
+          <View
+            style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
+          >
             <View>
-              <Text style={{ fontSize: 20, fontWeight: '700', color: colors.brand.text }}>Filtres</Text>
-              <Text style={{ color: colors.brand.muted, marginTop: 4 }}>Ajuste la portée, l'XP minimum et la catégorie.</Text>
+              <Text style={{ fontSize: 20, fontWeight: '700', color: colors.brand.text }}>
+                Filtres
+              </Text>
+              <Text style={{ color: colors.brand.muted, marginTop: 4 }}>
+                Ajuste la portée, l'XP minimum et la catégorie.
+              </Text>
             </View>
-            <Pressable accessibilityRole="button" onPress={onClose} style={{ width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.brand.surfaceStrong }}>
+            <Pressable
+              accessibilityRole="button"
+              onPress={onClose}
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: 12,
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: colors.brand.surfaceStrong,
+              }}
+            >
               <Ionicons name="close" size={20} color={colors.brand.text} />
             </Pressable>
           </View>
 
           <View>
-            <Text style={{ fontWeight: '600', color: colors.brand.text, marginBottom: spacing.sm }}>Catégorie</Text>
+            <Text style={{ fontWeight: '600', color: colors.brand.text, marginBottom: spacing.sm }}>
+              Catégorie
+            </Text>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
               {REQUEST_CATEGORIES.map((category) => {
                 const selected = draftFilters.category === category;
                 return (
                   <Pressable
                     key={category}
-                    onPress={() => onChangeDraft((p) => ({ ...p, category: selected ? undefined : category }))}
-                    style={{ paddingVertical: 10, paddingHorizontal: 16, borderRadius: 16, backgroundColor: selected ? colors.brand.surfaceStrong : colors.brand.surfaceMuted, borderWidth: selected ? 1 : 0, borderColor: selected ? colors.brand.text : 'transparent' }}
+                    onPress={() =>
+                      onChangeDraft((p) => ({ ...p, category: selected ? undefined : category }))
+                    }
+                    style={{
+                      paddingVertical: 10,
+                      paddingHorizontal: 16,
+                      borderRadius: 16,
+                      backgroundColor: selected
+                        ? colors.brand.surfaceStrong
+                        : colors.brand.surfaceMuted,
+                      borderWidth: selected ? 1 : 0,
+                      borderColor: selected ? colors.brand.text : 'transparent',
+                    }}
                   >
                     <Text style={{ color: colors.brand.text, fontSize: 14 }}>{category}</Text>
                   </Pressable>
@@ -436,17 +662,36 @@ function FiltersSheet({
           </View>
 
           <View>
-            <Text style={{ fontWeight: '600', color: colors.brand.text, marginBottom: spacing.sm }}>Distance maximale</Text>
+            <Text style={{ fontWeight: '600', color: colors.brand.text, marginBottom: spacing.sm }}>
+              Distance maximale
+            </Text>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
               {DISTANCE_OPTIONS.map((value) => {
                 const selected = draftFilters.maxDistanceMeters === value;
                 return (
                   <Pressable
                     key={value}
-                    onPress={() => onChangeDraft((p) => ({ ...p, maxDistanceMeters: selected ? undefined : value }))}
-                    style={{ paddingVertical: 10, paddingHorizontal: 16, borderRadius: 16, backgroundColor: selected ? '#dbeafe' : colors.brand.surfaceStrong, borderWidth: selected ? 1 : 0, borderColor: selected ? '#2563eb' : 'transparent' }}
+                    onPress={() =>
+                      onChangeDraft((p) => ({
+                        ...p,
+                        maxDistanceMeters: selected ? undefined : value,
+                      }))
+                    }
+                    style={{
+                      paddingVertical: 10,
+                      paddingHorizontal: 16,
+                      borderRadius: 16,
+                      backgroundColor: selected ? '#dbeafe' : colors.brand.surfaceStrong,
+                      borderWidth: selected ? 1 : 0,
+                      borderColor: selected ? '#2563eb' : 'transparent',
+                    }}
                   >
-                    <Text style={{ color: selected ? '#1d4ed8' : colors.brand.muted, fontSize: 14 }}>{'≤ '}{value >= 1000 ? `${value / 1000} km` : `${value} m`}</Text>
+                    <Text
+                      style={{ color: selected ? '#1d4ed8' : colors.brand.muted, fontSize: 14 }}
+                    >
+                      {'≤ '}
+                      {value >= 1000 ? `${value / 1000} km` : `${value} m`}
+                    </Text>
                   </Pressable>
                 );
               })}
@@ -454,17 +699,36 @@ function FiltersSheet({
           </View>
 
           <View>
-            <Text style={{ fontWeight: '600', color: colors.brand.text, marginBottom: spacing.sm }}>XP minimum</Text>
+            <Text style={{ fontWeight: '600', color: colors.brand.text, marginBottom: spacing.sm }}>
+              XP minimum
+            </Text>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
               {XP_OPTIONS.map((value) => {
                 const selected = draftFilters.minXp === value;
                 return (
                   <Pressable
                     key={value}
-                    onPress={() => onChangeDraft((p) => ({ ...p, minXp: selected ? undefined : value }))}
-                    style={{ paddingVertical: 10, paddingHorizontal: 16, borderRadius: 16, backgroundColor: selected ? '#dcfce7' : colors.brand.surfaceStrong, borderWidth: selected ? 1 : 0, borderColor: selected ? colors.semantic.success : 'transparent' }}
+                    onPress={() =>
+                      onChangeDraft((p) => ({ ...p, minXp: selected ? undefined : value }))
+                    }
+                    style={{
+                      paddingVertical: 10,
+                      paddingHorizontal: 16,
+                      borderRadius: 16,
+                      backgroundColor: selected ? '#dcfce7' : colors.brand.surfaceStrong,
+                      borderWidth: selected ? 1 : 0,
+                      borderColor: selected ? colors.semantic.success : 'transparent',
+                    }}
                   >
-                    <Text style={{ color: selected ? colors.semantic.success : colors.brand.muted, fontSize: 14 }}>{'≥ '}{value} XP</Text>
+                    <Text
+                      style={{
+                        color: selected ? colors.semantic.success : colors.brand.muted,
+                        fontSize: 14,
+                      }}
+                    >
+                      {'≥ '}
+                      {value} XP
+                    </Text>
                   </Pressable>
                 );
               })}
@@ -477,11 +741,26 @@ function FiltersSheet({
             onChange={({ neighborhoodId, radiusMeters }) => {
               const hood = NEIGHBORHOODS.find((n) => n.id === neighborhoodId);
               const km = Math.round((radiusMeters / 1000) * 10) / 10;
-              onChangeDraft((p) => ({ ...p, neighborhoodId, radiusMeters, area: hood ? `${hood.name} (~${km} km)` : p.area }));
+              onChangeDraft((p) => ({
+                ...p,
+                neighborhoodId,
+                radiusMeters,
+                area: hood ? `${hood.name} (~${km} km)` : p.area,
+              }));
             }}
           />
 
-          <PrimaryButton title="Réinitialiser" variant="ghost" onPress={() => onChangeDraft({ ...DEFAULT_FILTERS, channel: draftFilters.channel, query: draftFilters.query })} />
+          <PrimaryButton
+            title="Réinitialiser"
+            variant="ghost"
+            onPress={() =>
+              onChangeDraft({
+                ...DEFAULT_FILTERS,
+                channel: draftFilters.channel,
+                query: draftFilters.query,
+              })
+            }
+          />
           <PrimaryButton title="Afficher les demandes" variant="success" onPress={onApply} />
         </View>
       </View>
@@ -489,7 +768,15 @@ function FiltersSheet({
   );
 }
 
-function HeaderActionButton({ icon, onPress, accessibilityLabel }: { icon: keyof typeof Ionicons.glyphMap; onPress: () => void; accessibilityLabel: string }) {
+function HeaderActionButton({
+  icon,
+  onPress,
+  accessibilityLabel,
+}: {
+  icon: keyof typeof Ionicons.glyphMap;
+  onPress: () => void;
+  accessibilityLabel: string;
+}) {
   const { animatedStyle, pressableProps } = usePressFeedback({
     scaleTo: 0.92,
     opacityTo: 0.85,
@@ -498,15 +785,42 @@ function HeaderActionButton({ icon, onPress, accessibilityLabel }: { icon: keyof
     haptics: 'selection',
   });
   return (
-    <Pressable accessibilityRole="button" accessibilityLabel={accessibilityLabel} onPress={onPress} {...pressableProps}>
-      <Animated.View style={[{ width: 46, height: 46, borderRadius: 16, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.brand.surface, borderWidth: 1, borderColor: colors.brand.border }, animatedStyle]}>
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
+      onPress={onPress}
+      {...pressableProps}
+    >
+      <Animated.View
+        style={[
+          {
+            width: 46,
+            height: 46,
+            borderRadius: 16,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: colors.brand.surface,
+            borderWidth: 1,
+            borderColor: colors.brand.border,
+          },
+          animatedStyle,
+        ]}
+      >
         <Ionicons name={icon} size={18} color={colors.brand.text} />
       </Animated.View>
     </Pressable>
   );
 }
 
-function FilterButton({ hasActiveFilters, onPress, onLongPress }: { hasActiveFilters: boolean; onPress: () => void; onLongPress: () => void }) {
+function FilterButton({
+  hasActiveFilters,
+  onPress,
+  onLongPress,
+}: {
+  hasActiveFilters: boolean;
+  onPress: () => void;
+  onLongPress: () => void;
+}) {
   const { animatedStyle, pressableProps } = usePressFeedback({
     scaleTo: 0.94,
     opacityTo: 0.86,
@@ -515,10 +829,43 @@ function FilterButton({ hasActiveFilters, onPress, onLongPress }: { hasActiveFil
     haptics: 'selection',
   });
   return (
-    <Pressable accessibilityRole="button" accessibilityLabel="Ouvrir les filtres" onPress={onPress} onLongPress={onLongPress} {...pressableProps}>
-      <Animated.View style={[{ width: 48, height: 48, borderRadius: 18, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.brand.surface, borderWidth: 1, borderColor: colors.brand.border }, animatedStyle, hasActiveFilters && { borderColor: colors.brand.text, borderWidth: 1.5 }]}>
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel="Ouvrir les filtres"
+      onPress={onPress}
+      onLongPress={onLongPress}
+      {...pressableProps}
+    >
+      <Animated.View
+        style={[
+          {
+            width: 48,
+            height: 48,
+            borderRadius: 18,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: colors.brand.surface,
+            borderWidth: 1,
+            borderColor: colors.brand.border,
+          },
+          animatedStyle,
+          hasActiveFilters && { borderColor: colors.brand.text, borderWidth: 1.5 },
+        ]}
+      >
         <Ionicons name="options-outline" size={20} color={colors.brand.text} />
-        {hasActiveFilters ? <View style={{ position: 'absolute', top: 10, right: 10, width: 8, height: 8, borderRadius: 4, backgroundColor: colors.semantic.success }} /> : null}
+        {hasActiveFilters ? (
+          <View
+            style={{
+              position: 'absolute',
+              top: 10,
+              right: 10,
+              width: 8,
+              height: 8,
+              borderRadius: 4,
+              backgroundColor: colors.semantic.success,
+            }}
+          />
+        ) : null}
       </Animated.View>
     </Pressable>
   );

@@ -38,8 +38,8 @@ export function PrimaryButton({
     variant === 'success'
       ? colors.semantic.successGradient
       : variant === 'danger'
-      ? colors.semantic.dangerGradient
-      : colors.brand.primaryGradient;
+        ? colors.semantic.dangerGradient
+        : colors.brand.primaryGradient;
 
   return (
     <Pressable
@@ -62,9 +62,7 @@ export function PrimaryButton({
               },
             ]}
           >
-            {children ?? (
-              <Text style={[styles.secondaryLabel, textStyle as any]}>{title}</Text>
-            )}
+            {children ?? <Text style={[styles.secondaryLabel, textStyle as any]}>{title}</Text>}
           </Animated.View>
         ) : (
           <LinearGradient

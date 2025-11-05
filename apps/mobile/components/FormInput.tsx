@@ -1,6 +1,6 @@
-import React from "react";
-import { View, Text, TextInput, StyleSheet, TextInputProps, ViewStyle } from "react-native";
-import { colors, radius, spacing } from "../theme";
+import React from 'react';
+import { View, Text, TextInput, StyleSheet, TextInputProps, ViewStyle } from 'react-native';
+import { colors, radius, spacing } from '../theme';
 
 type Props = TextInputProps & {
   label?: string;
@@ -40,7 +40,7 @@ export function FormInput({ label, error, containerStyle, ...rest }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
+    width: '100%',
   },
   label: {
     fontSize: 14,
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderRadius: radius.lg,
     paddingHorizontal: spacing.md,
-    justifyContent: "center",
+    justifyContent: 'center',
     shadowColor: colors.shadow.brand.color,
     shadowOpacity: 0.18,
     shadowRadius: 10,
@@ -67,16 +67,16 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
   },
   textarea: {
-    textAlignVertical: "top",
+    textAlignVertical: 'top',
     minHeight: 100,
   },
   inputError: {
     borderWidth: 1,
-    borderColor: "#EF4444",
+    borderColor: '#EF4444',
   },
   error: {
     marginTop: spacing.xs,
-    color: "#EF4444",
+    color: '#EF4444',
   },
 });
 

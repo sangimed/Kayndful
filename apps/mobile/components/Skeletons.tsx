@@ -25,7 +25,7 @@ function SkeletonBlock({ width, height, borderRadius = 12, style }: SkeletonProp
           duration: 600,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     );
     loop.start();
     return () => loop.stop();
@@ -101,7 +101,9 @@ export function SkeletonRequestCard() {
           <SkeletonBlock width={120} height={12} borderRadius={6} />
         </View>
 
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, alignItems: 'center' }}>
+        <View
+          style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, alignItems: 'center' }}
+        >
           <SkeletonBlock width={80} height={24} borderRadius={16} />
           <SkeletonBlock width={70} height={24} borderRadius={16} />
           <SkeletonBlock width={60} height={24} borderRadius={16} />
