@@ -81,6 +81,7 @@ export type ConversationSummary = {
   peer: { id: string; name: string; avatar?: string };
   lastMessage: Message;
   unreadCount: number;
+  isCompletedByRequester?: boolean;
 };
 
 type GetRequestsParams = {
@@ -501,6 +502,7 @@ type Conversation = {
   requestId: string;
   participantIds: [string, string];
   unreadBy: Record<string, number>;
+  completedByRequester?: boolean;
 };
 
 let messages: Message[] = [
@@ -545,6 +547,7 @@ let conversations: Conversation[] = [
     requestId: 'r1',
     participantIds: ['me', 'u1'],
     unreadBy: { me: 0, u1: 1 },
+    completedByRequester: false,
   },
   {
     id: 'conv2',
@@ -552,6 +555,7 @@ let conversations: Conversation[] = [
     requestId: 'r2',
     participantIds: ['me', 'u2'],
     unreadBy: { me: 0, u2: 0 },
+    completedByRequester: true,
   },
 ];
 
@@ -739,6 +743,7 @@ export async function getRequestConversationSummary(
       createdAt: new Date().toISOString(),
     },
     unreadCount: conversation.unreadBy['me'] ?? 0,
+    isCompletedByRequester: conversation.completedByRequester ?? false,
   };
 }
 
@@ -820,6 +825,7 @@ export async function getConversations(userId: string): Promise<ConversationSumm
           createdAt: new Date().toISOString(),
         },
         unreadCount: conv.unreadBy[userId] ?? 0,
+        isCompletedByRequester: conv.completedByRequester ?? false,
       } satisfies ConversationSummary;
     })
     .sort((a, b) => sortByDateDesc(a.lastMessage, b.lastMessage));
@@ -922,6 +928,7 @@ export function seedMockConversationWithRequest(requestId: string, participantId
     requestId,
     participantIds: ['me', participantId],
     unreadBy: { me: 0, [participantId]: 0 },
+    completedByRequester: false,
   };
   conversations = [conv, ...conversations];
   return conv;

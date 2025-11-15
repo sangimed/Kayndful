@@ -1,6 +1,7 @@
 ﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated,
+  DimensionValue,
   GestureResponderEvent,
   Image,
   Pressable,
@@ -36,13 +37,13 @@ function formatRelativeTime(dateIso: string) {
   const diff = Date.now() - new Date(dateIso).getTime();
   const minutes = Math.max(0, Math.floor(diff / (1000 * 60)));
   if (minutes < 1) return "À l'instant";
-  if (minutes < 60) return `Il y a ${minutes} min`;
+  if (minutes < 60) return `${minutes} min`;
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `Il y a ${hours} h`;
+  if (hours < 24) return `${hours} h`;
   const days = Math.floor(hours / 24);
-  if (days < 7) return `Il y a ${days} j`;
+  if (days < 7) return `${days} j`;
   const weeks = Math.floor(days / 7);
-  return `Il y a ${weeks} sem.`;
+  return `${weeks} sem`;
 }
 
 function formatDistance(meters?: number) {
@@ -221,6 +222,20 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     overflow: 'hidden',
     backgroundColor: colors.brand.surfaceMuted,
+  },
+  mediaPlaceholder: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: 16,
+    backgroundColor: colors.brand.surfaceStrong,
+  },
+  mediaPlaceholderText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: colors.brand.muted,
   },
   mediaOverlay: {
     position: 'absolute',
@@ -405,7 +420,7 @@ function SupportersStack({
 
 // (MetaChip supprimÃ© â€“ rendu inline pour compatibilitÃ© dark mode)
 
-function getMediaLayoutStyles(count: number) {
+function getMediaLayoutStyles(count: number): { width: DimensionValue; height: number } {
   if (count <= 1) return { width: '100%', height: 220 };
   if (count === 2) return { width: '48%', height: 160 };
   return { width: '48%', height: 120 };
@@ -448,6 +463,7 @@ export function RequestCard({ item, onPress, showBookmarkButton = true }: Props)
   const [expanded, setExpanded] = useState(false);
   const [liked, setLiked] = useState(false);
   const [isFollowing, setIsFollowing] = useState(Boolean(item.isFollowed));
+  const [failedMedia, setFailedMedia] = useState<Record<string, boolean>>({});
   const toggleBookmark = useRequestStore((state) => state.toggleBookmark);
   const isBookmarked = useRequestStore((state) => state.bookmarks.includes(item.id));
 
@@ -455,12 +471,20 @@ export function RequestCard({ item, onPress, showBookmarkButton = true }: Props)
   const showSeeMore = !expanded && (item.description?.length ?? 0) > 140;
   const distanceLabel = formatDistance(item.distanceMeters);
   const areaLabel = item.area;
+  const locationLabel = areaLabel || distanceLabel;
+  const locationIcon: keyof typeof Ionicons.glyphMap = areaLabel
+    ? 'location-outline'
+    : 'navigate-outline';
   const timeLabel = formatTimeOfDay(item.createdAt);
   const relativeTime = formatRelativeTime(item.createdAt);
   const supporters = item.supporters ?? [];
   const supportCountLabel = `${formatSupportCount(item.supportCount)} soutiens`;
   const tags = item.tags ?? [];
   const media = item.media ?? [];
+  const visibleMedia = media.filter(
+    (mediaItem) => mediaItem.thumbnail && !failedMedia[mediaItem.id],
+  );
+  const shouldShowNoMediaPlaceholder = media.length === 0;
 
   const handleCardPress = () => onPress?.(item.id);
   const handleFollowToggle = (event: GestureResponderEvent) => {
@@ -511,14 +535,12 @@ export function RequestCard({ item, onPress, showBookmarkButton = true }: Props)
             </View>
 
             <View style={styles.metaRow}>
-              <View style={[styles.metaChip, { backgroundColor: chipBg }]}>
-                <Ionicons name="navigate-outline" size={14} color={textMuted} />
-                <Text style={[styles.metaChipText, { color: textMuted }]}>{distanceLabel}</Text>
-              </View>
-              <View style={[styles.metaChip, { backgroundColor: chipBg }]}>
-                <Ionicons name="location-outline" size={14} color={textMuted} />
-                <Text style={[styles.metaChipText, { color: textMuted }]}>{areaLabel}</Text>
-              </View>
+              {locationLabel ? (
+                <View style={[styles.metaChip, { backgroundColor: chipBg }]}>
+                  <Ionicons name={locationIcon} size={14} color={textMuted} />
+                  <Text style={[styles.metaChipText, { color: textMuted }]}>{locationLabel}</Text>
+                </View>
+              ) : null}
               <View style={[styles.metaChip, { backgroundColor: chipBg }]}>
                 <Ionicons name="time-outline" size={14} color={textMuted} />
                 <Text style={[styles.metaChipText, { color: textMuted }]}>{timeLabel}</Text>
@@ -572,16 +594,19 @@ export function RequestCard({ item, onPress, showBookmarkButton = true }: Props)
                   </Pressable>
                 ) : null}
 
-                {media.length ? (
+                {visibleMedia.length ? (
                   <View style={styles.mediaGrid}>
-                    {media.slice(0, 4).map((mediaItem) => {
-                      const { width, height } = getMediaLayoutStyles(media.length);
+                    {visibleMedia.slice(0, 4).map((mediaItem) => {
+                      const { width, height } = getMediaLayoutStyles(visibleMedia.length);
                       return (
                         <View key={mediaItem.id} style={[styles.mediaItem, { width, height }]}>
                           <Image
                             source={{ uri: mediaItem.thumbnail }}
                             style={{ width: '100%', height: '100%' }}
                             resizeMode="cover"
+                            onError={() =>
+                              setFailedMedia((prev) => ({ ...prev, [mediaItem.id]: true }))
+                            }
                           />
                           {mediaItem.type === 'video' ? (
                             <View style={styles.mediaOverlay}>
@@ -594,6 +619,13 @@ export function RequestCard({ item, onPress, showBookmarkButton = true }: Props)
                         </View>
                       );
                     })}
+                  </View>
+                ) : shouldShowNoMediaPlaceholder ? (
+                  <View style={[styles.mediaPlaceholder, { backgroundColor: chipBg }]}>
+                    <Ionicons name="image-outline" size={14} color={textMuted} />
+                    <Text style={[styles.mediaPlaceholderText, { color: textMuted }]}>
+                      Pas d'image
+                    </Text>
                   </View>
                 ) : null}
               </View>

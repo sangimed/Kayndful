@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
 export type RequestDraft = {
   id: string;
@@ -12,6 +12,18 @@ export type RequestDraft = {
   neighborhoodId?: string;
   radiusMeters?: number;
   updatedAt: string;
+  // Nouveaux champs pour le formulaire complet
+  estimatedMinutes?: number;
+  maxVolunteers?: number;
+  availabilityStart?: string;
+  availabilityEnd?: string;
+  languages?: string[];
+  constraints?: string[];
+  requiredEquipment?: string[];
+  urgency?: string;
+  thumbnailUri?: string;
+  acceptedRules?: boolean;
+  published?: boolean;
 };
 
 type RequestStore = {
@@ -63,14 +75,7 @@ export const useRequestStore = create<RequestStore>()(
     {
       name: 'kayndful-request-store',
       version: 1,
-      storage: {
-        getItem: async (name) => {
-          const value = await AsyncStorage.getItem(name);
-          return value ?? null;
-        },
-        setItem: (name, value) => AsyncStorage.setItem(name, value),
-        removeItem: (name) => AsyncStorage.removeItem(name),
-      },
+      storage: createJSONStorage(() => AsyncStorage),
       partialize: (state) => ({
         bookmarks: state.bookmarks,
         drafts: state.drafts,

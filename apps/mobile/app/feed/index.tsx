@@ -14,6 +14,7 @@ import {
   TextInput,
   View,
   useColorScheme,
+  useWindowDimensions,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -72,6 +73,19 @@ export default function FeedScreen() {
   const currentUser = useMemo(() => getCurrentUserSnapshot(), []);
   const scheme = useColorScheme();
   const isDark = scheme === 'dark';
+  const { width } = useWindowDimensions();
+  const isCompactHeader = width < 360;
+  const headerLayout = {
+    buttonSize: isCompactHeader ? 40 : 46,
+    buttonRadius: isCompactHeader ? 14 : 16,
+    profileIconSize: isCompactHeader ? 24 : 28,
+    actionIconSize: isCompactHeader ? 16 : 18,
+    filterButtonSize: isCompactHeader ? 40 : 46,
+    filterButtonRadius: isCompactHeader ? 15 : 17,
+    filterIconSize: isCompactHeader ? 18 : 20,
+    rowGap: spacing.sm,
+    actionsGap: spacing.xs,
+  } as const;
 
   const [items, setItems] = useState<Request[]>([]);
   const [page, setPage] = useState(1);
@@ -86,11 +100,6 @@ export default function FeedScreen() {
   const [sheetVisible, setSheetVisible] = useState(false);
   const [draftFilters, setDraftFilters] = useState<Filters>(DEFAULT_FILTERS);
   const [searchTerm, setSearchTerm] = useState(filters.query ?? '');
-  const [tabCounts, setTabCounts] = useState<Record<FeedChannel, number>>({
-    latest: 0,
-    community: 0,
-    following: 0,
-  });
 
   const hasActiveFilters = Boolean(
     filters.category ||
@@ -132,31 +141,6 @@ export default function FeedScreen() {
   useEffect(() => {
     load(1, true);
   }, [load]);
-
-  // Best-effort tab counts
-  useEffect(() => {
-    if (offline) return;
-    let cancelled = false;
-    const { channel, ...rest } = filters;
-    (async () => {
-      try {
-        const [a, b, c] = await Promise.all(
-          TABS.map((tab) =>
-            getRequests({ page: 1, pageSize: 100, filters: { ...rest, channel: tab.key } }),
-          ),
-        );
-        if (!cancelled)
-          setTabCounts({
-            latest: a.items.length,
-            community: b.items.length,
-            following: c.items.length,
-          });
-      } catch {}
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [filters, offline]);
 
   // Debounced search
   useEffect(() => {
@@ -209,10 +193,6 @@ export default function FeedScreen() {
     else setItems([]);
   };
 
-  const onSelectChannel = (channel: FeedChannel) => {
-    setFilters((prev) => (prev.channel === channel ? prev : { ...prev, channel }));
-  };
-
   return (
     <SafeAreaView
       style={{
@@ -222,32 +202,16 @@ export default function FeedScreen() {
       }}
     >
       <FlatList
-        data={[{ __type: 'segment' } as any, ...items]}
-        keyExtractor={(item, index) =>
-          (item as any).__type === 'segment' ? `seg-${index}` : (item as any).id
-        }
-        renderItem={({ item }) =>
-          (item as any).__type === 'segment' ? (
-            <View style={{ paddingHorizontal: 16, paddingTop: 8 }}>
-              <SegmentedTabs
-                activeKey={filters.channel}
-                counts={tabCounts}
-                onChange={onSelectChannel}
-              />
+        data={items}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={{ paddingHorizontal: 16, paddingTop: 8, alignItems: 'center' }}>
+            <View style={{ width: '100%', maxWidth: 380 }}>
+              <RequestCard item={item as Request} onPress={(id) => router.push(`/request/${id}`)} />
             </View>
-          ) : (
-            <View style={{ paddingHorizontal: 16, paddingTop: 8, alignItems: 'center' }}>
-              <View style={{ width: '100%', maxWidth: 380 }}>
-                <RequestCard
-                  item={item as Request}
-                  onPress={(id) => router.push(`/request/${id}`)}
-                />
-              </View>
-            </View>
-          )
-        }
+          </View>
+        )}
         contentContainerStyle={{ paddingBottom: 24 }}
-        stickyHeaderIndices={[1]}
         ListHeaderComponent={
           <View style={{ paddingHorizontal: 16, paddingTop: 8 }}>
             <FeedHeader
@@ -255,6 +219,7 @@ export default function FeedScreen() {
               hasActiveFilters={hasActiveFilters}
               offline={offline}
               searchValue={searchTerm}
+              layout={headerLayout}
               onSearchChange={setSearchTerm}
               onFiltersPress={openFilters}
               onFiltersLongPress={toggleOffline}
@@ -340,8 +305,8 @@ export default function FeedScreen() {
         onPress={() => router.push('/request/new')}
         style={{
           position: 'absolute',
-          bottom: spacing.xl,
-          right: spacing.lg,
+          bottom: spacing.xl + spacing.md,
+          right: spacing.md,
           shadowColor: colors.shadow.softCard.color,
           shadowOpacity: colors.shadow.softCard.opacity,
           shadowRadius: colors.shadow.softCard.radius,
@@ -354,14 +319,14 @@ export default function FeedScreen() {
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={{
-            width: 60,
-            height: 60,
-            borderRadius: 30,
+            width: 56,
+            height: 56,
+            borderRadius: 28,
             alignItems: 'center',
             justifyContent: 'center',
           }}
         >
-          <Ionicons name="add" size={28} color={colors.brand.text} />
+          <Ionicons name="add" size={24} color={colors.brand.text} />
         </LinearGradient>
       </Pressable>
 
@@ -382,6 +347,17 @@ type FeedHeaderProps = {
   hasActiveFilters: boolean;
   offline: boolean;
   searchValue: string;
+  layout: {
+    buttonSize: number;
+    buttonRadius: number;
+    profileIconSize: number;
+    actionIconSize: number;
+    filterButtonSize: number;
+    filterButtonRadius: number;
+    filterIconSize: number;
+    rowGap: number;
+    actionsGap: number;
+  };
   onSearchChange: (value: string) => void;
   onFiltersPress: () => void;
   onFiltersLongPress: () => void;
@@ -391,71 +367,12 @@ type FeedHeaderProps = {
   onOpenSaved: () => void;
 };
 
-function SegmentedTabs({
-  activeKey,
-  counts,
-  onChange,
-}: {
-  activeKey: FeedChannel;
-  counts: Record<FeedChannel, number>;
-  onChange: (k: FeedChannel) => void;
-}) {
-  return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
-      {TABS.map((tab) => {
-        const active = tab.key === activeKey;
-        return (
-          <Pressable key={tab.key} accessibilityRole="button" onPress={() => onChange(tab.key)}>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                paddingHorizontal: 14,
-                paddingVertical: 8,
-                borderRadius: 18,
-                backgroundColor: colors.brand.surface,
-                borderWidth: 1,
-                borderColor: active ? colors.brand.text : colors.brand.border,
-                gap: 8,
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 14,
-                  fontWeight: active ? '700' : '600',
-                  color: colors.brand.text,
-                }}
-              >
-                {tab.label}
-              </Text>
-              <View
-                style={{
-                  minWidth: 22,
-                  height: 22,
-                  borderRadius: 11,
-                  backgroundColor: active ? '#e5f5ff' : colors.brand.surfaceStrong,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  paddingHorizontal: 6,
-                }}
-              >
-                <Text style={{ fontSize: 12, color: colors.brand.text }}>
-                  {counts[tab.key] ?? 0}
-                </Text>
-              </View>
-            </View>
-          </Pressable>
-        );
-      })}
-    </View>
-  );
-}
-
 function FeedHeader({
   currentUserAvatar,
   hasActiveFilters,
   offline,
   searchValue,
+  layout,
   onSearchChange,
   onFiltersPress,
   onFiltersLongPress,
@@ -472,6 +389,17 @@ function FeedHeader({
       androidRipple: { color: addAlphaToHex(colors.brand.text, 0.08), foreground: true },
       haptics: 'selection',
     });
+  const {
+    buttonSize,
+    buttonRadius,
+    profileIconSize,
+    actionIconSize,
+    filterButtonSize,
+    filterButtonRadius,
+    filterIconSize,
+    rowGap,
+    actionsGap,
+  } = layout;
 
   return (
     <View style={{ paddingVertical: spacing.lg, gap: spacing.sm }}>
@@ -480,21 +408,22 @@ function FeedHeader({
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-between',
-          gap: spacing.md,
+          gap: rowGap,
         }}
       >
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Voir mon profil"
           onPress={onOpenProfile}
+          style={{ marginLeft: spacing.xs }}
           {...profilePressableProps}
         >
           <Animated.View
             style={[
               {
-                width: 46,
-                height: 46,
-                borderRadius: 16,
+                width: buttonSize,
+                height: buttonSize,
+                borderRadius: buttonRadius,
                 alignItems: 'center',
                 justifyContent: 'center',
                 backgroundColor: colors.brand.surface,
@@ -507,33 +436,53 @@ function FeedHeader({
             {currentUserAvatar ? (
               <Image
                 source={{ uri: currentUserAvatar }}
-                style={{ width: 42, height: 42, borderRadius: 14 }}
+                style={{
+                  width: buttonSize - 4,
+                  height: buttonSize - 4,
+                  borderRadius: buttonRadius - 2,
+                }}
               />
             ) : (
-              <Ionicons name="person-circle-outline" size={28} color={colors.brand.text} />
+              <Ionicons
+                name="person-circle-outline"
+                size={profileIconSize}
+                color={colors.brand.text}
+              />
             )}
           </Animated.View>
         </Pressable>
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 24, fontWeight: '700', color: colors.brand.text }}>
-            Demandes
-          </Text>
-        </View>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            gap: actionsGap,
+            flex: 1,
+          }}
+        >
           <HeaderActionButton
             icon="notifications-outline"
             accessibilityLabel="Ouvrir les notifications"
             onPress={onOpenNotifications}
+            size={buttonSize}
+            cornerRadius={buttonRadius}
+            iconSize={actionIconSize}
           />
           <HeaderActionButton
             icon="bookmark-outline"
             accessibilityLabel="Voir mes favoris"
             onPress={onOpenSaved}
+            size={buttonSize}
+            cornerRadius={buttonRadius}
+            iconSize={actionIconSize}
           />
           <FilterButton
             hasActiveFilters={hasActiveFilters}
             onPress={onFiltersPress}
             onLongPress={onFiltersLongPress}
+            size={filterButtonSize}
+            cornerRadius={filterButtonRadius}
+            iconSize={filterIconSize}
           />
         </View>
       </View>
@@ -772,10 +721,16 @@ function HeaderActionButton({
   icon,
   onPress,
   accessibilityLabel,
+  size = 46,
+  cornerRadius = 16,
+  iconSize = 18,
 }: {
   icon: keyof typeof Ionicons.glyphMap;
   onPress: () => void;
   accessibilityLabel: string;
+  size?: number;
+  cornerRadius?: number;
+  iconSize?: number;
 }) {
   const { animatedStyle, pressableProps } = usePressFeedback({
     scaleTo: 0.92,
@@ -794,9 +749,9 @@ function HeaderActionButton({
       <Animated.View
         style={[
           {
-            width: 46,
-            height: 46,
-            borderRadius: 16,
+            width: size,
+            height: size,
+            borderRadius: cornerRadius,
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: colors.brand.surface,
@@ -806,7 +761,7 @@ function HeaderActionButton({
           animatedStyle,
         ]}
       >
-        <Ionicons name={icon} size={18} color={colors.brand.text} />
+        <Ionicons name={icon} size={iconSize} color={colors.brand.text} />
       </Animated.View>
     </Pressable>
   );
@@ -816,10 +771,16 @@ function FilterButton({
   hasActiveFilters,
   onPress,
   onLongPress,
+  size = 48,
+  cornerRadius = 18,
+  iconSize = 20,
 }: {
   hasActiveFilters: boolean;
   onPress: () => void;
   onLongPress: () => void;
+  size?: number;
+  cornerRadius?: number;
+  iconSize?: number;
 }) {
   const { animatedStyle, pressableProps } = usePressFeedback({
     scaleTo: 0.94,
@@ -839,9 +800,9 @@ function FilterButton({
       <Animated.View
         style={[
           {
-            width: 48,
-            height: 48,
-            borderRadius: 18,
+            width: size,
+            height: size,
+            borderRadius: cornerRadius,
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: colors.brand.surface,
@@ -852,7 +813,7 @@ function FilterButton({
           hasActiveFilters && { borderColor: colors.brand.text, borderWidth: 1.5 },
         ]}
       >
-        <Ionicons name="options-outline" size={20} color={colors.brand.text} />
+        <Ionicons name="options-outline" size={iconSize} color={colors.brand.text} />
         {hasActiveFilters ? (
           <View
             style={{

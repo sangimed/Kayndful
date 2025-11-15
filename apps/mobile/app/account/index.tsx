@@ -122,6 +122,10 @@ export default function AccountScreen() {
           onPress={() => router.push('/account/edit')}
         />
         <PrimaryButton title="Mes discussions" onPress={() => router.push('/inbox')} />
+        <PrimaryButton
+          title="Mes contributions"
+          onPress={() => router.push('/request/contributions')}
+        />
         <PrimaryButton title="Mes brouillons" onPress={() => router.push('/request/drafts')} />
         <PrimaryButton title="Sauvegardees" onPress={() => router.push('/request/saved')} />
         <PrimaryButton
