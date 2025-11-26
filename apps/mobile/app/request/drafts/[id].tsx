@@ -1,21 +1,27 @@
 import React from 'react';
 import { SafeAreaView, Platform, KeyboardAvoidingView, useColorScheme } from 'react-native';
-import { useRouter } from 'expo-router';
-import { colors } from '../../theme';
-import { useRequestStore } from '../../store/requests';
-import { RequestFormComponent } from '../../components/RequestFormComponent';
-import { generateDraftId, type RequestFormData } from '../../utils/requestValidation';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { colors } from '../../../theme';
+import { useRequestStore } from '../../../store/requests';
+import { RequestFormComponent } from '../../../components/RequestFormComponent';
+import type { RequestFormData } from '../../../utils/requestValidation';
 
-export default function CreateRequestScreen() {
+export default function EditRequestDraftScreen() {
   const router = useRouter();
   const scheme = useColorScheme();
   const isDark = scheme === 'dark';
+  const params = useLocalSearchParams<{ id?: string }>();
+  const draftId = params.id;
+
+  const drafts = useRequestStore((state) => state.drafts);
   const saveDraft = useRequestStore((state) => state.saveDraft);
+
+  const existingDraft = draftId ? drafts[draftId] : undefined;
 
   const handleSaveDraft = (data: Partial<RequestFormData>) => {
     const draft = {
       ...data,
-      id: data.id || generateDraftId(),
+      id: draftId || data.id,
       updatedAt: new Date().toISOString(),
       published: false,
     };
@@ -36,7 +42,7 @@ export default function CreateRequestScreen() {
   const handlePublish = (data: Partial<RequestFormData>) => {
     const draft = {
       ...data,
-      id: data.id || generateDraftId(),
+      id: draftId || data.id,
       updatedAt: new Date().toISOString(),
       published: true,
     };
@@ -67,10 +73,10 @@ export default function CreateRequestScreen() {
         keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
       >
         <RequestFormComponent
-          initialData={{ id: generateDraftId() }}
+          initialData={existingDraft}
           onSaveDraft={handleSaveDraft}
           onPublish={handlePublish}
-          isEdit={false}
+          isEdit={true}
         />
       </KeyboardAvoidingView>
     </SafeAreaView>

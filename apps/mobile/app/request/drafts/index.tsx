@@ -50,7 +50,9 @@ export default function DraftsScreen() {
         contentContainerStyle={{ padding: spacing.lg, gap: spacing.lg, paddingBottom: spacing.xl }}
         renderItem={({ item }) => (
           <Pressable
-            onPress={() => router.push({ pathname: '/request/new', params: { draftId: item.id } })}
+            onPress={() =>
+              router.push({ pathname: '/request/drafts/[id]', params: { id: item.id } })
+            }
             style={{
               backgroundColor: colors.brand.surface,
               borderRadius: radius.lg,
