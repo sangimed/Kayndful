@@ -194,6 +194,12 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: spacing.sm,
   },
+  title: {
+    fontSize: 18,
+    fontWeight: '700',
+    lineHeight: 24,
+    color: colors.brand.text,
+  },
   description: {
     fontSize: 15,
     lineHeight: 20,
@@ -256,8 +262,10 @@ const styles = StyleSheet.create({
   actionsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.sm,
+    gap: spacing.sm,
+    padding: spacing.sm,
+    borderRadius: radius.card,
+    borderWidth: 1,
   },
   actionGhost: {
     flexDirection: 'row',
@@ -271,14 +279,21 @@ const styles = StyleSheet.create({
     borderColor: colors.brand.border,
   },
   actionButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 16,
+    minHeight: 64,
+    borderRadius: 18,
     borderWidth: 1,
     borderColor: colors.brand.border,
     backgroundColor: colors.brand.surface,
     alignItems: 'center',
     justifyContent: 'center',
+    gap: 6,
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.xs,
+  },
+  actionLabel: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: colors.brand.muted,
   },
   helpersLabel: {
     fontSize: 11,
@@ -343,6 +358,7 @@ const styles = StyleSheet.create({
 type ActionIconButtonProps = {
   icon: keyof typeof Ionicons.glyphMap;
   label: string;
+  displayLabel?: string;
   onPress?: () => void;
   active?: boolean;
   activeColor?: string;
@@ -353,6 +369,7 @@ type ActionIconButtonProps = {
 function ActionIconButton({
   icon,
   label,
+  displayLabel,
   onPress,
   active = false,
   activeColor = colors.semantic.success,
@@ -378,7 +395,7 @@ function ActionIconButton({
       accessibilityLabel={label}
       {...pressableProps}
       onPress={handlePress}
-      style={{ width: 44 }}
+      style={{ flex: 1 }}
     >
       <Animated.View
         style={[
@@ -391,6 +408,12 @@ function ActionIconButton({
         ]}
       >
         <Ionicons name={icon} size={18} color={active ? activeColor : defaultColor} />
+        <Text
+          numberOfLines={1}
+          style={[styles.actionLabel, { color: active ? activeColor : defaultColor }]}
+        >
+          {displayLabel ?? label}
+        </Text>
       </Animated.View>
     </Pressable>
   );
@@ -461,7 +484,6 @@ export function RequestCard({ item, onPress, showBookmarkButton = true }: Props)
     });
 
   const [expanded, setExpanded] = useState(false);
-  const [liked, setLiked] = useState(false);
   const [isFollowing, setIsFollowing] = useState(Boolean(item.isFollowed));
   const [failedMedia, setFailedMedia] = useState<Record<string, boolean>>({});
   const toggleBookmark = useRequestStore((state) => state.toggleBookmark);
@@ -485,6 +507,8 @@ export function RequestCard({ item, onPress, showBookmarkButton = true }: Props)
     (mediaItem) => mediaItem.thumbnail && !failedMedia[mediaItem.id],
   );
   const shouldShowNoMediaPlaceholder = media.length === 0;
+  const actionsSurface = isDark ? addAlphaToHex('#0F172A', 0.65) : colors.brand.surfaceMuted;
+  const actionsBorder = isDark ? addAlphaToHex('#FFFFFF', 0.08) : colors.brand.border;
 
   const handleCardPress = () => onPress?.(item.id);
   const handleFollowToggle = (event: GestureResponderEvent) => {
@@ -549,6 +573,11 @@ export function RequestCard({ item, onPress, showBookmarkButton = true }: Props)
 
             <View style={styles.bodyRow}>
               <View style={styles.bodyContent}>
+                {item.title ? (
+                  <Text style={[styles.title, { color: textPrimary }]} numberOfLines={2}>
+                    {item.title}
+                  </Text>
+                ) : null}
                 {segments.length ? (
                   <Text
                     style={[styles.description, { color: textPrimary }]}
@@ -670,33 +699,33 @@ export function RequestCard({ item, onPress, showBookmarkButton = true }: Props)
                   </Animated.View>
                 </Pressable>
               </View>
+              <View
+                style={[
+                  styles.actionsRow,
+                  { backgroundColor: actionsSurface, borderColor: actionsBorder },
+                ]}
+              >
+                {showBookmarkButton ? (
+                  <ActionIconButton
+                    icon={isBookmarked ? 'bookmark' : 'bookmark-outline'}
+                    label={isBookmarked ? 'Retirer des favoris' : 'Enregistrer pour plus tard'}
+                    displayLabel={isBookmarked ? 'Retirer' : 'Sauvegarder'}
+                    onPress={() => toggleBookmark(item.id)}
+                    active={isBookmarked}
+                    activeColor={colors.semantic.success}
+                    activeBackground="#dcfce7"
+                  />
+                ) : null}
+                <ActionIconButton
+                  icon="share-social-outline"
+                  label="Partager la demande"
+                  displayLabel="Partager"
+                />
+              </View>
             </View>
           </LinearGradient>
         </Animated.View>
       </Pressable>
-
-      <View style={styles.actionsRow}>
-        <ActionIconButton
-          icon={liked ? 'heart' : 'heart-outline'}
-          label={liked ? 'Retirer le soutien' : 'Soutenir cette demande'}
-          onPress={() => setLiked((prev) => !prev)}
-          active={liked}
-          activeColor={colors.semantic.danger}
-          activeBackground="#fee2e2"
-        />
-        {showBookmarkButton ? (
-          <ActionIconButton
-            icon={isBookmarked ? 'bookmark' : 'bookmark-outline'}
-            label={isBookmarked ? 'Retirer des favoris' : 'Enregistrer pour plus tard'}
-            onPress={() => toggleBookmark(item.id)}
-            active={isBookmarked}
-            activeColor={colors.semantic.success}
-            activeBackground="#dcfce7"
-          />
-        ) : null}
-        <ActionIconButton icon="share-social-outline" label="Partager la demande" />
-        <ActionIconButton icon="chatbubble-ellipses-outline" label="Envoyer un message" />
-      </View>
     </Animated.View>
   );
 }
