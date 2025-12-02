@@ -4,7 +4,9 @@ export const colors = {
   // Brand and base palette
   brand: {
     iconGradient: ['#FFD9BE', '#F7BFC0'] as const,
-    primaryGradient: ['#A8D5FF', '#b1e0ff'] as const,
+    primaryGradient: ['#FFC7A0', '#F793B0'] as const,
+    primary: '#F67C8B',
+    accent: '#F4A261',
     text: '#111827',
     muted: '#6B7280',
     border: '#E5E7EB',
@@ -47,11 +49,18 @@ export const colors = {
       elevation: 6,
     },
     primaryBtn: {
-      color: '#60A5FA',
-      opacity: 0.35,
+      color: '#F97316',
+      opacity: 0.3,
+      radius: 12,
+      offsetY: 10,
+      elevation: 8,
+    },
+    softButton: {
+      color: '#0F172A',
+      opacity: 0.1,
       radius: 10,
-      offsetY: 8,
-      elevation: 6,
+      offsetY: 6,
+      elevation: 3,
     },
   },
   white: '#FFFFFF',
