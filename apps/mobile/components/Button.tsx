@@ -129,6 +129,8 @@ function ButtonBase({
   const { animatedStyle, pressableProps } = usePressFeedback({
     androidRipple: { color: rippleColor, foreground: true },
     hitSlop: 8,
+    scaleTo: 0.96,
+    opacityTo: 0.85,
   });
 
   return (

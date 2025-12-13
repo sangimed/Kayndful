@@ -1,5 +1,13 @@
 import React from 'react';
-import { FlatList, SafeAreaView, Text, View, Pressable } from 'react-native';
+import {
+  FlatList,
+  Platform,
+  Pressable,
+  SafeAreaView,
+  StatusBar,
+  Text,
+  View,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, radius, spacing } from '../../../theme';
@@ -20,7 +28,13 @@ export default function DraftsScreen() {
 
   if (!sortedDrafts.length) {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: colors.gray }}>
+      <SafeAreaView
+        style={{
+          flex: 1,
+          backgroundColor: colors.gray,
+          paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? 0) : 0,
+        }}
+      >
         <View style={{ padding: spacing.lg }}>
           <Header onPressBack={() => router.back()} onPressClear={() => {}} showClear={false} />
         </View>
@@ -40,7 +54,13 @@ export default function DraftsScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.gray }}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: colors.gray,
+        paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? 0) : 0,
+      }}
+    >
       <View style={{ paddingHorizontal: spacing.lg, paddingTop: spacing.lg }}>
         <Header onPressBack={() => router.back()} onPressClear={handleClearAll} showClear />
       </View>

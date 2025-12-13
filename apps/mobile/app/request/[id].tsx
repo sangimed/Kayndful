@@ -2,8 +2,10 @@ import React, { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Modal,
+  Platform,
   SafeAreaView,
   ScrollView,
+  StatusBar,
   Text,
   View,
   Pressable,
@@ -134,7 +136,13 @@ export default function RequestDetailsScreen() {
   const backgroundColor = isDark ? colors.app.backgroundDark : colors.app.backgroundLight;
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor }}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor,
+        paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? 0) : 0,
+      }}
+    >
       <View
         style={{
           paddingHorizontal: spacing.lg,
@@ -238,7 +246,7 @@ export default function RequestDetailsScreen() {
             <View
               style={{
                 paddingHorizontal: spacing.lg,
-                paddingBottom: spacing.lg,
+                paddingBottom: spacing.lg + spacing.safeBottom,
                 paddingTop: spacing.sm,
                 backgroundColor,
               }}

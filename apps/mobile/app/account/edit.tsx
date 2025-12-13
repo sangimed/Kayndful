@@ -4,6 +4,7 @@ import {
   Platform,
   SafeAreaView,
   ScrollView,
+  StatusBar,
   Text,
   TextInput,
   View,
@@ -70,7 +71,13 @@ export default function EditProfileScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.gray }}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: colors.gray,
+        paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? 0) : 0,
+      }}
+    >
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.select({ ios: 'padding', android: undefined })}
@@ -79,7 +86,7 @@ export default function EditProfileScreen() {
           contentContainerStyle={{
             padding: spacing.lg,
             gap: spacing.lg,
-            paddingBottom: spacing.xl,
+            paddingBottom: spacing.xl + spacing.safeBottom,
           }}
           keyboardShouldPersistTaps="handled"
         >

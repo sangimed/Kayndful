@@ -205,10 +205,8 @@ export default function FeedScreen() {
         data={items}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={{ paddingHorizontal: 16, paddingTop: 8, alignItems: 'center' }}>
-            <View style={{ width: '100%', maxWidth: 380 }}>
-              <RequestCard item={item as Request} onPress={(id) => router.push(`/request/${id}`)} />
-            </View>
+          <View style={{ paddingHorizontal: 16, paddingTop: 8 }}>
+            <RequestCard item={item as Request} onPress={(id) => router.push(`/request/${id}`)} />
           </View>
         )}
         contentContainerStyle={{ paddingBottom: 24 }}
@@ -241,7 +239,7 @@ export default function FeedScreen() {
               }}
             >
               {[0, 1, 2].map((k) => (
-                <View key={k} style={{ width: '100%', maxWidth: 380 }}>
+                <View key={k} style={{ width: '100%' }}>
                   <SkeletonRequestCard />
                 </View>
               ))}

@@ -1,5 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { FlatList, SafeAreaView, Text, View, Pressable, RefreshControl } from 'react-native';
+import {
+  FlatList,
+  Platform,
+  Pressable,
+  RefreshControl,
+  SafeAreaView,
+  StatusBar,
+  Text,
+  View,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, radius, spacing } from '../../theme';
@@ -116,7 +125,13 @@ export default function ContributionsScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.gray }}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: colors.gray,
+        paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? 0) : 0,
+      }}
+    >
       <View
         style={{ paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.md }}
       >

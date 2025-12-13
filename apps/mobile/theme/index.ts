@@ -85,4 +85,6 @@ export const spacing = {
   md: 16,
   lg: 20,
   xl: 28,
+  // Safe area bottom spacing for action buttons
+  safeBottom: 34,
 } as const;

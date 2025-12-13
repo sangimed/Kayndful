@@ -1,5 +1,5 @@
 import React from 'react';
-import { SafeAreaView, ScrollView, Text, View, Pressable } from 'react-native';
+import { Platform, SafeAreaView, ScrollView, StatusBar, Text, View, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, radius, spacing } from '../../theme';
@@ -18,9 +18,19 @@ export default function AccountScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.gray }}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: colors.gray,
+        paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? 0) : 0,
+      }}
+    >
       <ScrollView
-        contentContainerStyle={{ padding: spacing.lg, gap: spacing.lg, paddingBottom: spacing.xl }}
+        contentContainerStyle={{
+          padding: spacing.lg,
+          gap: spacing.lg,
+          paddingBottom: spacing.xl + spacing.safeBottom,
+        }}
       >
         <View
           style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}

@@ -1,5 +1,14 @@
 import React from 'react';
-import { View, Text, SafeAreaView, Pressable, useColorScheme, StyleSheet } from 'react-native';
+import {
+  Platform,
+  Pressable,
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
+  useColorScheme,
+} from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -30,7 +39,10 @@ export default function RequestConfirmationScreen() {
     <SafeAreaView
       style={[
         styles.container,
-        { backgroundColor: isDark ? colors.app.backgroundDark : colors.app.backgroundLight },
+        {
+          backgroundColor: isDark ? colors.app.backgroundDark : colors.app.backgroundLight,
+          paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? 0) : 0,
+        },
       ]}
     >
       <View style={styles.content}>

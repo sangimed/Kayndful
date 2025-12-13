@@ -1,5 +1,11 @@
 import React from 'react';
-import { SafeAreaView, Platform, KeyboardAvoidingView, useColorScheme } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  StatusBar,
+  useColorScheme,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { colors } from '../../theme';
 import { useRequestStore } from '../../store/requests';
@@ -59,6 +65,7 @@ export default function CreateRequestScreen() {
       style={{
         flex: 1,
         backgroundColor: isDark ? colors.app.backgroundDark : colors.app.backgroundLight,
+        paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? 0) : 0,
       }}
     >
       <KeyboardAvoidingView
