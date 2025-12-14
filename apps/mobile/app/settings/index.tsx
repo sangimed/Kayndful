@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   Linking,
   Platform,
-  SafeAreaView,
   ScrollView,
   StatusBar,
   Switch,
@@ -10,21 +9,24 @@ import {
   View,
   Pressable,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, radius, spacing } from '../../theme';
 
 export default function SettingsScreen() {
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [darkTheme, setDarkTheme] = useState(false);
 
   return (
-    <SafeAreaView
+    <View
       style={{
         flex: 1,
         backgroundColor: colors.gray,
-        paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? 0) : 0,
+        paddingTop: insets.top,
+        paddingBottom: insets.bottom,
       }}
     >
       <ScrollView
@@ -140,6 +142,6 @@ export default function SettingsScreen() {
           </Pressable>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }

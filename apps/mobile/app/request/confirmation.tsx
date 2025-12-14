@@ -2,13 +2,13 @@ import React from 'react';
 import {
   Platform,
   Pressable,
-  SafeAreaView,
   StatusBar,
   StyleSheet,
   Text,
   View,
   useColorScheme,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -17,6 +17,7 @@ import { PrimaryButton } from '../../components/Button';
 import { formatDuration } from '../../utils/requestValidation';
 
 export default function RequestConfirmationScreen() {
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const params = useLocalSearchParams<{
     title: string;
@@ -36,12 +37,13 @@ export default function RequestConfirmationScreen() {
   const durationNum = parseInt(params.duration || '60', 10);
 
   return (
-    <SafeAreaView
+    <View
       style={[
         styles.container,
         {
           backgroundColor: isDark ? colors.app.backgroundDark : colors.app.backgroundLight,
-          paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? 0) : 0,
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom,
         },
       ]}
     >
@@ -126,7 +128,7 @@ export default function RequestConfirmationScreen() {
           onPress={() => router.replace('/request/new')}
         />
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 

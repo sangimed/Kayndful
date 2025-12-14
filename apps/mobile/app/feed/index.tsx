@@ -8,7 +8,6 @@ import {
   Platform,
   Pressable,
   RefreshControl,
-  SafeAreaView,
   StatusBar,
   Text,
   TextInput,
@@ -16,6 +15,7 @@ import {
   useColorScheme,
   useWindowDimensions,
 } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -69,6 +69,7 @@ const TABS: { key: FeedChannel; label: string }[] = [
 
 // -------------------- Screen --------------------
 export default function FeedScreen() {
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const currentUser = useMemo(() => getCurrentUserSnapshot(), []);
   const scheme = useColorScheme();
@@ -198,7 +199,6 @@ export default function FeedScreen() {
       style={{
         flex: 1,
         backgroundColor: isDark ? colors.app.backgroundDark : colors.app.backgroundLight,
-        paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? 0) : 0,
       }}
     >
       <FlatList

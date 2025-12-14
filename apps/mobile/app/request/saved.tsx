@@ -1,14 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import {
-  FlatList,
-  Platform,
-  Pressable,
-  RefreshControl,
-  SafeAreaView,
-  StatusBar,
-  Text,
-  View,
-} from 'react-native';
+import { FlatList, Platform, Pressable, RefreshControl, StatusBar, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing } from '../../theme';
@@ -19,6 +11,7 @@ import { getRequestsByIds, isMockOffline, type Request } from '../../services/mo
 import { isOfflineError } from '../../utils/errors';
 
 export default function SavedRequestsScreen() {
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const bookmarks = useRequestStore((state) => state.bookmarks);
   const [loading, setLoading] = useState(true);
@@ -95,11 +88,12 @@ export default function SavedRequestsScreen() {
   };
 
   return (
-    <SafeAreaView
+    <View
       style={{
         flex: 1,
         backgroundColor: colors.gray,
-        paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? 0) : 0,
+        paddingTop: insets.top,
+        paddingBottom: insets.bottom,
       }}
     >
       <View
@@ -160,6 +154,6 @@ export default function SavedRequestsScreen() {
           }
         />
       )}
-    </SafeAreaView>
+    </View>
   );
 }

@@ -1,14 +1,6 @@
 import React, { useCallback, useState } from 'react';
-import {
-  FlatList,
-  Platform,
-  Pressable,
-  RefreshControl,
-  SafeAreaView,
-  StatusBar,
-  Text,
-  View,
-} from 'react-native';
+import { FlatList, Platform, Pressable, RefreshControl, StatusBar, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing } from '../../theme';
@@ -24,6 +16,7 @@ import { isOfflineError } from '../../utils/errors';
 import { showErrorToast } from '../../utils/toast';
 
 export default function InboxScreen() {
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const [items, setItems] = useState<ConversationSummary[]>([]);
   const [loading, setLoading] = useState(true);
@@ -115,11 +108,12 @@ export default function InboxScreen() {
   };
 
   return (
-    <SafeAreaView
+    <View
       style={{
         flex: 1,
         backgroundColor: colors.gray,
-        paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? 0) : 0,
+        paddingTop: insets.top,
+        paddingBottom: insets.bottom,
       }}
     >
       <View
@@ -186,6 +180,6 @@ export default function InboxScreen() {
           }
         />
       )}
-    </SafeAreaView>
+    </View>
   );
 }

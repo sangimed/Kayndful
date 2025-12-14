@@ -675,7 +675,12 @@ export function RequestCard({ item, onPress, showBookmarkButton = true }: Props)
                     </View>
                   ))}
                 </View>
-                <View style={[styles.xpPill, { backgroundColor: addAlphaToHex(colors.semantic.success, 0.12) }]}>
+                <View
+                  style={[
+                    styles.xpPill,
+                    { backgroundColor: addAlphaToHex(colors.semantic.success, 0.12) },
+                  ]}
+                >
                   <Text
                     style={[styles.xpLabel, { color: colors.semantic.success }]}
                   >{`${item.xp} XP`}</Text>

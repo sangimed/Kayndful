@@ -5,12 +5,12 @@ import {
   Platform,
   Pressable,
   RefreshControl,
-  SafeAreaView,
   StatusBar,
   Text,
   TextInput,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing } from '../../theme';
@@ -25,6 +25,7 @@ import { isOfflineError } from '../../utils/errors';
 type ViewMode = 'list' | 'map';
 
 export default function SearchScreen() {
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const [query, setQuery] = useState('');
   const [viewMode, setViewMode] = useState<ViewMode>('list');
@@ -106,11 +107,12 @@ export default function SearchScreen() {
   };
 
   return (
-    <SafeAreaView
+    <View
       style={{
         flex: 1,
         backgroundColor: colors.gray,
-        paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? 0) : 0,
+        paddingTop: insets.top,
+        paddingBottom: insets.bottom,
       }}
     >
       <View
@@ -273,6 +275,6 @@ export default function SearchScreen() {
           renderEmpty()
         )}
       </View>
-    </SafeAreaView>
+    </View>
   );
 }

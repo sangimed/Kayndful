@@ -1,5 +1,6 @@
 import React from 'react';
-import { Platform, SafeAreaView, ScrollView, StatusBar, Text, View, Pressable } from 'react-native';
+import { Platform, ScrollView, StatusBar, Text, View, Pressable } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, radius, spacing } from '../../theme';
@@ -7,6 +8,7 @@ import { PrimaryButton } from '../../components/Button';
 import { useAuthStore } from '../../store/auth';
 
 export default function AccountScreen() {
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const { currentUser } = useAuthStore();
   const user = currentUser ?? {
@@ -18,11 +20,12 @@ export default function AccountScreen() {
   };
 
   return (
-    <SafeAreaView
+    <View
       style={{
         flex: 1,
         backgroundColor: colors.gray,
-        paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? 0) : 0,
+        paddingTop: insets.top,
+        paddingBottom: insets.bottom,
       }}
     >
       <ScrollView
@@ -144,6 +147,6 @@ export default function AccountScreen() {
           onPress={() => router.push('/settings')}
         />
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
