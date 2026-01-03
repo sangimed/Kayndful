@@ -1,18 +1,40 @@
 import React, { useState } from 'react';
-import { Linking, SafeAreaView, ScrollView, Switch, Text, View, Pressable } from 'react-native';
+import {
+  Linking,
+  Platform,
+  ScrollView,
+  StatusBar,
+  Switch,
+  Text,
+  View,
+  Pressable,
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, radius, spacing } from '../../theme';
 
 export default function SettingsScreen() {
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [darkTheme, setDarkTheme] = useState(false);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.gray }}>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: colors.gray,
+        paddingTop: insets.top,
+        paddingBottom: insets.bottom,
+      }}
+    >
       <ScrollView
-        contentContainerStyle={{ padding: spacing.lg, gap: spacing.lg, paddingBottom: spacing.xl }}
+        contentContainerStyle={{
+          padding: spacing.lg,
+          gap: spacing.lg,
+          paddingBottom: spacing.xl + spacing.safeBottom,
+        }}
       >
         <View
           style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
@@ -120,6 +142,6 @@ export default function SettingsScreen() {
           </Pressable>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }

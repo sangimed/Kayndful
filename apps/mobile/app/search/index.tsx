@@ -2,13 +2,15 @@ import React, { useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
+  Platform,
+  Pressable,
   RefreshControl,
-  SafeAreaView,
+  StatusBar,
   Text,
   TextInput,
   View,
-  Pressable,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing } from '../../theme';
@@ -23,6 +25,7 @@ import { isOfflineError } from '../../utils/errors';
 type ViewMode = 'list' | 'map';
 
 export default function SearchScreen() {
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const [query, setQuery] = useState('');
   const [viewMode, setViewMode] = useState<ViewMode>('list');
@@ -104,7 +107,14 @@ export default function SearchScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.gray }}>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: colors.gray,
+        paddingTop: insets.top,
+        paddingBottom: insets.bottom,
+      }}
+    >
       <View
         style={{ paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.md }}
       >
@@ -265,6 +275,6 @@ export default function SearchScreen() {
           renderEmpty()
         )}
       </View>
-    </SafeAreaView>
+    </View>
   );
 }

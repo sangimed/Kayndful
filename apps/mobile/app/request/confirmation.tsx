@@ -1,5 +1,14 @@
 import React from 'react';
-import { View, Text, SafeAreaView, Pressable, useColorScheme, StyleSheet } from 'react-native';
+import {
+  Platform,
+  Pressable,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
+  useColorScheme,
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -8,6 +17,7 @@ import { PrimaryButton } from '../../components/Button';
 import { formatDuration } from '../../utils/requestValidation';
 
 export default function RequestConfirmationScreen() {
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const params = useLocalSearchParams<{
     title: string;
@@ -27,10 +37,14 @@ export default function RequestConfirmationScreen() {
   const durationNum = parseInt(params.duration || '60', 10);
 
   return (
-    <SafeAreaView
+    <View
       style={[
         styles.container,
-        { backgroundColor: isDark ? colors.app.backgroundDark : colors.app.backgroundLight },
+        {
+          backgroundColor: isDark ? colors.app.backgroundDark : colors.app.backgroundLight,
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom,
+        },
       ]}
     >
       <View style={styles.content}>
@@ -114,7 +128,7 @@ export default function RequestConfirmationScreen() {
           onPress={() => router.replace('/request/new')}
         />
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 

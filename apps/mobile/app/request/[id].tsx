@@ -2,13 +2,15 @@ import React, { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Modal,
-  SafeAreaView,
+  Platform,
   ScrollView,
+  StatusBar,
   Text,
   View,
   Pressable,
   useColorScheme,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -26,6 +28,7 @@ import { isOfflineError } from '../../utils/errors';
 import { showErrorToast } from '../../utils/toast';
 
 export default function RequestDetailsScreen() {
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const params = useLocalSearchParams<{ id?: string }>();
   const requestId = params.id as string | undefined;
@@ -118,23 +121,32 @@ export default function RequestDetailsScreen() {
 
   if (!requestId) {
     return (
-      <SafeAreaView
+      <View
         style={{
           flex: 1,
           justifyContent: 'center',
           alignItems: 'center',
           backgroundColor: colors.gray,
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom,
         }}
       >
         <Text style={{ color: colors.brand.muted }}>Demande introuvable.</Text>
-      </SafeAreaView>
+      </View>
     );
   }
 
   const backgroundColor = isDark ? colors.app.backgroundDark : colors.app.backgroundLight;
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor }}>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor,
+        paddingTop: insets.top,
+        paddingBottom: insets.bottom,
+      }}
+    >
       <View
         style={{
           paddingHorizontal: spacing.lg,
@@ -238,7 +250,7 @@ export default function RequestDetailsScreen() {
             <View
               style={{
                 paddingHorizontal: spacing.lg,
-                paddingBottom: spacing.lg,
+                paddingBottom: spacing.lg + spacing.safeBottom,
                 paddingTop: spacing.sm,
                 backgroundColor,
               }}
@@ -498,6 +510,6 @@ export default function RequestDetailsScreen() {
           </Modal>
         </>
       )}
-    </SafeAreaView>
+    </View>
   );
 }

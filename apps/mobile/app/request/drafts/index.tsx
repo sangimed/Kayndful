@@ -1,5 +1,6 @@
 import React from 'react';
-import { FlatList, SafeAreaView, Text, View, Pressable } from 'react-native';
+import { FlatList, Platform, Pressable, SafeAreaView, StatusBar, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, radius, spacing } from '../../../theme';
@@ -9,6 +10,7 @@ import { PrimaryButton } from '../../../components/Button';
 import { showSuccessToast } from '../../../utils/toast';
 
 export default function DraftsScreen() {
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const { drafts, deleteDraft, clearDrafts } = useRequestStore((state) => ({
     drafts: Object.values(state.drafts),
@@ -20,7 +22,14 @@ export default function DraftsScreen() {
 
   if (!sortedDrafts.length) {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: colors.gray }}>
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: colors.gray,
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom,
+        }}
+      >
         <View style={{ padding: spacing.lg }}>
           <Header onPressBack={() => router.back()} onPressClear={() => {}} showClear={false} />
         </View>
@@ -30,7 +39,7 @@ export default function DraftsScreen() {
           ctaLabel="Creer une demande"
           onPress={() => router.push('/request/new')}
         />
-      </SafeAreaView>
+      </View>
     );
   }
 
@@ -40,7 +49,13 @@ export default function DraftsScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.gray }}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: colors.gray,
+        paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? 0) : 0,
+      }}
+    >
       <View style={{ paddingHorizontal: spacing.lg, paddingTop: spacing.lg }}>
         <Header onPressBack={() => router.back()} onPressClear={handleClearAll} showClear />
       </View>

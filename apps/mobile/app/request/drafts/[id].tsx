@@ -1,5 +1,11 @@
 import React from 'react';
-import { SafeAreaView, Platform, KeyboardAvoidingView, useColorScheme } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  StatusBar,
+  useColorScheme,
+} from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { colors } from '../../../theme';
 import { useRequestStore } from '../../../store/requests';
@@ -65,6 +71,7 @@ export default function EditRequestDraftScreen() {
       style={{
         flex: 1,
         backgroundColor: isDark ? colors.app.backgroundDark : colors.app.backgroundLight,
+        paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? 0) : 0,
       }}
     >
       <KeyboardAvoidingView

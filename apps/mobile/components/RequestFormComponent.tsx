@@ -767,6 +767,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: spacing.sm,
     padding: spacing.md,
+    paddingBottom: spacing.md + spacing.safeBottom,
     borderTopWidth: 1,
     borderTopColor: colors.brand.border,
   },

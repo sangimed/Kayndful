@@ -675,16 +675,16 @@ export function RequestCard({ item, onPress, showBookmarkButton = true }: Props)
                     </View>
                   ))}
                 </View>
-                <LinearGradient
-                  colors={colors.semantic.successGradient}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  style={styles.xpPill}
+                <View
+                  style={[
+                    styles.xpPill,
+                    { backgroundColor: addAlphaToHex(colors.semantic.success, 0.12) },
+                  ]}
                 >
                   <Text
-                    style={[styles.xpLabel, { color: addAlphaToHex(textPrimary, 0.85) }]}
+                    style={[styles.xpLabel, { color: colors.semantic.success }]}
                   >{`${item.xp} XP`}</Text>
-                </LinearGradient>
+                </View>
                 <Pressable
                   accessibilityRole="button"
                   accessibilityLabel="Proposer mon aide"

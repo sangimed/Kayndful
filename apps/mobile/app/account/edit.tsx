@@ -2,13 +2,14 @@ import React, { useMemo, useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
-  SafeAreaView,
   ScrollView,
+  StatusBar,
   Text,
   TextInput,
   View,
   Pressable,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, radius, spacing } from '../../theme';
@@ -27,6 +28,7 @@ const SKILLS = [
 ];
 
 export default function EditProfileScreen() {
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const { currentUser, updateProfile } = useAuthStore();
   const base = currentUser ?? {
@@ -70,7 +72,14 @@ export default function EditProfileScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.gray }}>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: colors.gray,
+        paddingTop: insets.top,
+        paddingBottom: insets.bottom,
+      }}
+    >
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.select({ ios: 'padding', android: undefined })}
@@ -79,7 +88,7 @@ export default function EditProfileScreen() {
           contentContainerStyle={{
             padding: spacing.lg,
             gap: spacing.lg,
-            paddingBottom: spacing.xl,
+            paddingBottom: spacing.xl + spacing.safeBottom,
           }}
           keyboardShouldPersistTaps="handled"
         >
@@ -207,6 +216,6 @@ export default function EditProfileScreen() {
           />
         </ScrollView>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 }

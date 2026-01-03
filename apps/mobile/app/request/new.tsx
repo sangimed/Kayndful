@@ -1,5 +1,6 @@
 import React from 'react';
-import { SafeAreaView, Platform, KeyboardAvoidingView, useColorScheme } from 'react-native';
+import { KeyboardAvoidingView, Platform, useColorScheme, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { colors } from '../../theme';
 import { useRequestStore } from '../../store/requests';
@@ -7,6 +8,7 @@ import { RequestFormComponent } from '../../components/RequestFormComponent';
 import { generateDraftId, type RequestFormData } from '../../utils/requestValidation';
 
 export default function CreateRequestScreen() {
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const scheme = useColorScheme();
   const isDark = scheme === 'dark';
@@ -55,10 +57,12 @@ export default function CreateRequestScreen() {
   };
 
   return (
-    <SafeAreaView
+    <View
       style={{
         flex: 1,
         backgroundColor: isDark ? colors.app.backgroundDark : colors.app.backgroundLight,
+        paddingTop: insets.top,
+        paddingBottom: insets.bottom,
       }}
     >
       <KeyboardAvoidingView
@@ -73,6 +77,6 @@ export default function CreateRequestScreen() {
           isEdit={false}
         />
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 }

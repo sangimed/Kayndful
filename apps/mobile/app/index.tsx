@@ -5,6 +5,14 @@ import { StatusBar } from 'expo-status-bar';
 import { router } from 'expo-router';
 import { AppLogo } from '../components/Logo';
 import { PrimaryButton, SecondaryButton } from '../components/Button';
+import { colors, spacing } from '../theme';
+import { addAlphaToHex } from '../hooks/usePressFeedback';
+
+const HERO_GRADIENT = [
+  colors.brand.surfaceMuted,
+  addAlphaToHex(colors.brand.accent, 0.08),
+  colors.brand.surfaceStrong,
+] as const;
 
 export default function Index() {
   const goSignUp = () => router.push('/register');
@@ -12,7 +20,7 @@ export default function Index() {
 
   return (
     <LinearGradient
-      colors={['#ede0ff', '#ece4f7', '#f7f2ff']}
+      colors={HERO_GRADIENT}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={styles.screen}
@@ -23,7 +31,7 @@ export default function Index() {
         <AppLogo />
 
         <Text style={styles.title}>Kayndful</Text>
-        <Text style={styles.subtitle}>Turns free time into acts of kindness 🫶</Text>
+        <Text style={styles.subtitle}>Turns free time into acts of kindness.</Text>
 
         <View style={styles.actions}>
           <PrimaryButton title="Sign Up" onPress={goSignUp} />
@@ -44,13 +52,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     // Reduce side padding so buttons get wider.
-    paddingHorizontal: 16,
+    paddingHorizontal: spacing.lg,
   },
   title: {
     alignSelf: 'center',
     fontSize: 48,
     fontWeight: '800',
-    color: '#111827',
+    color: colors.brand.text,
     letterSpacing: -0.5,
     marginBottom: 12,
   },
@@ -58,18 +66,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     fontSize: 20,
     lineHeight: 28,
-    color: '#6B7280',
+    color: colors.brand.muted,
     textAlign: 'center',
-    marginHorizontal: 8,
-    marginBottom: 28,
+    marginHorizontal: spacing.sm,
+    marginBottom: spacing.xl,
   },
   actions: {
     alignItems: 'stretch',
-    gap: 16,
+    gap: spacing.md,
   },
   footer: {
     textAlign: 'center',
-    color: '#9CA3AF',
+    color: colors.brand.muted,
     marginBottom: Platform.select({ ios: 34, android: 42 }),
     fontSize: 17,
   },

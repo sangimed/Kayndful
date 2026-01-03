@@ -4,12 +4,12 @@ import {
   FlatList,
   KeyboardAvoidingView,
   Platform,
-  SafeAreaView,
   Text,
   TextInput,
   View,
   Pressable,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, radius, spacing } from '../../theme';
@@ -34,6 +34,7 @@ type ChatHeader = {
 };
 
 export default function ChatScreen() {
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const params = useLocalSearchParams<{ id?: string }>();
   const chatId = params.id as string | undefined;
@@ -149,21 +150,30 @@ export default function ChatScreen() {
 
   if (!chatId) {
     return (
-      <SafeAreaView
+      <View
         style={{
           flex: 1,
           justifyContent: 'center',
           alignItems: 'center',
           backgroundColor: colors.gray,
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom,
         }}
       >
         <Text style={{ color: colors.brand.muted }}>Discussion introuvable.</Text>
-      </SafeAreaView>
+      </View>
     );
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.gray }}>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: colors.gray,
+        paddingTop: insets.top,
+        paddingBottom: insets.bottom,
+      }}
+    >
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.select({ ios: 'padding', android: undefined })}
@@ -294,6 +304,6 @@ export default function ChatScreen() {
           </View>
         </View>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 }

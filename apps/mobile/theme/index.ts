@@ -3,8 +3,10 @@ export type Gradient = readonly [string, string];
 export const colors = {
   // Brand and base palette
   brand: {
-    iconGradient: ['#FFD9BE', '#F7BFC0'] as const,
-    primaryGradient: ['#A8D5FF', '#b1e0ff'] as const,
+    iconGradient: ['#9FC4FF', '#5E99FF'] as const,
+    primaryGradient: ['#C6DCFF', '#90C0FF'] as const,
+    primary: '#78AEFF',
+    accent: '#5FA8FF',
     text: '#111827',
     muted: '#6B7280',
     border: '#E5E7EB',
@@ -48,10 +50,17 @@ export const colors = {
     },
     primaryBtn: {
       color: '#60A5FA',
-      opacity: 0.35,
+      opacity: 0.3,
+      radius: 12,
+      offsetY: 10,
+      elevation: 8,
+    },
+    softButton: {
+      color: '#0F172A',
+      opacity: 0.1,
       radius: 10,
-      offsetY: 8,
-      elevation: 6,
+      offsetY: 6,
+      elevation: 3,
     },
   },
   white: '#FFFFFF',
@@ -76,4 +85,6 @@ export const spacing = {
   md: 16,
   lg: 20,
   xl: 28,
+  // Safe area bottom spacing for action buttons
+  safeBottom: 34,
 } as const;
