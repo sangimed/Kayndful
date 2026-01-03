@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlatList, Platform, Pressable, StatusBar, Text, View } from 'react-native';
+import { FlatList, Platform, Pressable, SafeAreaView, StatusBar, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
