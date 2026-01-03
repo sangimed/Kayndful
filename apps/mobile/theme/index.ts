@@ -3,10 +3,10 @@ export type Gradient = readonly [string, string];
 export const colors = {
   // Brand and base palette
   brand: {
-    iconGradient: ['#FFD9BE', '#F7BFC0'] as const,
-    primaryGradient: ['#FFC7A0', '#F793B0'] as const,
-    primary: '#F67C8B',
-    accent: '#F4A261',
+    iconGradient: ['#9FC4FF', '#5E99FF'] as const,
+    primaryGradient: ['#C6DCFF', '#90C0FF'] as const,
+    primary: '#78AEFF',
+    accent: '#5FA8FF',
     text: '#111827',
     muted: '#6B7280',
     border: '#E5E7EB',
@@ -49,7 +49,7 @@ export const colors = {
       elevation: 6,
     },
     primaryBtn: {
-      color: '#F97316',
+      color: '#60A5FA',
       opacity: 0.3,
       radius: 12,
       offsetY: 10,
