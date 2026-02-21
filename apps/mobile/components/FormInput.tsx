@@ -43,20 +43,19 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   label: {
-    fontSize: 14,
+    fontSize: 13,
     color: colors.brand.muted,
     marginBottom: spacing.xs,
+    fontWeight: '600',
   },
   inputWrapper: {
-    backgroundColor: colors.white,
+    backgroundColor: colors.brand.surface,
     borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: colors.brand.border,
+    minHeight: 54,
     paddingHorizontal: spacing.md,
     justifyContent: 'center',
-    shadowColor: colors.shadow.brand.color,
-    shadowOpacity: 0.18,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 6,
   },
   input: {
     fontSize: 16,
@@ -71,12 +70,12 @@ const styles = StyleSheet.create({
     minHeight: 100,
   },
   inputError: {
-    borderWidth: 1,
-    borderColor: '#EF4444',
+    borderColor: colors.semantic.danger,
   },
   error: {
     marginTop: spacing.xs,
-    color: '#EF4444',
+    color: colors.semantic.danger,
+    fontSize: 12,
   },
 });
 

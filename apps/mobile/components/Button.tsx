@@ -16,102 +16,65 @@ type CommonButtonProps = {
 type PrimaryVariant = 'primary' | 'success' | 'danger' | 'ghost';
 type ButtonVariant = PrimaryVariant | 'secondary';
 
-type ShadowPreset = {
-  color: string;
-  opacity: number;
-  radius: number;
-  offsetY: number;
-  elevation: number;
-};
-
 type ButtonToken = {
   fill: string[];
-  gloss?: string[];
   borderColor: string;
   textColor: string;
-  fontWeight?: TextStyle['fontWeight'];
   rippleBase: string;
-  shadow: ShadowPreset;
+  shadow: {
+    color: string;
+    opacity: number;
+    radius: number;
+    offsetY: number;
+    elevation: number;
+  };
 };
-
-const toneShadow = (color: string): ShadowPreset => ({
-  color,
-  opacity: 0.26,
-  radius: 14,
-  offsetY: 8,
-  elevation: 7,
-});
 
 const BUTTON_VARIANTS: Record<ButtonVariant, ButtonToken> = {
   primary: {
-    fill: [colors.brand.primaryGradient[0], colors.brand.primary, colors.brand.primaryGradient[1]],
-    gloss: [
-      addAlphaToHex('#FFFFFF', 0.22),
-      addAlphaToHex(colors.brand.accent, 0.08),
-      'transparent',
-    ],
-    borderColor: addAlphaToHex(colors.brand.accent, 0.55),
+    fill: [colors.brand.primaryGradient[0], colors.brand.primaryGradient[1]],
+    borderColor: addAlphaToHex(colors.brand.primary, 0.72),
     textColor: '#F8FAFC',
-    fontWeight: '800',
-    rippleBase: colors.brand.accent,
+    rippleBase: '#FFFFFF',
     shadow: colors.shadow.primaryBtn,
   },
   secondary: {
-    fill: ['#E2E8F0', '#CBD5E1', '#CBD5E1'],
-    borderColor: addAlphaToHex(colors.brand.text, 0.18),
+    fill: [colors.brand.surface, colors.brand.surface],
+    borderColor: colors.brand.border,
     textColor: colors.brand.text,
-    fontWeight: '700',
     rippleBase: colors.brand.text,
     shadow: colors.shadow.softButton,
   },
   success: {
-    fill: [colors.semantic.success, '#15803D', '#22C55E'],
-    gloss: [
-      addAlphaToHex('#FFFFFF', 0.16),
-      addAlphaToHex(colors.semantic.success, 0.08),
-      'transparent',
-    ],
-    borderColor: addAlphaToHex(colors.semantic.success, 0.55),
-    textColor: '#F0FDF4',
-    fontWeight: '800',
+    fill: [colors.semantic.successGradient[0], colors.semantic.successGradient[1]],
+    borderColor: addAlphaToHex(colors.semantic.success, 0.7),
+    textColor: '#052E16',
     rippleBase: colors.semantic.success,
-    shadow: toneShadow('#15803D'),
+    shadow: colors.shadow.softButton,
   },
   danger: {
-    fill: [colors.semantic.danger, '#B91C1C', '#F87171'],
-    gloss: [
-      addAlphaToHex('#FFFFFF', 0.14),
-      addAlphaToHex(colors.semantic.danger, 0.08),
-      'transparent',
-    ],
-    borderColor: addAlphaToHex(colors.semantic.danger, 0.5),
-    textColor: '#FEF2F2',
-    fontWeight: '800',
+    fill: [colors.semantic.dangerGradient[0], colors.semantic.dangerGradient[1]],
+    borderColor: addAlphaToHex(colors.semantic.danger, 0.7),
+    textColor: '#450A0A',
     rippleBase: colors.semantic.danger,
-    shadow: toneShadow('#B91C1C'),
+    shadow: colors.shadow.softButton,
   },
   ghost: {
-    fill: [
-      colors.brand.surface,
-      colors.brand.surfaceStrong,
-      addAlphaToHex(colors.brand.border, 0.12),
-    ],
-    gloss: [addAlphaToHex(colors.brand.surfaceMuted, 0.6), 'transparent'],
+    fill: [colors.brand.surfaceMuted, colors.brand.surfaceMuted],
     borderColor: colors.brand.border,
     textColor: colors.brand.text,
-    fontWeight: '700',
     rippleBase: colors.brand.text,
     shadow: colors.shadow.softButton,
   },
 };
 
-function shadowStyle(preset: ShadowPreset) {
+function shadowStyle(shadow: ButtonToken['shadow']) {
   return {
-    shadowColor: preset.color,
-    shadowOpacity: preset.opacity,
-    shadowRadius: preset.radius,
-    shadowOffset: { width: 0, height: preset.offsetY },
-    elevation: preset.elevation,
+    shadowColor: shadow.color,
+    shadowOpacity: shadow.opacity,
+    shadowRadius: shadow.radius,
+    shadowOffset: { width: 0, height: shadow.offsetY },
+    elevation: shadow.elevation,
   };
 }
 
@@ -125,12 +88,11 @@ function ButtonBase({
   variant,
 }: CommonButtonProps & { variant: ButtonVariant }) {
   const token = BUTTON_VARIANTS[variant];
-  const rippleColor = addAlphaToHex(token.rippleBase, 0.18);
   const { animatedStyle, pressableProps } = usePressFeedback({
-    androidRipple: { color: rippleColor, foreground: true },
+    androidRipple: { color: addAlphaToHex(token.rippleBase, 0.14), foreground: true },
     hitSlop: 8,
-    scaleTo: 0.96,
-    opacityTo: 0.85,
+    scaleTo: 0.97,
+    opacityTo: 0.9,
   });
 
   return (
@@ -142,38 +104,16 @@ function ButtonBase({
       style={[styles.ctaContainer, style as any]}
     >
       <Animated.View
-        style={[
-          styles.shadowWrap,
-          shadowStyle(token.shadow),
-          animatedStyle,
-          disabled && styles.disabled,
-        ]}
+        style={[shadowStyle(token.shadow), animatedStyle, disabled && styles.disabled, styles.shadowWrap]}
       >
         <LinearGradient
-          colors={token.fill}
+          colors={token.fill as [string, string, ...string[]]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={[styles.button, { borderColor: token.borderColor }]}
         >
-          {token.gloss ? (
-            <LinearGradient
-              colors={token.gloss}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.gloss}
-              pointerEvents="none"
-            />
-          ) : null}
           {children ?? (
-            <Text
-              style={[
-                styles.label,
-                { color: token.textColor, fontWeight: token.fontWeight ?? '700' },
-                textStyle as any,
-              ]}
-            >
-              {title}
-            </Text>
+            <Text style={[styles.label, { color: token.textColor }, textStyle as any]}>{title}</Text>
           )}
         </LinearGradient>
       </Animated.View>
@@ -204,26 +144,8 @@ export function PrimaryButton({
   );
 }
 
-export function SecondaryButton({
-  title,
-  children,
-  onPress,
-  style,
-  textStyle,
-  disabled,
-}: CommonButtonProps) {
-  return (
-    <ButtonBase
-      title={title}
-      onPress={onPress}
-      textStyle={textStyle}
-      style={style}
-      disabled={disabled}
-      variant="secondary"
-    >
-      {children}
-    </ButtonBase>
-  );
+export function SecondaryButton(props: CommonButtonProps) {
+  return <ButtonBase {...props} variant="secondary" />;
 }
 
 const styles = StyleSheet.create({
@@ -237,20 +159,17 @@ const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
     justifyContent: 'center',
-    height: 60,
+    height: 54,
     width: '100%',
     borderRadius: radius.lg,
     borderWidth: 1,
     overflow: 'hidden',
     paddingHorizontal: spacing.lg,
   },
-  gloss: {
-    ...StyleSheet.absoluteFillObject,
-    opacity: 0.9,
-  },
   label: {
-    fontSize: 18,
-    letterSpacing: 0.1,
+    fontSize: 16,
+    letterSpacing: 0.15,
+    fontWeight: '700',
   },
   disabled: {
     opacity: 0.6,

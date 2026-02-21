@@ -1,81 +1,74 @@
 export type Gradient = readonly [string, string];
 
 export const colors = {
-  // Brand and base palette
   brand: {
-    iconGradient: ['#9FC4FF', '#5E99FF'] as const,
-    primaryGradient: ['#C6DCFF', '#90C0FF'] as const,
-    primary: '#78AEFF',
-    accent: '#5FA8FF',
-    text: '#111827',
-    muted: '#6B7280',
-    border: '#E5E7EB',
+    iconGradient: ['#7C9BFF', '#5E7DFF'] as const,
+    primaryGradient: ['#5E7DFF', '#4F6FFF'] as const,
+    primary: '#4F6FFF',
+    accent: '#7C9BFF',
+    text: '#0F172A',
+    muted: '#64748B',
+    border: '#E2E8F0',
     surface: '#FFFFFF',
     surfaceMuted: '#F8FAFC',
-    surfaceStrong: '#F1F5F9',
+    surfaceStrong: '#EEF2FF',
   },
-  // Semantic status colors
   semantic: {
-    success: '#16a34a',
-    danger: '#dc2626',
-    successGradient: ['#BBF7D0', '#22C55E'] as const,
-    dangerGradient: ['#FECACA', '#EF4444'] as const,
-    neutral: '#0f172a',
+    success: '#16A34A',
+    danger: '#DC2626',
+    successGradient: ['#86EFAC', '#22C55E'] as const,
+    dangerGradient: ['#FCA5A5', '#EF4444'] as const,
+    neutral: '#0F172A',
   },
-  // App level surfaces (light/dark aware usage in components)
   app: {
-    backgroundLight: '#F7F8FA',
-    backgroundDark: '#0E1114',
+    backgroundLight: '#F4F6FB',
+    backgroundDark: '#0B1020',
     cardLight: '#FFFFFF',
-    cardDark: '#151A1E',
-    // Subtle surface tint used for gradients/overlays
-    tintLight: 'rgba(0,0,0,0.04)',
-    tintDark: 'rgba(255,255,255,0.06)',
+    cardDark: '#111827',
+    tintLight: 'rgba(79,111,255,0.08)',
+    tintDark: 'rgba(124,155,255,0.14)',
   },
-  // Shadow presets for soft, diffuse elevation
   shadow: {
     brand: {
-      color: '#000',
-      opacity: 0.2,
-      radius: 16,
-      offsetY: 12,
-      elevation: 12,
-    },
-    softCard: {
-      color: '#000',
-      opacity: 0.12,
+      color: '#0F172A',
+      opacity: 0.14,
       radius: 18,
       offsetY: 8,
-      elevation: 6,
+      elevation: 8,
+    },
+    softCard: {
+      color: '#0F172A',
+      opacity: 0.1,
+      radius: 14,
+      offsetY: 6,
+      elevation: 5,
     },
     primaryBtn: {
-      color: '#60A5FA',
-      opacity: 0.3,
+      color: '#4F6FFF',
+      opacity: 0.35,
       radius: 12,
-      offsetY: 10,
-      elevation: 8,
+      offsetY: 8,
+      elevation: 7,
     },
     softButton: {
       color: '#0F172A',
-      opacity: 0.1,
-      radius: 10,
-      offsetY: 6,
-      elevation: 3,
+      opacity: 0.08,
+      radius: 8,
+      offsetY: 4,
+      elevation: 2,
     },
   },
   white: '#FFFFFF',
-  gray: '#F3F4F6',
-  overlay: 'rgba(15,23,42,0.55)',
+  gray: '#F1F5F9',
+  overlay: 'rgba(2,6,23,0.55)',
 } as const;
 
 export const radius = {
-  // Global sizes
-  xl: 36,
-  lg: 20,
-  md: 15,
-  // Component-specific presets
-  card: 16,
-  chip: 18,
+  xl: 32,
+  lg: 18,
+  md: 14,
+  card: 18,
+  chip: 16,
   image: 12,
 } as const;
 
@@ -85,6 +78,5 @@ export const spacing = {
   md: 16,
   lg: 20,
   xl: 28,
-  // Safe area bottom spacing for action buttons
   safeBottom: 34,
 } as const;
