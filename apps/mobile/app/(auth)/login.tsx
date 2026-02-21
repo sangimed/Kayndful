@@ -3,22 +3,19 @@ import {
   SafeAreaView,
   View,
   Text,
-  TextInput,
   StyleSheet,
-  Pressable,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   Linking,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
 import PrimaryButton from '../../components/Button';
 import BackButton from '../../components/BackButton';
+import FormInput from '../../components/FormInput';
 import { colors, spacing, radius } from '../../theme';
 import { useAuthStore } from '../../store/auth';
-
-// Keep visuals consistent with register/verify screens
-const BG = '#FFF6EF';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -28,108 +25,96 @@ export default function LoginScreen() {
 
   const onSendCode = () => {
     if (!isValid) return;
-    // TODO(dev): Temporary mocked auth. Bypass verification and mark user as authenticated with mocked profile.
-    // Replace with real auth flow when backend/session is ready.
     useAuthStore.getState().loginWithMock();
     router.replace('/feed');
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.select({ ios: 'padding', android: undefined })}
-      >
-        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-          {/* Back button */}
-          <BackButton style={styles.backSpacer} />
+    <LinearGradient colors={['#EEF2FF', '#F8FAFC', '#FFFFFF']} style={{ flex: 1 }}>
+      <SafeAreaView style={styles.safeArea}>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.select({ ios: 'padding', android: undefined })}
+        >
+          <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+            <BackButton style={styles.backSpacer} />
 
-          {/* Headline */}
-          <Text style={styles.title}>Log in</Text>
-          <Text style={styles.subtitle}>We’ll send a login code to your phone.</Text>
+            <View style={styles.card}>
+              <Text style={styles.title}>Welcome back</Text>
+              <Text style={styles.subtitle}>Enter your phone number to continue.</Text>
 
-          {/* Phone input */}
-          <View style={styles.inputWrapper}>
-            <TextInput
-              value={phone}
-              onChangeText={setPhone}
-              placeholder="Phone Number"
-              placeholderTextColor={colors.brand.muted}
-              keyboardType="phone-pad"
-              textContentType="telephoneNumber"
-              style={styles.input}
-            />
-          </View>
+              <FormInput
+                value={phone}
+                onChangeText={setPhone}
+                placeholder="Phone number"
+                keyboardType="phone-pad"
+                textContentType="telephoneNumber"
+                containerStyle={{ marginTop: spacing.lg }}
+              />
 
-          <View style={{ height: spacing.lg }} />
+              <View style={{ height: spacing.md }} />
+              <PrimaryButton title="Send code" onPress={onSendCode} disabled={!isValid} />
+            </View>
 
-          {/* CTA */}
-          <PrimaryButton title="Send Code" onPress={onSendCode} disabled={!isValid} />
-
-          {/* Footer help */}
-          <View style={{ flex: 1 }} />
-          <Text style={styles.footerText}>
-            Trouble logging in?{' '}
-            <Text
-              onPress={() => Linking.openURL('https://example.com/help')}
-              style={styles.footerLink}
-            >
-              Get help
+            <View style={{ flex: 1 }} />
+            <Text style={styles.footerText}>
+              Trouble logging in?{' '}
+              <Text
+                onPress={() => Linking.openURL('https://example.com/help')}
+                style={styles.footerLink}
+              >
+                Get help
+              </Text>
+              .
             </Text>
-            .
-          </Text>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: BG,
   },
   content: {
     flexGrow: 1,
     paddingHorizontal: spacing.lg,
-    paddingTop: spacing.xl + 8,
+    paddingTop: spacing.xl,
     paddingBottom: spacing.xl,
   },
-  backSpacer: { marginBottom: spacing.lg },
+  backSpacer: { marginBottom: spacing.md },
+  card: {
+    backgroundColor: colors.brand.surface,
+    borderRadius: radius.xl,
+    borderWidth: 1,
+    borderColor: colors.brand.border,
+    padding: spacing.lg,
+    shadowColor: colors.shadow.brand.color,
+    shadowOpacity: colors.shadow.brand.opacity,
+    shadowRadius: colors.shadow.brand.radius,
+    shadowOffset: { width: 0, height: colors.shadow.brand.offsetY },
+    elevation: colors.shadow.brand.elevation,
+  },
   title: {
-    fontSize: 36,
+    fontSize: 32,
     fontWeight: '800',
     color: colors.brand.text,
   },
   subtitle: {
-    marginTop: spacing.sm,
-    fontSize: 16,
+    marginTop: spacing.xs,
+    fontSize: 15,
     color: colors.brand.muted,
-  },
-  inputWrapper: {
-    marginTop: spacing.xl,
-    backgroundColor: colors.white,
-    borderRadius: radius.lg,
-    paddingHorizontal: spacing.md,
-    height: 64,
-    justifyContent: 'center',
-    shadowColor: colors.shadow.brand.color,
-    shadowOpacity: 0.18,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 10 },
-    elevation: 8,
-  },
-  input: {
-    fontSize: 18,
-    color: colors.brand.text,
   },
   footerText: {
     textAlign: 'center',
     color: colors.brand.muted,
     marginTop: spacing.xl,
+    fontSize: 13,
   },
   footerLink: {
-    color: colors.brand.text,
-    fontWeight: '600',
+    color: colors.brand.primary,
+    fontWeight: '700',
   },
 });

@@ -3,7 +3,6 @@ import {
   SafeAreaView,
   View,
   Text,
-  TextInput,
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
@@ -11,12 +10,11 @@ import {
   Linking,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
 import PrimaryButton from '../../components/Button';
 import BackButton from '../../components/BackButton';
+import FormInput from '../../components/FormInput';
 import { colors, spacing, radius } from '../../theme';
-
-// Soft warm background to match the mock
-const BG = '#FFF6EF';
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -25,109 +23,95 @@ export default function RegisterScreen() {
 
   const onSendCode = () => {
     if (!isValid) return;
-    router.push({
-      pathname: '/verify-code',
-      params: { phone: phone.trim() },
-    });
+    router.push({ pathname: '/verify-code', params: { phone: phone.trim() } });
   };
 
   return (
-    <SafeAreaView style={[styles.safeArea]}>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.select({ ios: 'padding', android: undefined })}
-      >
-        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-          {/* Back button */}
-          <BackButton style={styles.backSpacer} />
+    <LinearGradient colors={['#EEF2FF', '#F8FAFC', '#FFFFFF']} style={{ flex: 1 }}>
+      <SafeAreaView style={styles.safeArea}>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.select({ ios: 'padding', android: undefined })}
+        >
+          <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+            <BackButton style={styles.backSpacer} />
 
-          {/* Headline */}
-          <Text style={styles.title}>Verify your number</Text>
-          <Text style={styles.subtitle}>We&apos;ll send a verification code to your phone.</Text>
+            <View style={styles.card}>
+              <Text style={styles.title}>Create your account</Text>
+              <Text style={styles.subtitle}>We’ll text you a verification code.</Text>
 
-          {/* Phone input */}
-          <View style={styles.inputWrapper}>
-            <TextInput
-              value={phone}
-              onChangeText={setPhone}
-              placeholder="Phone Number"
-              placeholderTextColor={colors.brand.muted}
-              keyboardType="phone-pad"
-              textContentType="telephoneNumber"
-              style={styles.input}
-            />
-          </View>
+              <FormInput
+                value={phone}
+                onChangeText={setPhone}
+                placeholder="Phone number"
+                keyboardType="phone-pad"
+                textContentType="telephoneNumber"
+                containerStyle={{ marginTop: spacing.lg }}
+              />
 
-          <View style={{ height: spacing.lg }} />
+              <View style={{ height: spacing.md }} />
+              <PrimaryButton title="Send code" onPress={onSendCode} disabled={!isValid} />
+            </View>
 
-          {/* CTA */}
-          <PrimaryButton title="Send Code" onPress={onSendCode} disabled={!isValid} />
-
-          {/* Footer terms */}
-          <View style={{ flex: 1 }} />
-          <Text style={styles.footerText}>
-            By continuing, you agree to our{' '}
-            <Text
-              onPress={() => Linking.openURL('https://example.com/terms')}
-              style={styles.footerLink}
-            >
-              Terms of Service
+            <View style={{ flex: 1 }} />
+            <Text style={styles.footerText}>
+              By continuing, you agree to our{' '}
+              <Text
+                onPress={() => Linking.openURL('https://example.com/terms')}
+                style={styles.footerLink}
+              >
+                Terms of Service
+              </Text>
+              .
             </Text>
-            .
-          </Text>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: BG,
   },
   content: {
     flexGrow: 1,
     paddingHorizontal: spacing.lg,
-    paddingTop: spacing.xl + 8,
+    paddingTop: spacing.xl,
     paddingBottom: spacing.xl,
   },
-  backSpacer: { marginBottom: spacing.lg },
+  backSpacer: { marginBottom: spacing.md },
+  card: {
+    backgroundColor: colors.brand.surface,
+    borderRadius: radius.xl,
+    borderWidth: 1,
+    borderColor: colors.brand.border,
+    padding: spacing.lg,
+    shadowColor: colors.shadow.brand.color,
+    shadowOpacity: colors.shadow.brand.opacity,
+    shadowRadius: colors.shadow.brand.radius,
+    shadowOffset: { width: 0, height: colors.shadow.brand.offsetY },
+    elevation: colors.shadow.brand.elevation,
+  },
   title: {
-    fontSize: 36,
+    fontSize: 32,
     fontWeight: '800',
     color: colors.brand.text,
   },
   subtitle: {
-    marginTop: spacing.sm,
-    fontSize: 16,
+    marginTop: spacing.xs,
+    fontSize: 15,
     color: colors.brand.muted,
-  },
-  inputWrapper: {
-    marginTop: spacing.xl,
-    backgroundColor: colors.white,
-    borderRadius: radius.lg,
-    paddingHorizontal: spacing.md,
-    height: 64,
-    justifyContent: 'center',
-    // Soft shadow similar to the mock
-    shadowColor: colors.shadow.brand.color,
-    shadowOpacity: 0.18,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 10 },
-    elevation: 8,
-  },
-  input: {
-    fontSize: 18,
-    color: colors.brand.text,
   },
   footerText: {
     textAlign: 'center',
     color: colors.brand.muted,
     marginTop: spacing.xl,
+    fontSize: 13,
   },
   footerLink: {
-    color: colors.brand.text,
-    fontWeight: '600',
+    color: colors.brand.primary,
+    fontWeight: '700',
   },
 });
