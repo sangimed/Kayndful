@@ -104,7 +104,12 @@ function ButtonBase({
       style={[styles.ctaContainer, style as any]}
     >
       <Animated.View
-        style={[shadowStyle(token.shadow), animatedStyle, disabled && styles.disabled, styles.shadowWrap]}
+        style={[
+          shadowStyle(token.shadow),
+          animatedStyle,
+          disabled && styles.disabled,
+          styles.shadowWrap,
+        ]}
       >
         <LinearGradient
           colors={token.fill as [string, string, ...string[]]}
@@ -113,7 +118,9 @@ function ButtonBase({
           style={[styles.button, { borderColor: token.borderColor }]}
         >
           {children ?? (
-            <Text style={[styles.label, { color: token.textColor }, textStyle as any]}>{title}</Text>
+            <Text style={[styles.label, { color: token.textColor }, textStyle as any]}>
+              {title}
+            </Text>
           )}
         </LinearGradient>
       </Animated.View>

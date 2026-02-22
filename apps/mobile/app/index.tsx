@@ -25,7 +25,10 @@ export default function Index() {
 
         <View style={styles.actions}>
           <PrimaryButton title="Create account" onPress={() => router.push('/register')} />
-          <SecondaryButton title="I already have an account" onPress={() => router.push('/login')} />
+          <SecondaryButton
+            title="I already have an account"
+            onPress={() => router.push('/login')}
+          />
         </View>
       </View>
 
