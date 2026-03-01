@@ -9,6 +9,9 @@ import { User } from './users/user.entity';
 import { ServiceOffer } from './service-offers/service-offer.entity';
 import { Transaction } from './transactions/transaction.entity';
 
+const isDevelopmentEnvironment = process.env.NODE_ENV === 'development';
+const isDatabaseSynchronizationEnabled = process.env.DB_SYNCHRONIZE === 'true';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -20,7 +23,9 @@ import { Transaction } from './transactions/transaction.entity';
       password: process.env.DB_PASS || 'postgres',
       database: process.env.DB_NAME || 'kayndful',
       entities: [User, ServiceOffer, Transaction],
-      synchronize: true,
+      ...(isDevelopmentEnvironment && isDatabaseSynchronizationEnabled
+        ? { synchronize: true }
+        : {}),
     }),
     UsersModule,
     AuthModule,
